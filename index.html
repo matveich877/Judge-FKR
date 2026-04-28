@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Реестр судей ФКР</title>
+    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=WqcoZ3Gs1ts4CS2fl-fZ4sjDlxL7db-FsLzDLqaDQnUC_9lm-SUm8Nru1H0bCwF_qtBywFOMSswr50aNY8tdDN0ScieFW9aVuAceTYXP4pXyc4ZrJ2kvAVS7f3eoG2u6eJYaVchkUuZfK8HjeUlg36LC-AUk1gfGVTTnSpiY-Al__uM3ED5RpM0eAGWKxB1zU4tj8nFMBS-Uvc4g1t60OvBCjr7-tT63krYZzJLvuHxagwy4qzRkPyDdum4xG80Smi7gdRcl_wLos4WmigjehXzd1sNK9QIjEiUPdtcxlMnm2BG-vyHFaaB79xAerl_f225BND3jtXVWE88TPhd--nJKC9UrYWJlatQwvb3EG3mq9aIarcgijeFG-3FYtgMzBhHhs8D8J0cn_CeDRKtKamzGaA0H99DLvwXcp0DMAYxvJjRcGouZgmG0paRBOPVCTXd9IYBQL5n2xrnfmBmLf13Kys3uAIgwDMO3VLceXNLvS4gupx9cQ94V5sq_XR8FX14Uy1OsDMIyAaCZLWl0X0WhR_3fah5HIh_Eh-Kg8Y51vGWK-PxRrYedd8lxZieWMDsS39JL-or9RCV0ulzC6fz64oTdmYSacXgZnRbvHq3aK9WDmp2puVyC8yVOT1RDE5fiVJ_Jpk3oC9bclOlxUA" charset="UTF-8"></script><style>
+        :root {
+            --bg-deep: #0f0c29;
+            --bg-mid: #302b63;
+            --accent-red: #ff416c;
+            --accent-orange: #ff4b2b;
+            --accent-gold: #ffb347;
+            --glass-bg: rgba(20, 20, 45, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text: #f0f0f5;
+            --text-secondary: #a0a0b8;
+            --green: #00e676;
+            --green-bg: rgba(0, 230, 118, 0.12);
+            --yellow: #ffd600;
+            --yellow-bg: rgba(255, 214, 0, 0.12);
+            --red: #ff1744;
+            --red-bg: rgba(255, 23, 68, 0.12);
+            --blue: #448aff;
+            --blue-bg: rgba(68, 138, 255, 0.12);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(255,65,108,0.25) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(255,75,43,0.2) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(255,179,71,0.1) 0%, transparent 60%),
+                linear-gradient(135deg, #0f0c29 0%, #1a1a3e 50%, #0f0c29 100%);
+            background-attachment: fixed;
+            color: var(--text);
+            line-height: 1.5;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px 28px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        h1 {
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(255,65,108,0.4);
+            letter-spacing: -0.3px;
+        }
+        .date-now { font-size: 0.9rem; color: var(--text-secondary); }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 18px 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(255,65,108,0.15); }
+        .stat-value { font-size: 2rem; font-weight: 800; color: #fff; text-shadow: 0 0 12px rgba(255,255,255,0.2); }
+        .stat-label { font-size: 0.75rem; color: var(--text-secondary); margin-top: 6px; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-card.warning .stat-value { color: var(--yellow); text-shadow: 0 0 12px rgba(255,214,0,0.3); }
+        .stat-card.danger .stat-value { color: var(--red); text-shadow: 0 0 12px rgba(255,23,68,0.3); }
+        .controls {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 18px 22px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        input, select {
+            padding: 10px 14px;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.2s;
+            background: rgba(0,0,0,0.25);
+            color: #fff;
+        }
+        input:focus, select:focus { border-color: var(--accent-red); box-shadow: 0 0 0 3px rgba(255,65,108,0.15); }
+        input::placeholder { color: #777; }
+        input[type="text"] { flex: 1; min-width: 220px; }
+        select { min-width: 160px; }
+        select option { background: #1a1a3e; color: #fff; }
+        .btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent-red), var(--accent-orange));
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(255,65,108,0.3);
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,65,108,0.45); }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.15);
+            color: var(--text);
+            box-shadow: none;
+        }
+        .btn-outline:hover { border-color: var(--accent-red); color: #fff; }
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            font-size: 0.92rem;
+        }
+        th, td { padding: 14px 18px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        th {
+            background: rgba(255,255,255,0.04);
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+        th:hover { background: rgba(255,255,255,0.07); }
+        th.sortable::after { content: " ⇅"; opacity: 0.3; font-size: 0.75rem; }
+        th.sort-asc::after { content: " ↑"; opacity: 1; }
+        th.sort-desc::after { content: " ↓"; opacity: 1; }
+        tr { transition: background 0.15s; }
+        tr:hover td { background: rgba(255,255,255,0.03); }
+        td { vertical-align: middle; }
+        .fio { font-weight: 700; color: #fff; font-size: 1rem; }
+        .region { color: var(--text-secondary); font-size: 0.85rem; margin-top: 2px; }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .badge-kumite { background: rgba(68,138,255,0.15); color: var(--blue); box-shadow: 0 0 8px rgba(68,138,255,0.1); }
+        .badge-kata { background: rgba(255,65,108,0.15); color: var(--accent-red); box-shadow: 0 0 8px rgba(255,65,108,0.1); }
+        .badge-cat { background: rgba(255,179,71,0.12); color: var(--accent-gold); border-color: rgba(255,179,71,0.2); }
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .status-active { background: var(--green-bg); color: var(--green); box-shadow: 0 0 10px rgba(0,230,118,0.08); }
+        .status-warning { background: var(--yellow-bg); color: var(--yellow); box-shadow: 0 0 10px rgba(255,214,0,0.08); }
+        .status-danger { background: var(--red-bg); color: var(--red); box-shadow: 0 0 10px rgba(255,23,68,0.08); }
+        .days-left { font-weight: 800; font-size: 1.1rem; }
+        .days-left.pos { color: var(--green); text-shadow: 0 0 8px rgba(0,230,118,0.2); }
+        .days-left.neg { color: var(--red); text-shadow: 0 0 8px rgba(255,23,68,0.2); }
+        .days-left.warn { color: var(--yellow); text-shadow: 0 0 8px rgba(255,214,0,0.2); }
+        .links { display: flex; gap: 8px; flex-wrap: wrap; }
+        .link-doc {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 5px 12px;
+            border-radius: 8px;
+            background: rgba(68,138,255,0.1);
+            color: var(--blue);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            border: 1px solid rgba(68,138,255,0.15);
+        }
+        .link-doc:hover { background: rgba(68,138,255,0.2); transform: translateY(-1px); }
+        .link-doc.empty { background: rgba(255,255,255,0.03); color: #555; pointer-events: none; border-color: transparent; }
+        .progress-bar {
+            width: 100%;
+            height: 5px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s;
+            box-shadow: 0 0 8px currentColor;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+        @media (max-width: 900px) {
+            table { font-size: 0.85rem; }
+            th, td { padding: 12px 14px; }
+            .hide-mobile { display: none; }
+        }
+        @media (max-width: 640px) {
+            .controls { flex-direction: column; align-items: stretch; }
+            input, select { width: 100%; }
+            header { flex-direction: column; align-items: flex-start; }
+            h1 { font-size: 1.3rem; }
+        }
+        .instructions {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 22px 26px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .instructions h3 { color: #fff; margin-bottom: 12px; font-size: 1.05rem; }
+        .instructions code {
+            background: rgba(0,0,0,0.3);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 0.82rem;
+            color: var(--accent-gold);
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .instructions ul, .instructions ol { margin-left: 18px; margin-top: 10px; }
+        .instructions li { margin-bottom: 8px; }
+        .instructions strong { color: #fff; }
+
+        .logo-wrap {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+        .logo-wrap img {
+            height: 72px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
+            transition: transform 0.2s;
+        }
+        .logo-wrap img:hover { transform: scale(1.03); }
+        @media (max-width: 640px) {
+            .logo-wrap img { height: 52px; }
+            .logo-wrap { gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <div class="logo-wrap">
+            <img src="logo.jpg" alt="Федерация Каратэ России">
+            <div>
+                <h1>Реестр судей ФКР</h1>
+                <div class="date-now">Сегодня: <span id="today"></span></div>
+            </div>
+        </div>
+        <a href="#instructions" class="btn btn-outline">Как обновить данные</a>
+    </header>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="controls">
+        <input type="text" id="search" placeholder="Поиск по ФИО или региону...">
+        <select id="filterCat">
+            <option value="">Все категории</option>
+            <option value="ЮС">ЮС</option>
+            <option value="С3К">С3К</option>
+            <option value="С2К">С2К</option>
+            <option value="С1К">С1К</option>
+            <option value="ССВК">ССВК</option>
+        </select>
+        <select id="filterStatus">
+            <option value="">Все статусы</option>
+            <option value="active">Активно</option>
+            <option value="warning">Требуется продление</option>
+            <option value="danger">Просрочено</option>
+        </select>
+        <select id="filterDir">
+            <option value="">Все направления</option>
+            <option value="Кумитэ">Кумитэ</option>
+            <option value="Ката">Ката</option>
+            <option value="Кумитэ, Ката">Кумитэ + Ката</option>
+        </select>
+        <button class="btn" onclick="exportTable()">📥 Экспорт CSV</button>
+    </div>
+
+    <div id="tableWrap">
+        <table id="judgesTable">
+            <thead>
+                <tr>
+                    <th class="sortable" data-col="fio">ФИО / Регион</th>
+                    <th class="sortable" data-col="dir">Направление</th>
+                    <th class="sortable" data-col="cat">Категория</th>
+                    <th class="sortable hide-mobile" data-col="dateStart">Дата присвоения</th>
+                    <th class="sortable hide-mobile" data-col="dateEnd">Дата окончания</th>
+                    <th class="sortable" data-col="days">Осталось</th>
+                    <th class="sortable" data-col="status">Статус</th>
+                    <th>Документы</th>
+                </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+        </table>
+    </div>
+
+    <div class="instructions" id="instructions">
+        <h3>🔧 Как обновить данные на сайте</h3>
+        <ol style="line-height: 1.7;">
+            <li>Редактируйте файл в Excel по шаблону: <strong>ФИО;Регион;Направление;Категория;ДатаПрисвоения;ДатаПродления;ПриказПрисвоение;ПриказПродление</strong></li>
+            <li>Сохраните лист как CSV (разделитель <code>;</code>, кодировка <code>UTF-8</code>).</li>
+            <li>Назовите файл <code>judges_data.csv</code> и загрузите в корень репозитория GitHub Pages.</li>
+            <li>Изменения появятся на сайте в течение 1–2 минут.</li>
+        </ol>
+        <p style="margin-top:12px;"><strong>Формат дат:</strong> <code>ГГГГ-ММ-ДД</code> (пример: <code>2025-06-30</code>). Если дата продления пустая — счётчик идёт от даты присвоения.</p>
+        <p style="margin-top:8px;"><strong>Сроки категорий:</strong> ЮС и С3К — 1 год, С2К и С1К — 2 года, ССВК — 4 года.</p>
+    </div>
+</div>
+
+<script>
+// ================== КОНФИГУРАЦИЯ ==================
+const CSV_URL = 'judges_data.csv';
+const CATEGORY_YEARS = {
+    'ЮС': 1,
+    'С3К': 1,
+    'С2К': 2,
+    'С1К': 2,
+    'ССВК': 4
+};
+const WARNING_DAYS = 90;
+
+let allData = [];
+let sortCol = 'days';
+let sortAsc = true;
+
+// ================== УТИЛИТЫ ==================
+function parseDate(str) {
+    if (!str) return null;
+    const d = new Date(str.trim());
+    return isNaN(d) ? null : d;
+}
+function addYears(date, years) {
+    const d = new Date(date);
+    d.setFullYear(d.getFullYear() + years);
+    if (d.getMonth() !== (date.getMonth() + years * 12) % 12) d.setDate(0);
+    return d;
+}
+function daysBetween(a, b) {
+    return Math.ceil((b - a) / (1000 * 60 * 60 * 24));
+}
+function formatDate(d) {
+    return d ? d.toLocaleDateString('ru-RU') : '—';
+}
+function escapeHtml(t) {
+    const div = document.createElement('div');
+    div.textContent = t;
+    return div.innerHTML;
+}
+
+// ================== ПАРСИНГ CSV ==================
+async function loadCSV() {
+    try {
+        const resp = await fetch(CSV_URL + '?t=' + Date.now());
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        parseCSV(await resp.text());
+    } catch (e) {
+        document.getElementById('tableWrap').innerHTML = `
+            <div class="empty-state">
+                <p><strong>Не удалось загрузить judges_data.csv</strong></p>
+                <p style="margin-top:8px;">Убедитесь, что файл находится в той же папке, что и index.html</p>
+                <p style="margin-top:8px; font-size:0.85rem; color:#666;">${e.message}</p>
+            </div>`;
+    }
+}
+function splitLine(line, sep) {
+    const result = []; let cur = ''; let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') inQuotes = !inQuotes;
+        else if (ch === sep && !inQuotes) { result.push(cur); cur = ''; }
+        else cur += ch;
+    }
+    result.push(cur);
+    return result;
+}
+function parseCSV(text) {
+    const lines = text.trim().split(/
+?
+/);
+    if (lines.length < 2) return;
+    const sep = lines[0].includes(';') ? ';' : ',';
+    const headers = lines[0].split(sep).map(h => h.trim().replace(/^﻿/, ''));
+    const idx = name => headers.indexOf(name);
+    const idxFio = idx('ФИО'), idxReg = idx('Регион'), idxDir = idx('Направление'), idxCat = idx('Категория');
+    const idxDateA = idx('ДатаПрисвоения'), idxDateE = idx('ДатаПродления');
+    const idxOrdA = idx('ПриказПрисвоение'), idxOrdE = idx('ПриказПродление');
+    allData = [];
+    for (let i = 1; i < lines.length; i++) {
+        const row = splitLine(lines[i], sep);
+        if (row.length < 4) continue;
+        const cat = (idxCat >= 0 ? row[idxCat] : '').trim();
+        if (!cat) continue;
+        const years = CATEGORY_YEARS[cat];
+        if (!years) continue;
+        const dateAssign = parseDate(idxDateA >= 0 ? row[idxDateA] : '');
+        const dateExtend = parseDate(idxDateE >= 0 ? row[idxDateE] : '');
+        const baseDate = dateExtend || dateAssign;
+        if (!baseDate) continue;
+        const endDate = addYears(baseDate, years);
+        const today = new Date(); today.setHours(0,0,0,0);
+        const daysLeft = daysBetween(today, endDate);
+        let status, statusClass;
+        if (daysLeft < 0) { status = 'Просрочено'; statusClass = 'danger'; }
+        else if (daysLeft <= WARNING_DAYS) { status = 'Требуется продление'; statusClass = 'warning'; }
+        else { status = 'Активно'; statusClass = 'active'; }
+        allData.push({
+            fio: (idxFio >= 0 ? row[idxFio] : '').trim(),
+            region: (idxReg >= 0 ? row[idxReg] : '').trim(),
+            direction: (idxDir >= 0 ? row[idxDir] : '—').trim(),
+            category: cat,
+            dateAssign, dateExtend, dateEnd: endDate,
+            daysLeft, status, statusClass,
+            orderAssign: (idxOrdA >= 0 ? row[idxOrdA] : '').trim(),
+            orderExtend: (idxOrdE >= 0 ? row[idxOrdE] : '').trim(),
+            totalTermDays: daysBetween(baseDate, endDate)
+        });
+    }
+    renderStats();
+    renderTable();
+}
+
+// ================== СТАТИСТИКА ==================
+function renderStats() {
+    const total = allData.length;
+    const active = allData.filter(d => d.statusClass === 'active').length;
+    const warning = allData.filter(d => d.statusClass === 'warning').length;
+    const danger = allData.filter(d => d.statusClass === 'danger').length;
+    const byCat = {};
+    allData.forEach(d => { byCat[d.category] = (byCat[d.category] || 0) + 1; });
+    document.getElementById('stats').innerHTML = `
+        <div class="stat-card"><div class="stat-value">${total}</div><div class="stat-label">Всего судей</div></div>
+        <div class="stat-card"><div class="stat-value" style="color:var(--green)">${active}</div><div class="stat-label">Активно</div></div>
+        <div class="stat-card warning"><div class="stat-value">${warning}</div><div class="stat-label">< 90 дней</div></div>
+        <div class="stat-card danger"><div class="stat-value">${danger}</div><div class="stat-label">Просрочено</div></div>
+        ${Object.entries(byCat).sort((a,b)=>b[1]-a[1]).map(([cat,n])=>`
+            <div class="stat-card"><div class="stat-value" style="font-size:1.4rem">${n}</div><div class="stat-label">${cat}</div></div>
+        `).join('')}`;
+}
+
+// ================== ТАБЛИЦА ==================
+function renderTable() {
+    const search = document.getElementById('search').value.toLowerCase();
+    const catFilter = document.getElementById('filterCat').value;
+    const statusFilter = document.getElementById('filterStatus').value;
+    const dirFilter = document.getElementById('filterDir').value;
+    let filtered = allData.filter(d => {
+        const matchSearch = !search || d.fio.toLowerCase().includes(search) || d.region.toLowerCase().includes(search);
+        return matchSearch && (!catFilter || d.category === catFilter) && (!statusFilter || d.statusClass === statusFilter) && (!dirFilter || d.direction === dirFilter);
+    });
+    filtered.sort((a, b) => {
+        let va, vb;
+        switch (sortCol) {
+            case 'fio': va = a.fio; vb = b.fio; break;
+            case 'dir': va = a.direction; vb = b.direction; break;
+            case 'cat': va = a.category; vb = b.category; break;
+            case 'dateStart': va = a.dateAssign || 0; vb = b.dateAssign || 0; break;
+            case 'dateEnd': va = a.dateEnd || 0; vb = b.dateEnd || 0; break;
+            case 'days': va = a.daysLeft; vb = b.daysLeft; break;
+            case 'status': va = a.statusClass; vb = b.statusClass; break;
+            default: va = a.daysLeft; vb = b.daysLeft;
+        }
+        if (va < vb) return sortAsc ? -1 : 1;
+        if (va > vb) return sortAsc ? 1 : -1;
+        return 0;
+    });
+    const tbody = document.getElementById('tbody');
+    if (!filtered.length) {
+        tbody.innerHTML = `<tr><td colspan="8" class="empty-state">Ничего не найдено</td></tr>`;
+        return;
+    }
+    tbody.innerHTML = filtered.map(d => {
+        const dirBadges = d.direction.split(', ').map(dir => {
+            const cls = dir.includes('Кумитэ') ? 'badge-kumite' : (dir.includes('Ката') ? 'badge-kata' : 'badge-cat');
+            return `<span class="badge ${cls}">${dir}</span>`;
+        }).join(' ');
+        const daysClass = d.daysLeft < 0 ? 'neg' : (d.daysLeft <= WARNING_DAYS ? 'warn' : 'pos');
+        const progressPct = Math.max(0, Math.min(100, (d.daysLeft / d.totalTermDays) * 100));
+        const progressColor = d.daysLeft < 0 ? 'var(--red)' : (d.daysLeft <= WARNING_DAYS ? 'var(--yellow)' : 'var(--green)');
+        return `<tr>
+            <td><div class="fio">${escapeHtml(d.fio)}</div><div class="region">${escapeHtml(d.region)}</div></td>
+            <td>${dirBadges}</td>
+            <td><span class="badge badge-cat">${d.category}</span></td>
+            <td class="hide-mobile">${formatDate(d.dateAssign)}${d.dateExtend ? '<br><small style="color:#888">продл.: '+formatDate(d.dateExtend)+'</small>' : ''}</td>
+            <td class="hide-mobile">${formatDate(d.dateEnd)}</td>
+            <td>
+                <div class="days-left ${daysClass}">${d.daysLeft} дн.</div>
+                <div class="progress-bar"><div class="progress-fill" style="width:${progressPct}%;background:${progressColor}"></div></div>
+            </td>
+            <td><span class="status status-${d.statusClass}">${d.status}</span></td>
+            <td>
+                <div class="links">
+                    ${d.orderAssign ? `<a href="${escapeHtml(d.orderAssign)}" target="_blank" class="link-doc">📄 Присвоение</a>` : '<span class="link-doc empty">—</span>'}
+                    ${d.orderExtend ? `<a href="${escapeHtml(d.orderExtend)}" target="_blank" class="link-doc">📄 Продление</a>` : ''}
+                </div>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+// ================== ЭКСПОРТ ==================
+function exportTable() {
+    const search = document.getElementById('search').value.toLowerCase();
+    const catFilter = document.getElementById('filterCat').value;
+    const statusFilter = document.getElementById('filterStatus').value;
+    const dirFilter = document.getElementById('filterDir').value;
+    let filtered = allData.filter(d => {
+        const matchSearch = !search || d.fio.toLowerCase().includes(search) || d.region.toLowerCase().includes(search);
+        return matchSearch && (!catFilter || d.category === catFilter) && (!statusFilter || d.statusClass === statusFilter) && (!dirFilter || d.direction === dirFilter);
+    });
+    const headers = ['ФИО','Регион','Направление','Категория','ДатаПрисвоения','ДатаПродления','ДатаОкончания','ДнейОсталось','Статус','ПриказПрисвоение','ПриказПродление'];
+    const rows = filtered.map(d => [
+        d.fio, d.region, d.direction, d.category,
+        d.dateAssign ? d.dateAssign.toISOString().split('T')[0] : '',
+        d.dateExtend ? d.dateExtend.toISOString().split('T')[0] : '',
+        d.dateEnd.toISOString().split('T')[0],
+        d.daysLeft, d.status, d.orderAssign, d.orderExtend
+    ].map(v => `"${String(v).replace(/"/g,'""')}"`).join(';'));
+    const csv = [headers.join(';'), ...rows].join('
+');
+    const blob = new Blob(["﻿" + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `judges_export_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+// ================== СОБЫТИЯ ==================
+document.getElementById('search').addEventListener('input', renderTable);
+document.getElementById('filterCat').addEventListener('change', renderTable);
+document.getElementById('filterStatus').addEventListener('change', renderTable);
+document.getElementById('filterDir').addEventListener('change', renderTable);
+document.querySelectorAll('th.sortable').forEach(th => {
+    th.addEventListener('click', () => {
+        const col = th.dataset.col;
+        if (sortCol === col) sortAsc = !sortAsc;
+        else { sortCol = col; sortAsc = true; }
+        document.querySelectorAll('th').forEach(t => t.classList.remove('sort-asc','sort-desc'));
+        th.classList.add(sortAsc ? 'sort-asc' : 'sort-desc');
+        renderTable();
+    });
+});
+document.getElementById('today').textContent = new Date().toLocaleDateString('ru-RU', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+loadCSV();
+</script>
+</body>
+</html>
