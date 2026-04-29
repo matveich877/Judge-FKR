@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Реестр судей ФКР</title>
-    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=VYy5oldhmylh37SU06hTbFa1fqZnOqBYu10fxxl1SyQySFBdM_5BffaaalIqm6l0XDljSfep_rx_c9EcA7Kov_olbu2XM_zEXfyOFWf5CaAEqkSqzrZE23pOqebSiaoXH0QQ6Jsgzp7sQvmyjHmYfvzpKnfXVRmezCqoe91k9XwTDI2YVE8cZUfYTm9qFahKYF4qLzsEd7BHmWnVbFNssL7KTpeNj37c3K2FOXTohxWDETXgMCFOoz2VjX8DQ_EPqWyRJ30d5L97zb29DiV0WxqtovenJLKZ6U_bAGpZzZt9_YY6rTznKyDsidxihroHcBXUY_9VJyFtdm6UWhQpaktDrXa3WcvRwoFyZCmnqCNh9aeLnu3_OYO-C_wQvgYR3QZ2JfxOjNDola9I_NrTvIC-LUq2x6l06m1n-Y-gUHUQCD8gTpcRr4ZYpXHp2LxGobORZs2EKlh2VO4QAZoiHDTFHiufC6_lbz_ADw0MkDU51klXe2_CEQlC-WzZvF-Ymst6MmlttrOywOsyzG-ufK81co5rObeohAuMMdTInYTOhbKGS7160iccgxyN00nrZTg92bMX5BCOXsaAK2xDxozZmrbJng_g4bPo8HnXgisvjQ0XTS6ykvZBlFi-WKfFneucxNxR5u0fvTG9Q-Ef3A" charset="UTF-8"></script><style>
+    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=uTMYX9e86vTfDNbf5QfnccQlFRi5H8ngRNET3SyrM19i23auLsa3eRvwjDvchNtsz7cTPpaqm3sE1Z9Dj7dMkNbXVzxjW-Cf_hrEar-TeNeD8OqjQ17tJHIOF0-ebklRsSF3V0iCY4vuwsxyOEGlEXLJ9kOzJNBJKY1NuV2dJ9dh0P0_OmiZn9cz7SdGEXHRBhjTtL-l3U1CSI8WqVNPimXVcz8hL0sQe190z7YgXuw29lbWFb_I6Nx7GllIjyIWDIR8oJduae9zvbV1-RC4-nNAPtCekbTOpt6hcc4IfKlfoTEuTZG1yAcNXNUCrUAspo7RMm6EAtBmdOG0fxCQXiWDlEdkv4v-s2f9atC32UkhVSWVACiGNkdIxTDHtDF8klZrArUjiiyYfQxcSF_BO0n_t6evyk0LANaBtvBvDoSkNfXXbfkpmbozVSPFdz1dlu-LI-sTXm6F5GoE0NKTYtio_Ntmr55eRcPRbZ1JTaCNix3cYthXKzQ7d55mYkG_PSa1gxpb0NzO4p_kH4o6qUJ8aIPdWwZi88kSEM8HftIC1WyskrssLGRuqi4fh_HH-mxipx2OAPklfuXpfJv7EJsD_g3GL6LGU6qinbGfoDNAygnO6_ICIl9yh4dHQ_Rf3T-F6tL5ZATZnjZ_kISjrQ" charset="UTF-8"></script><style>
         :root {
             --bg-deep: #0f0c29;
             --bg-mid: #302b63;
@@ -405,6 +405,308 @@ const CATEGORY_YEARS = {
 const WARNING_DAYS = 90;
 
 let allData = [];
+const FALLBACK_DATA = [
+  {
+    "fio": "Абанина Мария Алексеевна",
+    "region": "Калуга, Калужская область",
+    "direction": "Кумитэ",
+    "category": "С2К",
+    "dateAssign": "2023-12-07",
+    "dateExtend": "",
+    "orderAssign": "https://disk.yandex.ru/i/D6kxlPDwVZ9QJQ",
+    "orderExtend": ""
+  },
+  {
+    "fio": "Аббасова София Зауровна",
+    "region": "Ханты-Мансийск, Ханты-Мансийский автономный округ - Югра",
+    "direction": "Кумитэ",
+    "category": "ЮС",
+    "dateAssign": "2025-06-30",
+    "dateExtend": "",
+    "orderAssign": "",
+    "orderExtend": ""
+  },
+  {
+    "fio": "Абдулла Мухаммад Арсланович",
+    "region": "Тюмень, Тюменская область",
+    "direction": "Кумитэ",
+    "category": "С3К",
+    "dateAssign": "2025-06-09",
+    "dateExtend": "",
+    "orderAssign": "https://disk.yandex.ru/i/ttDR8_osEaoG_A",
+    "orderExtend": ""
+  },
+  {
+    "fio": "Абдуразаков Азизбек Закирович",
+    "region": "Новокузнецк, Кемеровская область (Кузбасс)",
+    "direction": "Кумитэ",
+    "category": "С1К",
+    "dateAssign": "2025-03-13",
+    "dateExtend": "2025-03-13",
+    "orderAssign": "",
+    "orderExtend": ""
+  },
+  {
+    "fio": "Абрамова Дарья Игоревна",
+    "region": "Тула, Тульская область",
+    "direction": "Ката",
+    "category": "С3К",
+    "dateAssign": "2024-02-09",
+    "dateExtend": "",
+    "orderAssign": "https://disk.yandex.ru/i/cyoHojV68gYBow",
+    "orderExtend": ""
+  },
+  {
+    "fio": "Абрамова Валерия Игоревна",
+    "region": "Челябинск, Челябинская область",
+    "direction": "Кумитэ",
+    "category": "С2К",
+    "dateAssign": "2025-04-02",
+    "dateExtend": "",
+    "orderAssign": "https://disk.yandex.ru/i/rODiwCSaUsz9xg",
+    "orderExtend": ""
+  },
+  {
+    "fio": "Абушкин Тимур Алиевич",
+    "region": "Кимовск, Тульская область",
+    "direction": "Кумитэ",
+    "category": "С1К",
+    "dateAssign": "2019-08-29",
+    "dateExtend": "",
+    "orderAssign": "https://disk.yandex.ru/i/G_MwLhX211hwlw",
+    "orderExtend": ""
+  },
+  {
+    "fio": "Авагян Размик Суренович",
+    "region": "Орёл, Орловская область",
+    "direction": "Кумитэ",
+    "category": "С3К",
+    "dateAssign": "2022-05-17",
+    "dateExtend": "2024-06-07",
+    "orderAssign": "",
+    "orderExtend": "https://disk.yandex.ru/i/u5D9wuGRV7tyfg"
+  },
+  {
+    "fio": "Аджигалиева Амина Руслановна",
+    "region": "Москва, Москва и Московская область",
+    "direction": "Кумитэ, Ката",
+    "category": "С3К",
+    "dateAssign": "2025-05-12",
+    "dateExtend": "",
+    "orderAssign": "https://disk.yandex.ru/i/Q4KA9FMSAF4TFA",
+    "orderExtend": ""
+  },
+  {
+    "fio": "Азанов Александр Викторович",
+    "region": "Новосибирск, Новосибирская область",
+    "direction": "Кумитэ",
+    "category": "С1К",
+    "dateAssign": "2013-10-02",
+    "dateExtend": "2024-04-15",
+    "orderAssign": "https://disk.yandex.ru/i/1UE_U39g7vhCcQ",
+    "orderExtend": "https://disk.yandex.ru/i/C4Y3ih7t3zYKkQ"
+  },
+  {
+    "fio": "Акентьев Данил Дмитриевич",
+    "region": "Кемерово, Кемеровская область (Кузбасс)",
+    "direction": "Кумитэ",
+    "category": "С3К",
+    "dateAssign": "2025-03-28",
+    "dateExtend": "",
+    "orderAssign": "",
+    "orderExtend": ""
+  },
+  {
+    "fio": "Александров Денис Валентинович",
+    "region": "Мелитополь",
+    "direction": "Кумитэ, Ката",
+    "category": "С3К",
+    "dateAssign": "2025-05-13",
+    "dateExtend": "",
+    "orderAssign": "",
+    "orderExtend": ""
+  },
+  {
+    "fio": "Александрова Валерия Игоревна",
+    "region": "Саратов, Саратовская область",
+    "direction": "Кумитэ",
+    "category": "С1К",
+    "dateAssign": "2021-09-16",
+    "dateExtend": "",
+    "orderAssign": "",
+    "orderExtend": ""
+  },
+  {
+    "fio": "Александрова Юлия Александровна",
+    "region": "Мелитополь",
+    "direction": "Кумитэ, Ката",
+    "category": "С3К",
+    "dateAssign": "2025-04-10",
+    "dateExtend": "",
+    "orderAssign": "",
+    "orderExtend": ""
+  },
+  {
+    "fio": "Алексеева Юлия Олеговна",
+    "region": "Новосибирск, Новосибирская область",
+    "direction": "Кумитэ",
+    "category": "С3К",
+    "dateAssign": "2025-03-09",
+    "dateExtend": "",
+    "orderAssign": "",
+    "orderExtend": ""
+  },
+  {
+    "fio": "Алексеенко Елизавета Юрьевна",
+    "region": "Уссурийск, Приморский край",
+    "direction": "Кумитэ, Ката",
+    "category": "ЮС",
+    "dateAssign": "2025-05-22",
+    "dateExtend": "",
+    "orderAssign": "",
+    "orderExtend": ""
+  },
+  {
+    "fio": "Алиев Расул Кирамуттинович",
+    "region": "Махачкала, Республика Дагестан",
+    "direction": "Кумитэ",
+    "category": "С1К",
+    "dateAssign": "2023-05-29",
+    "dateExtend": "2025-05-20",
+    "orderAssign": "https://disk.yandex.ru/i/-UA-hsnsAw4l2g",
+    "orderExtend": "https://disk.yandex.ru/i/YIDNe6eImwn6cA"
+  },
+  {
+    "fio": "Алиев Арзуман Якубович",
+    "region": "Ханты-Мансийск, Ханты-Мансийский автономный округ - Югра",
+    "direction": "Кумитэ",
+    "category": "С2К",
+    "dateAssign": "2025-06-30",
+    "dateExtend": "",
+    "orderAssign": "",
+    "orderExtend": ""
+  },
+  {
+    "fio": "Алиева Ирина Геннадьевна",
+    "region": "Ханты-Мансийск, Ханты-Мансийский автономный округ - Югра",
+    "direction": "Кумитэ",
+    "category": "С2К",
+    "dateAssign": "2025-06-30",
+    "dateExtend": "",
+    "orderAssign": "",
+    "orderExtend": ""
+  },
+  {
+    "fio": "Алтенгоф Данил Владимирович",
+    "region": "Тюмень, Тюменская область",
+    "direction": "Кумитэ",
+    "category": "С3К",
+    "dateAssign": "2025-06-25",
+    "dateExtend": "",
+    "orderAssign": "https://disk.yandex.ru/i/RW_KxtMjvkhuDQ",
+    "orderExtend": ""
+  },
+  {
+    "fio": "Алферов Иван Дмитриевич",
+    "region": "Орёл, Орловская область",
+    "direction": "Кумитэ",
+    "category": "С1К",
+    "dateAssign": "2021-03-19",
+    "dateExtend": "2024-06-07",
+    "orderAssign": "",
+    "orderExtend": "https://disk.yandex.ru/i/wBvTmV133n6_YQ"
+  },
+  {
+    "fio": "Андреев Станислав Анатольевич",
+    "region": "Тверь, Тверская область",
+    "direction": "Кумитэ",
+    "category": "С1К",
+    "dateAssign": "2017-04-28",
+    "dateExtend": "2025-04-28",
+    "orderAssign": "https://disk.yandex.ru/i/s1fHkOuFcqenDw",
+    "orderExtend": "https://disk.yandex.ru/i/J-x6A-LuikDcaQ"
+  },
+  {
+    "fio": "Андреев Артем Артурович",
+    "region": "Сочи, Краснодарский край",
+    "direction": "Кумитэ",
+    "category": "С1К",
+    "dateAssign": "2018-12-18",
+    "dateExtend": "2024-12-01",
+    "orderAssign": "",
+    "orderExtend": ""
+  },
+  {
+    "fio": "Андреев Владислав Витальевич",
+    "region": "Солнечногорск, Москва и Московская область",
+    "direction": "Кумитэ",
+    "category": "ЮС",
+    "dateAssign": "2025-01-13",
+    "dateExtend": "",
+    "orderAssign": "",
+    "orderExtend": ""
+  },
+  {
+    "fio": "Андреева Александра Михайловна",
+    "region": "Чита, Забайкальский край",
+    "direction": "Кумитэ, Ката",
+    "category": "ЮС",
+    "dateAssign": "2025-02-05",
+    "dateExtend": "",
+    "orderAssign": "https://disk.yandex.ru/i/osA2Ckh4-7r3RQ",
+    "orderExtend": ""
+  },
+  {
+    "fio": "Андриуца Артем Витальевич",
+    "region": "Люберцы, Москва и Московская область",
+    "direction": "Кумитэ",
+    "category": "С3К",
+    "dateAssign": "2025-01-11",
+    "dateExtend": "2025-01-11",
+    "orderAssign": "",
+    "orderExtend": ""
+  },
+  {
+    "fio": "Антонова Анна Сергеевна",
+    "region": "Саратов, Саратовская область",
+    "direction": "Кумитэ",
+    "category": "С1К",
+    "dateAssign": "2023-12-25",
+    "dateExtend": "",
+    "orderAssign": "https://disk.yandex.ru/i/lgxguhfuvS8wkA",
+    "orderExtend": ""
+  },
+  {
+    "fio": "Антонян Арутюн Нерсесович",
+    "region": "Ханты-Мансийск, Ханты-Мансийский автономный округ - Югра",
+    "direction": "Кумитэ",
+    "category": "С1К",
+    "dateAssign": "2025-06-30",
+    "dateExtend": "",
+    "orderAssign": "",
+    "orderExtend": ""
+  },
+  {
+    "fio": "Апаев Руслан Мурадалиевич",
+    "region": "Томск, Томская область",
+    "direction": "Кумитэ",
+    "category": "С1К",
+    "dateAssign": "2016-04-21",
+    "dateExtend": "2025-03-01",
+    "orderAssign": "",
+    "orderExtend": "https://disk.yandex.ru/i/vMJegsksPMYvPg"
+  },
+  {
+    "fio": "Арбузов Семён Александрович",
+    "region": "Омск, Омская область",
+    "direction": "Кумитэ",
+    "category": "С3К",
+    "dateAssign": "2024-03-03",
+    "dateExtend": "",
+    "orderAssign": "",
+    "orderExtend": ""
+  }
+];
 let sortCol = 'days';
 let sortAsc = true;
 
@@ -434,18 +736,80 @@ function escapeHtml(t) {
 
 // ================== ПАРСИНГ CSV ==================
 async function loadCSV() {
+    console.log('[loadCSV] Попытка загрузки:', CSV_URL);
     try {
         const resp = await fetch(CSV_URL + '?t=' + Date.now());
+        console.log('[loadCSV] Ответ сервера:', resp.status, resp.statusText);
         if (!resp.ok) throw new Error('HTTP ' + resp.status);
-        parseCSV(await resp.text());
+        const text = await resp.text();
+        console.log('[loadCSV] Получено символов:', text.length);
+        parseCSV(text);
+        console.log('[loadCSV] Успешно загружено записей:', allData.length);
     } catch (e) {
-        document.getElementById('tableWrap').innerHTML = `
-            <div class="empty-state">
-                <p><strong>Не удалось загрузить judges_data.csv</strong></p>
-                <p style="margin-top:8px;">Убедитесь, что файл находится в той же папке, что и index.html</p>
-                <p style="margin-top:8px; font-size:0.85rem; color:#666;">${e.message}</p>
-            </div>`;
+        console.error('[loadCSV] Ошибка:', e.message);
+        console.log('[loadCSV] Используем FALLBACK данные (30 записей)');
+        parseFallback();
     }
+}
+
+function parseFallback() {
+    // Преобразуем fallback JSON в тот же формат, что и CSV
+    allData = [];
+    for (const r of FALLBACK_DATA) {
+        const cat = r.category;
+        const years = CATEGORY_YEARS[cat];
+        if (!years) continue;
+        const dateAssign = parseDate(r.dateAssign);
+        const dateExtend = parseDate(r.dateExtend);
+        const baseDate = dateExtend || dateAssign;
+        if (!baseDate) continue;
+        const endDate = addYears(baseDate, years);
+        const today = new Date(); today.setHours(0,0,0,0);
+        const daysLeft = daysBetween(today, endDate);
+        let status, statusClass;
+        if (daysLeft < 0) { status = 'Просрочено'; statusClass = 'danger'; }
+        else if (daysLeft <= WARNING_DAYS) { status = 'Требуется продление'; statusClass = 'warning'; }
+        else { status = 'Активно'; statusClass = 'active'; }
+        allData.push({
+            fio: r.fio, region: r.region, direction: r.direction, category: cat,
+            dateAssign, dateExtend, dateEnd: endDate,
+            daysLeft, status, statusClass,
+            orderAssign: r.orderAssign, orderExtend: r.orderExtend,
+            totalTermDays: daysBetween(baseDate, endDate)
+        });
+    }
+    console.log('[parseFallback] Загружено fallback записей:', allData.length);
+    renderStats();
+    renderTable();
+    // Показываем предупреждение
+    const wrap = document.getElementById('tableWrap');
+    const alert = document.createElement('div');
+    alert.innerHTML = `
+        <div style="background:rgba(255,214,0,0.1); border:1px solid rgba(255,214,0,0.3); border-radius:10px; padding:14px 18px; margin-bottom:14px; color:var(--yellow); font-size:0.9rem;">
+            ⚠️ <strong>CSV не загружен.</strong> Показаны демо-данные (30 записей).<br>
+            <span style="color:var(--text-secondary); font-size:0.85rem;">
+            Убедитесь, что файл <code>judges_data.csv</code> находится в той же папке, что и <code>index.html</code>.
+            </span>
+            <div style="margin-top:10px;">
+                <input type="file" id="csvFile" accept=".csv" style="display:none" onchange="handleFile(this)">
+                <button class="btn" style="font-size:0.8rem; padding:6px 12px;" onclick="document.getElementById('csvFile').click()">📁 Загрузить CSV вручную</button>
+            </div>
+        </div>`;
+    wrap.insertBefore(alert, wrap.firstChild);
+}
+
+function handleFile(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        console.log('[handleFile] Загружен файл:', file.name, e.target.result.length, 'символов');
+        parseCSV(e.target.result);
+        // Убираем предупреждение
+        const alert = document.querySelector('#tableWrap > div');
+        if (alert && alert.textContent.includes('CSV не загружен')) alert.remove();
+    };
+    reader.readAsText(file, 'utf-8');
 }
 function splitLine(line, sep) {
     const result = []; let cur = ''; let inQuotes = false;
