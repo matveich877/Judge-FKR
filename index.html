@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Реестр судей ФКР</title>
+<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=pZ8bh0E_fI4DokeR5qitWNCHEC4IuHqzMmhi6xq1AP_56Me7YrmNbCg-Nne8isy00jxwqmDukSxWXoNlLyAht64Bv-5iE8Qk1gNKBN6TqcxDP-1kBzvVDjY0fX7jB68DwDNHotqxq4xeH336rQx7ls3nuWRihDKB1QP6cEJOYNR_2WZ80D_fhhHjlzWib3hdRRRvyPVZ9BlNueq_XaDBboE54BeVtxBNoZ_wgqXiU41xutadq5hqnWbmrHmjFjqUIBg2k1pZrlWxwJHqb6waUpTtnqLEtjezTZiZq5vNAkmTvwdBHH7yYAx1VgFwqqtYWl7mSBhB4yfvvpMfjvxoeag8-ZkQd1uppf3knyFw-J9dKBseP7LpK3HoPqLnvw9113kKle2pxN8YueWyfUXj7jWzOF5BVmhhpu_CNVEs9n56EX_EZePAtho7bg_ZZTqDFgwzsSMWtjwX0CY9ImSMy1gLIHz8jBCd_DHrD7UDBSaMPSrWC1iEOl7OtHZE3uxfW4BGhAFxOzKsO6isWTtjox0TYwsZ7sc5lOGFhI9koKN0n5QyBGmOWvyoZBcNOayvAbDY8aDVGfEqsKEDmvIoK9CkOb08R7Ha9EtKoUjzDkWdMOi7Ewx4iM6hhml5O-dNMLsmIzxDNQHbBuigbz5zGss6s5aVc_eEKQSz00b1DX7J57pvF_FPkf2bNK1RE3wRBeSoyEjusJlltJXwyzqF6ZMxp2-7lrD8NZQKu7E8oeryHXtR4QMY9j-oOeyyxcUbPbbBahMeNr3FuFQPbssX6oxl95YzCfXtK4zL36RVk5cKAe0St7SyQb79I0IVjvZ8lXQg59YWtpKCcGbyNDvC7aecazMdjOLa3GI98mqLw7U" charset="UTF-8"></script><style>
+  :root {
+    --bg: #f5f6fa;
+    --card: #ffffff;
+    --text: #2c3e50;
+    --border: #dcdde1;
+    --primary: #2980b9;
+    --primary-hover: #1f618d;
+    --success: #27ae60;
+    --success-bg: #e8f8f0;
+    --danger: #e74c3c;
+    --danger-bg: #fdedec;
+    --warning: #f39c12;
+    --warning-bg: #fef5e7;
+    --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  h1 { margin: 0 0 16px; font-size: 22px; }
+  .controls {
+    display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+    background: var(--card); padding: 16px; border-radius: 10px;
+    box-shadow: var(--shadow); margin-bottom: 16px;
+  }
+  .controls input[type="file"] { display: none; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 10px 16px; border: none; border-radius: 8px;
+    background: var(--primary); color: #fff; font-size: 14px; cursor: pointer;
+    transition: background .2s; text-decoration: none;
+  }
+  .btn:hover { background: var(--primary-hover); }
+  .btn-secondary { background: #7f8c8d; }
+  .btn-secondary:hover { background: #616a6b; }
+  .search-box {
+    flex: 1 1 220px; min-width: 200px;
+    padding: 10px 14px; border: 1px solid var(--border);
+    border-radius: 8px; font-size: 14px; outline: none;
+  }
+  .search-box:focus { border-color: var(--primary); }
+  .drop-zone {
+    border: 2px dashed var(--border); border-radius: 10px;
+    padding: 30px; text-align: center; color: #7f8c8d;
+    background: var(--card); margin-bottom: 16px; cursor: pointer;
+    transition: border-color .2s, background .2s;
+  }
+  .drop-zone.dragover { border-color: var(--primary); background: #eef6fc; }
+  .stats {
+    display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;
+  }
+  .stat-chip {
+    background: var(--card); padding: 8px 14px; border-radius: 20px;
+    font-size: 13px; box-shadow: var(--shadow);
+  }
+  .table-wrap {
+    background: var(--card); border-radius: 10px;
+    box-shadow: var(--shadow); overflow: hidden;
+  }
+  .table-scroll {
+    max-height: 70vh; overflow: auto;
+  }
+  table {
+    width: 100%; border-collapse: collapse; font-size: 13px;
+    min-width: 900px;
+  }
+  thead th {
+    position: sticky; top: 0; z-index: 2;
+    background: #f8f9fa; color: #555;
+    padding: 12px 10px; text-align: left;
+    font-weight: 600; border-bottom: 2px solid var(--border);
+    cursor: pointer; user-select: none; white-space: nowrap;
+  }
+  thead th:hover { background: #eef1f5; }
+  thead th .sort-icon { color: #aaa; margin-left: 4px; }
+  tbody tr { border-bottom: 1px solid var(--border); }
+  tbody tr:hover { background: #fafbfc; }
+  td { padding: 10px; vertical-align: top; }
+  .nowrap { white-space: nowrap; }
+  .status-ok { color: var(--success); font-weight: 600; }
+  .status-bad { color: var(--danger); font-weight: 600; }
+  .status-warn { color: var(--warning); font-weight: 600; }
+  tr.row-ok { background: var(--success-bg) !important; }
+  tr.row-bad { background: var(--danger-bg) !important; }
+  tr.row-warn { background: var(--warning-bg) !important; }
+  .empty-state {
+    text-align: center; padding: 40px; color: #7f8c8d;
+  }
+  .hint {
+    font-size: 12px; color: #95a5a6; margin-top: 4px;
+  }
+  @media (max-width: 600px) {
+    .controls { flex-direction: column; align-items: stretch; }
+    .search-box { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<h1>📋 Реестр судей ФКР</h1>
+
+<div class="drop-zone" id="dropZone">
+  <div>📁 Перетащите CSV-файл сюда или нажмите для выбора</div>
+  <div class="hint">Поддерживается CSV UTF-8 (разделитель автоопределяется: точка с запятой или запятая)</div>
+  <input type="file" id="fileInput" accept=".csv,.txt">
+</div>
+
+<div class="controls">
+  <label class="btn" for="fileInput">📂 Загрузить CSV</label>
+  <button class="btn btn-secondary" id="btnExport" style="display:none">💾 Сохранить CSV</button>
+  <input type="text" class="search-box" id="searchBox" placeholder="🔍 Поиск по таблице...">
+  <button class="btn btn-secondary" id="btnClear" style="display:none">🗑 Очистить</button>
+</div>
+
+<div class="stats" id="stats"></div>
+
+<div class="table-wrap">
+  <div class="table-scroll" id="tableContainer">
+    <div class="empty-state">Загрузите CSV-файл, сохранённый из Excel (лист «Реестр» или «Данные для ввода»)</div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const $ = id => document.getElementById(id);
+  let rawData = [];      // массив массивов (строки CSV)
+  let headers = [];      // заголовки
+  let rows = [];         // объекты строк для отображения
+  let sortCol = -1, sortAsc = true;
+
+  // ---------- CSV парсер ----------
+  function detectDelimiter(text) {
+    const first = text.split(/?
+/)[0] || '';
+    const semi = (first.match(/;/g) || []).length;
+    const comma = (first.match(/,/g) || []).length;
+    return semi >= comma ? ';' : ',';
+  }
+
+  function parseCSV(text) {
+    const delim = detectDelimiter(text);
+    const lines = text.split(/?
+/).filter(l => l.trim() !== '');
+    if (!lines.length) return [];
+
+    // Простой парсер с учётом кавычек
+    const parseLine = (line) => {
+      const res = []; let cur = ''; let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (inQuotes) {
+          if (ch === '"') {
+            if (line[i+1] === '"') { cur += '"'; i++; }
+            else { inQuotes = false; }
+          } else { cur += ch; }
+        } else {
+          if (ch === '"') { inQuotes = true; }
+          else if (ch === delim) { res.push(cur.trim()); cur = ''; }
+          else { cur += ch; }
+        }
+      }
+      res.push(cur.trim());
+      return res;
+    };
+
+    return lines.map(parseLine);
+  }
+
+  // ---------- Работа с данными ----------
+  function loadData(arr) {
+    if (!arr || arr.length < 2) {
+      $('tableContainer').innerHTML = '<div class="empty-state">Файл пустой или не распознан</div>';
+      return;
+    }
+    headers = arr[0];
+    rawData = arr.slice(1);
+    rows = rawData.map((r, idx) => {
+      const obj = { _idx: idx };
+      headers.forEach((h, i) => obj[h] = (r[i] || '').trim());
+      return obj;
+    });
+    sortCol = -1; sortAsc = true;
+    render();
+    saveToStorage();
+  }
+
+  function getStatusClass(row) {
+    const st = (row['Статус'] || '').toLowerCase();
+    if (st.includes('всё в норме') || st.includes('все в норме')) return 'row-ok';
+    if (st.includes('необходимо продление') || st.includes('истек') || st.includes('просроч')) return 'row-bad';
+    if (st.includes('предупрежд')) return 'row-warn';
+    return '';
+  }
+
+  function getStatusHtml(val) {
+    const v = (val || '').toLowerCase();
+    if (v.includes('всё в норме') || v.includes('все в норме')) return '<span class="status-ok">✅ ' + escapeHtml(val) + '</span>';
+    if (v.includes('необходимо продление')) return '<span class="status-bad">⚠️ ' + escapeHtml(val) + '</span>';
+    return escapeHtml(val);
+  }
+
+  function escapeHtml(t) {
+    return (t || '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  }
+
+  function render() {
+    const q = $('searchBox').value.toLowerCase().trim();
+    let display = rows;
+    if (q) {
+      display = rows.filter(r => Object.values(r).some(v => String(v).toLowerCase().includes(q)));
+    }
+    if (sortCol >= 0) {
+      const key = headers[sortCol];
+      display = [...display].sort((a, b) => {
+        const av = a[key] || '', bv = b[key] || '';
+        const an = parseFloat(av.replace(/\s/g, '').replace(',', '.'));
+        const bn = parseFloat(bv.replace(/\s/g, '').replace(',', '.'));
+        let cmp;
+        if (!isNaN(an) && !isNaN(bn) && av.match(/^-?\d[\d\s.,]*$/) && bv.match(/^-?\d[\d\s.,]*$/)) {
+          cmp = an - bn;
+        } else {
+          cmp = String(av).localeCompare(String(bv), 'ru');
+        }
+        return sortAsc ? cmp : -cmp;
+      });
+    }
+
+    // Статистика
+    const total = rows.length;
+    const filtered = display.length;
+    let ok = 0, bad = 0;
+    rows.forEach(r => {
+      const c = getStatusClass(r);
+      if (c === 'row-ok') ok++;
+      if (c === 'row-bad') bad++;
+    });
+    $('stats').innerHTML = `
+      <div class="stat-chip">Всего записей: <b>${total}</b></div>
+      <div class="stat-chip">Отображено: <b>${filtered}</b></div>
+      <div class="stat-chip" style="color:var(--success)">✅ В норме: <b>${ok}</b></div>
+      <div class="stat-chip" style="color:var(--danger)">⚠️ Продление: <b>${bad}</b></div>
+    `;
+
+    if (!display.length) {
+      $('tableContainer').innerHTML = '<div class="empty-state">Ничего не найдено</div>';
+      $('btnExport').style.display = 'inline-flex';
+      $('btnClear').style.display = 'inline-flex';
+      return;
+    }
+
+    let html = '<table><thead><tr>';
+    headers.forEach((h, i) => {
+      let icon = '';
+      if (i === sortCol) icon = sortAsc ? '▲' : '▼';
+      html += `<th onclick="window.sortBy(${i})">${escapeHtml(h)} <span class="sort-icon">${icon}</span></th>`;
+    });
+    html += '</tr></thead><tbody>';
+    display.forEach(r => {
+      const rowClass = getStatusClass(r);
+      html += `<tr class="${rowClass}">`;
+      headers.forEach(h => {
+        const val = r[h] || '';
+        const isStatus = h === 'Статус';
+        const isDate = h.toLowerCase().includes('дата');
+        const cls = (isDate || h.includes('ФИО') || h.includes('судьи')) ? 'nowrap' : '';
+        html += `<td class="${cls}">${isStatus ? getStatusHtml(val) : escapeHtml(val)}</td>`;
+      });
+      html += '</tr>';
+    });
+    html += '</tbody></table>';
+    $('tableContainer').innerHTML = html;
+    $('btnExport').style.display = 'inline-flex';
+    $('btnClear').style.display = 'inline-flex';
+  }
+
+  window.sortBy = function(idx) {
+    if (sortCol === idx) sortAsc = !sortAsc;
+    else { sortCol = idx; sortAsc = true; }
+    render();
+  };
+
+  // ---------- Файл / Drag-Drop ----------
+  function handleFile(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      const text = e.target.result;
+      const data = parseCSV(text);
+      loadData(data);
+    };
+    reader.readAsText(file, 'UTF-8');
+  }
+
+  $('fileInput').addEventListener('change', e => handleFile(e.target.files[0]));
+
+  const dz = $('dropZone');
+  dz.addEventListener('click', () => $('fileInput').click());
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+  dz.addEventListener('drop', e => {
+    e.preventDefault(); dz.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file) handleFile(file);
+  });
+
+  // ---------- Поиск ----------
+  $('searchBox').addEventListener('input', render);
+
+  // ---------- Экспорт ----------
+  $('btnExport').addEventListener('click', () => {
+    const q = $('searchBox').value.toLowerCase().trim();
+    let out = rows;
+    if (q) out = rows.filter(r => Object.values(r).some(v => String(v).toLowerCase().includes(q)));
+    // Собираем CSV обратно
+    const delim = ';';
+    const lines = [headers.join(delim)];
+    out.forEach(r => {
+      lines.push(headers.map(h => {
+        let v = r[h] || '';
+        if (v.includes(delim) || v.includes('"')) v = '"' + v.replace(/"/g, '""') + '"';
+        return v;
+      }).join(delim));
+    });
+    const blob = new Blob([lines.join('
+')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'реестр_судей_фильтр.csv'; a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  $('btnClear').addEventListener('click', () => {
+    localStorage.removeItem('judges_csv_data');
+    rows = []; headers = []; rawData = [];
+    $('tableContainer').innerHTML = '<div class="empty-state">Данные очищены. Загрузите новый CSV.</div>';
+    $('stats').innerHTML = ''; $('btnExport').style.display = 'none'; $('btnClear').style.display = 'none';
+    $('searchBox').value = '';
+  });
+
+  // ---------- LocalStorage ----------
+  function saveToStorage() {
+    try {
+      localStorage.setItem('judges_csv_data', JSON.stringify({ headers, rawData }));
+    } catch(e) {}
+  }
+  function restoreFromStorage() {
+    try {
+      const saved = localStorage.getItem('judges_csv_data');
+      if (saved) {
+        const obj = JSON.parse(saved);
+        if (obj.headers && obj.rawData) {
+          headers = obj.headers; rawData = obj.rawData;
+          rows = rawData.map((r, idx) => {
+            const o = { _idx: idx };
+            headers.forEach((h, i) => o[h] = (r[i] || '').trim());
+            return o;
+          });
+          render();
+        }
+      }
+    } catch(e) {}
+  }
+  restoreFromStorage();
+})();
+</script>
+
+</body>
+</html>
