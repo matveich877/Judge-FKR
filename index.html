@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Реестр судей ФКР</title>
-    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=uTMYX9e86vTfDNbf5QfnccQlFRi5H8ngRNET3SyrM19i23auLsa3eRvwjDvchNtsz7cTPpaqm3sE1Z9Dj7dMkNbXVzxjW-Cf_hrEar-TeNeD8OqjQ17tJHIOF0-ebklRsSF3V0iCY4vuwsxyOEGlEXLJ9kOzJNBJKY1NuV2dJ9dh0P0_OmiZn9cz7SdGEXHRBhjTtL-l3U1CSI8WqVNPimXVcz8hL0sQe190z7YgXuw29lbWFb_I6Nx7GllIjyIWDIR8oJduae9zvbV1-RC4-nNAPtCekbTOpt6hcc4IfKlfoTEuTZG1yAcNXNUCrUAspo7RMm6EAtBmdOG0fxCQXiWDlEdkv4v-s2f9atC32UkhVSWVACiGNkdIxTDHtDF8klZrArUjiiyYfQxcSF_BO0n_t6evyk0LANaBtvBvDoSkNfXXbfkpmbozVSPFdz1dlu-LI-sTXm6F5GoE0NKTYtio_Ntmr55eRcPRbZ1JTaCNix3cYthXKzQ7d55mYkG_PSa1gxpb0NzO4p_kH4o6qUJ8aIPdWwZi88kSEM8HftIC1WyskrssLGRuqi4fh_HH-mxipx2OAPklfuXpfJv7EJsD_g3GL6LGU6qinbGfoDNAygnO6_ICIl9yh4dHQ_Rf3T-F6tL5ZATZnjZ_kISjrQ" charset="UTF-8"></script><style>
+    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=TPCEaqBFbD3ma2m6LYZjytqlplaMa6xPhik4fv8gYM-Rw5vfokjdHWFCZ5-04uGoUQNYSITcjbVKVRiM-jx23SkuI1_dEv4Z9Kwyspu223wbcMCMexYGcFRcgBYJHcJBEG2bgnHdswVUZgYmG9EIfLtXUHOpXJvCXaHHy1hktAm1Fs7FjxXxdIan5pUmifHyi6fwFHCOW34PhcSL4mCO1oz6-eI_9hNAHovD3AtEiDqgeyA_60u38mX2o71Ux0oJqfm_n3iJWo5BOHGNaZT-KnEOM9CikWLMJ8Dk_TSuBH3rCj0Ul7mJAWknDCismW9wpSA7DZgdYktr4Cvr8s5czZsh2mVPz8jexDsxCM-Rm-e08CyhTi70qHiX8M5Yep0GEuHG0U_WwFeSQfnqrZ-0-sjuybbykAqMDEoBMM9Bi6Q8WKveMnAN-hwT-9pAd9FcS1rBpFj3B3AHz7sfKx0mKRAuoIv894pwfZsSPSUNOqAEpQ7mIDqaWGZvwxP6VN0qk8QfwNlYaMBR_a7YsEU9P6AAKVFl1vpUAxqgPatun1k19BGysCi9S6QMc0GXggTtuPCOYaBS2flKnJ8LO3KKQyTv1bBheWSVC5HuSrlGZWEq5P_8gwfEJO7L4ZEb2DIPFIK6rYZzm3teOl6ChRB_-g" charset="UTF-8"></script><style>
         :root {
             --bg-deep: #0f0c29;
             --bg-mid: #302b63;
@@ -823,12 +823,10 @@ function splitLine(line, sep) {
     return result;
 }
 function parseCSV(text) {
-    const lines = text.trim().split(/
-?
-/);
+    const lines = text.trim().split(/\r?\n/);
     if (lines.length < 2) return;
     const sep = lines[0].includes(';') ? ';' : ',';
-    const headers = lines[0].split(sep).map(h => h.trim().replace(/^﻿/, ''));
+    const headers = lines[0].split(sep).map(h => h.trim().replace(/^\uFEFF/, ''));
     const idx = name => headers.indexOf(name);
     const idxFio = idx('ФИО'), idxReg = idx('Регион'), idxDir = idx('Направление'), idxCat = idx('Категория');
     const idxDateA = idx('ДатаПрисвоения'), idxDateE = idx('ДатаПродления');
