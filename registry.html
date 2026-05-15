@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Реестр судей — Судейский комитет ФКР</title>
     <link rel="stylesheet" href="./css/style.css">
-    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=3Wk7g7SNBlO984E_a_rv2ii4B-WwmOwpMESVjP-QlMVbwcq-7xgRuyDoXHtiqq6A3jz-qE6PhcdkeHegddWARWVQjp2AQIO2YLViyyGkum2Lz6C8Bh1EyYEdSMacoLno5SshiM1qUhr3PgcAE1S-L9FULif7ZFZAorJ1ohksr7939EybdBWIWeOdVdjRMrNLly7mAaecB92haKCj_hg8WoPIiE9pfgY41veRZYINXG7m52JuHHSQLURQAucaQ5Z8sjERBPZY-SKNXLErR3Z8HKLiqm9LP5uF0Nxps77LA-v5sJ1_EVJHbKNT1Ox7lCqNbdWLu3bKFS9z6GOA9v7JWVStZk1iltRtrXCaWDk0jWRsoTrLW0kLAoerboNNk7a5i738Bhq315mDfgMC_AWFuYW0LPF9SkNzZaqUjQ3DjLoidaRDhx1xnwpP9dceeZuS0F4mv5LAOLbnMbpQhEsUg6tIwpNIMmvlS19ODOfft4gf6XY0riDpkhLYOMZIBCHvO9VhJo-FttBHzBmZB5t3NM7R1RClQsfTNvjc1lQfxabH6ELdRPh7PbqKJgugTU8sotmsjWuyJJ4anx9_WmuphuReQi_CSvYuwZiMr8z-UpAnw4P58AsDWrVTGCzU4eMdgD8a1VfmqOKobjC5ud82WA" charset="UTF-8"></script><script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=EENCFFuFBuSXJcEKpSCShSMZJnepsXWrkTePDMbPZbesvuHR8tdcZIh8k_6KzoJGn0z0N9SF6N4FYzHoaZT_EqNthcvkHeZd2c4CqakIVD-haZKknYEvbNUpaKiYgmeI9uGkueEzCHTOAJdgcQN30sSDXUpXUQhbzTsseiK9R_MR6tr4AQvPboZlSsWlaRdDXywd3ECaA_kIWKcxsQBTNh2Kh6zUI1s0a7r-pRw1II7usxi4JU2HSkT1J_lDIRmYAQX4GUh_4CPAV_FN16ZNvT4PGWSiGial8YhXo1xCJaZbLkqTB437r5kL3AupCPupVZFkFDmBZC1YyoUZtycxFIYFtwtOkrzc2T_QeeeURcT59i1HI1JZvQqZR1mQfZsxAzU8-u8Jml1oDNYRUSFvvj14LZsAjyOc3v8hAPuBSMVUYLcDE7_vOIHkrcWJI5qHMMkynai5AhQJ_XYTBBf7IOVAcL-NrsXY7lJzH2F3b2-y8l68xtxhE05xIziu419d8eDK_tg0JLhNhIg_6fd04WfJSaNrHvZA2wwxXHaZ5R01zY3F9Z7LFl67fEuLut4B5cITWeR2VsptSDkAxH8dhYLJQktsU9TuHjCY0dapjVCdPb30RwvX49q3M0sKyXpkbp8NhWN-VbWSJvD2zZFDRw" charset="UTF-8"></script><script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <style>
-        /* Дополнительные стили для реестра */
         .registry-table th { cursor: pointer; user-select: none; }
         .registry-table th:hover { background: #e9ecef; }
         .registry-table th .sort-icon { margin-left: 5px; opacity: 0.3; font-size: 10px; }
@@ -166,7 +165,7 @@
 
     <div class="mt-3" style="background: var(--fk-gray); padding: 20px; border-left: 4px solid var(--fk-blue);">
         <p style="font-size: 13px; color: var(--fk-text-muted); line-height:1.6;">
-            <strong style="color: var(--fk-blue);">Как обновить данные:</strong> Замените файл <code>data/judges.csv</code> в репозитории — изменения отобразятся на сайте в течение нескольких минут. 
+            <strong style="color: var(--fk-blue);">Как обновить данные:</strong> Замените файл <code>data/judges.csv</code> в репозитории — изменения отобразятся на сайте в течение нескольких минут.
             Формат CSV: ФИО, Регион, КУМИТЭ, КАТА, Категория, Дата_присвоения, Дата_продления, Статус, Приказ_присвоения, Приказ_продления.
         </p>
     </div>
@@ -212,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderTable();
         },
         error: function() {
-            document.getElementById('registry-body').innerHTML = 
+            document.getElementById('registry-body').innerHTML =
                 `<tr><td colspan="9" class="empty-state">
                     <h3>Не удалось загрузить data/judges.csv</h3>
                     <p>Убедитесь, что файл находится в папке <code>data/</code> рядом с registry.html</p>
@@ -234,13 +233,11 @@ function applyFilters() {
     const search = document.getElementById('search-input').value.toLowerCase();
 
     filteredData = allData.filter(r => {
-        // Поиск
-        const okSearch = !search || 
+        const okSearch = !search ||
             ((r['ФИО']||'').toLowerCase().includes(search)) ||
             ((r['Регион']||'').toLowerCase().includes(search)) ||
             ((r['Категория']||'').toLowerCase().includes(search));
 
-        // Кнопки фильтров
         let okFilter = true;
         if (activeFilter === 'committee') {
             okFilter = ['ССВК','С1К'].includes(r['Категория']);
