@@ -5,7 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Нормативные документы — Судейский комитет ФКР</title>
     <link rel="stylesheet" href="./css/style.css">
-<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=GzD5DPoIlSbkqSO4beOlhOU0sAtOBiZFbXOr3JxLKPQjpB3sws4Xj3LE_AEefWqwIbNWOE61kxxkGGZ1BHta984uAFI4No3w0G88l7EguKxrbTBm86JQzdtehq2CdZLaGjCSNknggULFxPZspA2IoFETE9De0sulVpVlwwaF5C34pZY8qebO9YkKZ1kpRz3a6NwUTfgcczMzDUgAiMlo7rKS5vs3dhEl_gHdgQ3BBMqtngth4GzRiGkdVQx5XA7IsI8SNrD2UWf_K83Hzn49xSnHhOabep-Lja3uI1_KGCjjG90Og6_LiNGwvukcPnuaadGtDtVuamJrvE2kCuo-Sr4iAXUvhF5RHzbO2ZD4Nwxhm520iFpClAxj7NCBwtby6kY_gUiQwve8-hr5CbDMvSZhicyO1wWZXxJT7_xxbxI-z7z2Vp-b6CTW67TzTgkDzGn3jt1rQ1fwVXfwm90FTHOZCT87E_5rKq9FM6Lc4yztMgQD941rC0E8f-dhsvoaY-kRFPCruF2RsS8sJraNM9YPwPjAXg5aD588wLzpCDc1YFP_5pet1wpZwwZvufyTmLIEjFxWz3snSY9aPHUIOLGj5dyCTY5n94fQczvAkHK-tGqOitQ7FWnZrItUFIRYWEq_Ld84s8JC9fYRAoSspw" charset="UTF-8"></script></head>
+    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=s-W3Ic0h7xOYxyL2qg-WepSVzqJrfS6ct6HY_fcnO6M9dT9ZwrwiU_QnZRAktiFMSIj7FA_cLkdGI_Ey1ZjHbRbCfUM3rS7Flgd58p3Ifbu1D2m7ObwvGx3uGfeBqSEX03mIVI65vtw7-uzOeKGShi802Rniq72hPf7_0OKn5gK66HXlhyBxdzlfrCp5W1RGWVpOqY9QtrX8AWUu0-uizBNzPHb9Q-YE_I88fcds7ff6z3AyyrVDM7W2y71Mm-3uSGophg46LOmITsPgG-wU-UTmREEgWIRP_P2cYY_r70FGbqjpp8j9hAbeHRzHWGclCCr0f__UnZeK3Wm0Jpn7Xer-r0_D6YeX1HpbOvWrDFLmORQqXni_VRWws6EVL5IiiUn9HPIvWBRq6xsWFh3NJcc8FiPZTJHS29e8TtpWAP5VimeEPIPJ6ApIJjRoithVDCVmdEYmJ9hdlUz0kXvSnrxvenx7YM1Jur2zJ--s3y2LZdO2RAKhYbM9qSJSSW3lguerGbqdB0DCVVPkWxNndIDylkV_bFcikP8zeKfKdyKQaIuoH87AZ0oNMN_l_s7ZUh374vsfX513y7VNVZudzUXCkEMuBnl4nwFcuYWoSJZp0OsJCBjTJhw2IZMg9QL8dmo4owVq8ZPQW1dMNLPxKg" charset="UTF-8"></script><style>
+        /* Кнопки для документов */
+        .doc-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .btn {
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid transparent;
+        }
+        .btn-primary {
+            background: var(--fk-blue, #1565c0);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: #0d47a1;
+            transform: translateY(-1px);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--fk-blue, #1565c0);
+            border-color: #e0e0e0;
+        }
+        .btn-outline:hover {
+            border-color: var(--fk-blue, #1565c0);
+            background: rgba(21,101,192,0.04);
+        }
+        .doc-list li {
+            align-items: flex-start !important;
+        }
+        .doc-list .doc-info {
+            flex: 1;
+        }
+    </style>
+</head>
 <body>
 
 <header class="header">
@@ -16,11 +60,10 @@
     <button class="menu-toggle" onclick="toggleMenu()" aria-label="Меню">☰</button>
     <nav class="nav">
       <a href="./index.html" class="">Главная</a>
-<a href="./documents.html" class="active">Документы</a>
-<a href="./registry.html" class="">Реестр судей</a>
-<a href="./protocols.html" class="">Протоколы</a>
-<a href="./rules.html" class="">Правила WKF</a>
-
+      <a href="./documents.html" class="active">Документы</a>
+      <a href="./registry.html" class="">Реестр судей</a>
+      <a href="./protocols.html" class="">Протоколы</a>
+      <a href="./rules.html" class="">Правила WKF</a>
     </nav>
   </div>
 </header>
@@ -33,13 +76,95 @@
 </section>
 
 <main class="container">
-    <h2 class="section-title">Документы для скачивания</h2>
+
+    <!-- ===== РЕГЛАМЕНТЫ СУДЕЙСКОГО КОМИТЕТА ===== -->
+    <h2 class="section-title">Регламенты Судейского комитета</h2>
+    <ul class="doc-list">
+        <li>
+            <div class="doc-icon">PDF</div>
+            <div class="doc-info">
+                <h4>Регламент назначения СП и ЗСП</h4>
+                <p>Назначение старшего площадки и заместителя на официальных соревнованиях, включённых в ЕКП Минспорта РФ.</p>
+                <div class="doc-actions">
+                    <a href="./docs/reglament-sp-zsp.pdf" target="_blank" class="btn btn-primary">📄 Открыть</a>
+                    <a href="./docs/reglament-sp-zsp.pdf" download class="btn btn-outline">⬇ Скачать</a>
+                </div>
+            </div>
+            <div class="doc-meta">
+                <div class="date">24.09.2025</div>
+                <div class="size">PDF</div>
+            </div>
+        </li>
+        <li>
+            <div class="doc-icon">PDF</div>
+            <div class="doc-info">
+                <h4>Регламент назначения главного судьи</h4>
+                <p>Порядок согласования кандидатуры главного судьи на всероссийских и международных соревнованиях.</p>
+                <div class="doc-actions">
+                    <a href="./docs/reglament-glavniy-sudya.pdf" target="_blank" class="btn btn-primary">📄 Открыть</a>
+                    <a href="./docs/reglament-glavniy-sudya.pdf" download class="btn btn-outline">⬇ Скачать</a>
+                </div>
+            </div>
+            <div class="doc-meta">
+                <div class="date">24.09.2025</div>
+                <div class="size">PDF</div>
+            </div>
+        </li>
+        <li>
+            <div class="doc-icon">PDF</div>
+            <div class="doc-info">
+                <h4>Регламент назначения судьи для зачёта тренеров</h4>
+                <p>Согласование спортивного судьи в качестве лектора и экзаменатора для присвоения лицензии тренеру.</p>
+                <div class="doc-actions">
+                    <a href="./docs/reglament-zachet-trenery.pdf" target="_blank" class="btn btn-primary">📄 Открыть</a>
+                    <a href="./docs/reglament-zachet-trenery.pdf" download class="btn btn-outline">⬇ Скачать</a>
+                </div>
+            </div>
+            <div class="doc-meta">
+                <div class="date">24.09.2025</div>
+                <div class="size">PDF</div>
+            </div>
+        </li>
+        <li>
+            <div class="doc-icon">PDF</div>
+            <div class="doc-info">
+                <h4>Регламент ответственности судей в период соревнований</h4>
+                <p>Обязанности и границы ответственности ГС, СП, ЗСП, рефери, арбитра, судьи и апелляционного жюри.</p>
+                <div class="doc-actions">
+                    <a href="./docs/reglament-otvetstvennost.pdf" target="_blank" class="btn btn-primary">📄 Открыть</a>
+                    <a href="./docs/reglament-otvetstvennost.pdf" download class="btn btn-outline">⬇ Скачать</a>
+                </div>
+            </div>
+            <div class="doc-meta">
+                <div class="date">24.09.2025</div>
+                <div class="size">PDF</div>
+            </div>
+        </li>
+        <li>
+            <div class="doc-icon">PDF</div>
+            <div class="doc-info">
+                <h4>Регламент назначения СС для проведения КЗ</h4>
+                <p>Требования к лекторам и экзаменаторам для присвоения / подтверждения квалификационных категорий судьям.</p>
+                <div class="doc-actions">
+                    <a href="./docs/reglament-ss-kz.pdf" target="_blank" class="btn btn-primary">📄 Открыть</a>
+                    <a href="./docs/reglament-ss-kz.pdf" download class="btn btn-outline">⬇ Скачать</a>
+                </div>
+            </div>
+            <div class="doc-meta">
+                <div class="date">24.09.2025</div>
+                <div class="size">PDF</div>
+            </div>
+        </li>
+    </ul>
+
+    <!-- ===== ОБЩИЕ ДОКУМЕНТЫ (placeholder — можно заполнить позже) ===== -->
+    <h2 class="section-title" style="margin-top:48px;">Общие документы</h2>
     <ul class="doc-list">
         <li>
             <div class="doc-icon">PDF</div>
             <div class="doc-info">
                 <h4>Положение о судейском комитете ФКР</h4>
-                <p>Утверждено решением Президиума ФКР от 12.02.2024</p>
+                <p>Утверждено решением Президиума ФКР.</p>
             </div>
             <div class="doc-meta">
                 <div class="date">12.02.2024</div>
@@ -50,52 +175,22 @@
             <div class="doc-icon">PDF</div>
             <div class="doc-info">
                 <h4>Регламент всероссийских соревнований 2025</h4>
-                <p>Правила проведения, заявочные документы, система награждения</p>
+                <p>Правила проведения, заявочные документы, система награждения.</p>
             </div>
             <div class="doc-meta">
                 <div class="date">10.01.2025</div>
                 <div class="size">1.2 МБ</div>
             </div>
         </li>
-        <li>
-            <div class="doc-icon">PDF</div>
-            <div class="doc-info">
-                <h4>Инструкция для главных судей</h4>
-                <p>Порядок работы ГС, взаимодействие с секретариатом, технические требования</p>
-            </div>
-            <div class="doc-meta">
-                <div class="date">05.09.2024</div>
-                <div class="size">890 КБ</div>
-            </div>
-        </li>
-        <li>
-            <div class="doc-icon">PDF</div>
-            <div class="doc-info">
-                <h4>Порядок присвоения и лишения судейских категорий</h4>
-                <p>Процедура экзамена, критерии оценки, сроки действия категорий</p>
-            </div>
-            <div class="doc-meta">
-                <div class="date">18.03.2023</div>
-                <div class="size">156 КБ</div>
-            </div>
-        </li>
-        <li>
-            <div class="doc-icon">PDF</div>
-            <div class="doc-info">
-                <h4>Критерии оценки выступлений (ката и кумите)</h4>
-                <p>Методические рекомендации для судей по оценке спортивных выступлений</p>
-            </div>
-            <div class="doc-meta">
-                <div class="date">01.06.2024</div>
-                <div class="size">2.1 МБ</div>
-            </div>
-        </li>
     </ul>
 
-    <div class="mt-3" style="background: var(--fk-gray); padding: 24px; border-left: 4px solid var(--fk-red);">
-        <p style="font-size: 14px; color: var(--fk-text-muted);">
-            <strong style="color: var(--fk-blue);">Примечание:</strong> Для получения оригиналов документов с печатью и подписью обращайтесь в офис ФКР. 
-            Электронные версии носят информационный характер.
+    <div class="mt-3" style="background: var(--fk-gray); padding: 24px; border-left: 4px solid var(--fk-red); margin-top: 40px;">
+        <p style="font-size: 14px; color: var(--fk-text-muted); line-height:1.6;">
+            <strong style="color: var(--fk-blue);">Как добавить новый документ:</strong><br>
+            1. Загрузите PDF в папку <code>docs/</code> репозитория.<br>
+            2. Скопируйте блок <code>&lt;li&gt;...&lt;/li&gt;</code> из раздела «Регламенты» выше.<br>
+            3. Поменяйте название, описание и путь к файлу.<br>
+            4. Обновите дату в <code>.doc-meta</code>.
         </p>
     </div>
 </main>
