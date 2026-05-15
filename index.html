@@ -5,7 +5,136 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Судейский комитет — Федерация каратэ России</title>
     <link rel="stylesheet" href="./css/style.css">
-<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=cRgQCxqUCCqMt6JBgXbHW5xENjrBkj5mp3K6bwqJqz7xZe9LSVLNFq0mhL20napZg0Y6a-My7VjVvL8NWQiBwHxnt_W__tFsxHDljTcXNFx_ln0lsPcB4na21jLvXIxaIxwWbTJAzVM1DQzI7qzkib71axUHM-idLckuMDScCjfQz0ncgHWaAqO_GamiAbYEt6oJfd4sJdY45FtrqtzyH99nXloaO7JDqkAUz5Y9gJBVl6k0J0br1J029JF3w13AQj3qiWkYAxnSjDeTXe3PyWsS8eyiVt8mUEurXTi1Yj36yyuHMPN3KMistKkt23B5ceFFpKNmcmMaqFVFd1HFblUUpBtdGTfo7Eh1kU4c5mDzLvvGrwYujkDy4nlPBycLCON423lOdFsCwF2vV2_5cjQ72wKJxtsah5XN08FX8xlQ2gC12N9HhOUft2THZog7mXNNIqparZawBTv0BoHCNo1dDfGyLNcWFlShcuW1niHp55HSexAR_YDpP6gIps58dV42dsSzJdm5-1VI9UhhZLmP57M38bVmt7H2Da5ulMuXA9uhQh7xIk0GpSS67tsGOwCezgBkmFJtfCq8CTOYtwpJWRFSYL8vwH0aZHjvt6SKxJREGFMqqItnLZu1Bl1IpsI5feJAFQNIKEHH7OBHVQ" charset="UTF-8"></script></head>
+    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=iA5dwfM6vyVO4g3yvRpHZu-67fZuWHQ2HA8lIxqCtuCvi8JVWrNP1c-Qji8TruvzPz5UArY2WYNtm51LEfEGndZMn6VdyKS0vthEkqYpHhXb5frfUOZhA3FfzG3JD3a5-A6hO7q0lPHlNH8sUoUFF4aLfl6ZMXMBxJYg6ZlLFSFVFnS-hWESEkxqtaiRFTqzxpLnCPipzR5HvsitBSDxMBGoCLxf4uOKEgAABHu_lZwMHcQah3K6hceFRQr3n68X6SqdZViZ_zeLs3bOKIYJJMHnN1_wNQzmT8EkI3hNCH8MXEucrDQW9gjKOF7TwYXtDDHOT5HaAizlYr8g8AxWbgH8QVsOs0d89zVTTHBeV30Z3vHRFglDu_o_srXQBXBNORjkJWwPOAezKg-7dYvXByIA0Pr2VTtDTRzxMwceZN-yAgsqgnbOYdnfUsHl3fWbmSBu7WXxcz5ykog_50Q6bsyBJte757PcE3RF-UfH7Xh1zeG6c7AS-k_MGG893e6g-VNVkynPmeOE2jbCbNsC0kdl1Pg4TAD65t5NRu_65z5eh7XE3gii9OqAwJLnzW0b6DFpMhttxI7_zk4O9HA9dlDl1ko9wTzU5YM4T7mKIOWLvJC3pDnz3i1Uu7R82NVXODNkU9aPPK6_tUt88stfhA" charset="UTF-8"></script><style>
+        /* ===== Новостная лента ===== */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
+        }
+        .news-card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 14px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.25s;
+        }
+        .news-card:hover {
+            border-color: var(--fk-blue, #1565c0);
+            box-shadow: 0 10px 28px rgba(21,101,192,0.10);
+            transform: translateY(-3px);
+        }
+        .news-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+            background: #f5f5f5;
+        }
+        .news-body {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+        }
+        .news-date {
+            display: inline-block;
+            background: var(--fk-blue, #1565c0);
+            color: #fff;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            align-self: flex-start;
+        }
+        .news-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--fk-dark, #1a1a2e);
+            line-height: 1.35;
+            margin: 0;
+        }
+        .news-text {
+            font-size: 0.92rem;
+            color: #555;
+            line-height: 1.55;
+            margin: 0;
+            flex: 1;
+        }
+        .news-docs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 4px;
+        }
+        .news-docs a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            border-radius: 8px;
+            background: rgba(21,101,192,0.06);
+            color: var(--fk-blue, #1565c0);
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-decoration: none;
+            border: 1px solid #e0e0e0;
+            transition: 0.2s;
+        }
+        .news-docs a:hover {
+            background: var(--fk-blue, #1565c0);
+            color: #fff;
+            border-color: var(--fk-blue, #1565c0);
+        }
+        .news-docs a::before { content: "📄"; }
+
+        .loading-news, .empty-news {
+            text-align: center;
+            padding: 48px 20px;
+            color: #888;
+            grid-column: 1 / -1;
+        }
+        .spinner-small {
+            width: 32px; height: 32px;
+            border: 3px solid #f0f0f0;
+            border-top-color: var(--fk-blue, #1565c0);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 12px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .hint-box {
+            background: var(--fk-gray);
+            padding: 20px;
+            border-left: 4px solid var(--fk-blue);
+            margin-top: 40px;
+            border-radius: 0 12px 12px 0;
+        }
+        .hint-box p {
+            font-size: 13px;
+            color: var(--fk-text-muted);
+            line-height: 1.6;
+            margin: 0;
+        }
+        .hint-box code {
+            background: #fff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #e0e0e0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        @media (max-width: 640px) {
+            .news-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
 <body>
 
 <header class="header">
@@ -33,6 +162,8 @@
 </section>
 
 <main class="container">
+
+    <!-- ===== Переходы по разделам ===== -->
     <h2 class="section-title">Основные разделы</h2>
     <div class="cards-grid">
         <a href="./documents.html" class="card">
@@ -57,18 +188,24 @@
         </a>
     </div>
 
-    <h2 class="section-title">Последние обновления</h2>
-    <div class="cards-grid" style="grid-template-columns: 1fr;">
-        <div class="card" style="border-top-color: var(--fk-blue);">
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
-                <div>
-                    <h3 style="margin-bottom:8px;">Обновлён реестр судей</h3>
-                    <p>Добавлены данные по итогам экзаменационной сессии апреля 2025 года. Обновлён статус 12 судей.</p>
-                </div>
-                <span class="badge" style="flex-shrink:0;">15 мая 2025</span>
-            </div>
-        </div>
+    <!-- ===== Новостная лента ===== -->
+    <h2 class="section-title" style="margin-top:48px;">Новости</h2>
+    <div class="news-grid" id="newsGrid">
+        <div class="loading-news"><div class="spinner-small"></div>Загрузка новостей...</div>
     </div>
+
+    <!-- ===== Инструкция ===== -->
+    <div class="hint-box">
+        <p>
+            <strong style="color: var(--fk-blue);">Как добавить новость:</strong><br>
+            1. Откройте файл <code>data/news.json</code> в репозитории.<br>
+            2. Добавьте объект в массив: укажите <code>date</code> (ДД.ММ.ГГГГ), <code>title</code>, <code>text</code>.<br>
+            3. Для картинки: загрузите фото в <code>images/news/</code> и укажите путь в <code>image</code>.<br>
+            4. Для документов: добавьте в <code>docs</code> массив с <code>name</code> и <code>url</code>.<br>
+            5. Сохраните (Commit) — новость появится на сайте в течение минуты.
+        </p>
+    </div>
+
 </main>
 
 <footer class="footer">
@@ -84,5 +221,79 @@
 </footer>
 
 <script src="./js/registry.js"></script>
+<script>
+/* ---------- Новостная лента ---------- */
+document.addEventListener('DOMContentLoaded', () => {
+    loadNews();
+});
+
+async function loadNews() {
+    const grid = document.getElementById('newsGrid');
+    try {
+        const res = await fetch('data/news.json');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        let news = await res.json();
+
+        if (!Array.isArray(news) || news.length === 0) {
+            grid.innerHTML = '<div class="empty-news">Новостей пока нет. Добавьте первую новость в data/news.json</div>';
+            return;
+        }
+
+        // Сортировка по дате (новые сверху)
+        news.sort((a, b) => {
+            const da = parseNewsDate(a.date);
+            const db = parseNewsDate(b.date);
+            return db - da;
+        });
+
+        grid.innerHTML = news.map(item => renderNewsCard(item)).join('');
+    } catch (e) {
+        grid.innerHTML = `<div class="empty-news">
+            <h3>Не удалось загрузить новости</h3>
+            <p>Проверьте, что файл <code>data/news.json</code> находится рядом с index.html.<br>Ошибка: ${esc(e.message)}</p>
+        </div>`;
+    }
+}
+
+function parseNewsDate(str) {
+    if (!str) return 0;
+    const parts = str.trim().split('.');
+    if (parts.length === 3) {
+        return new Date(+parts[2], +parts[1] - 1, +parts[0]).getTime();
+    }
+    return new Date(str).getTime() || 0;
+}
+
+function renderNewsCard(item) {
+    const imgHtml = item.image
+        ? `<img src="${esc(item.image)}" alt="" class="news-image" onerror="this.style.display='none'">`
+        : '';
+
+    let docsHtml = '';
+    if (item.docs && item.docs.length > 0) {
+        docsHtml = '<div class="news-docs">' +
+            item.docs.map(d => `<a href="${esc(d.url)}" target="_blank">${esc(d.name)}</a>`).join('') +
+        '</div>';
+    }
+
+    return `<article class="news-card">
+        ${imgHtml}
+        <div class="news-body">
+            <span class="news-date">${esc(item.date)}</span>
+            <h3 class="news-title">${esc(item.title)}</h3>
+            <p class="news-text">${esc(item.text)}</p>
+            ${docsHtml}
+        </div>
+    </article>`;
+}
+
+function esc(t) {
+    if (t == null) return '';
+    const d = document.createElement('div');
+    d.textContent = t;
+    return d.innerHTML;
+}
+</script>
+
 </body>
 </html>
