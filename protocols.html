@@ -5,7 +5,112 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Протоколы решений — Судейский комитет ФКР</title>
     <link rel="stylesheet" href="./css/style.css">
-<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=koJfXmVpOy3W4R8rj_8lrgqgUjwM0HuSHTDZErkUciHOgN6DBio2UtqKY3KJmEYlMiyfUQhj-TX-7-jgX7soeWSgl0pJphwNz_QPrhR1vLrLrSg7V81ZPYB1jGGb78-71qDq67XZTJpm6JsW7VN5l_2ZVNXUjndBa6SssCUB-6fzflqNPKlZQWfbtkrNZ-64srMU8i7kwJaNgROOj1a40RnnDEqJ1tblKrwIghxh28A_QPxGKRxSQmg3J_wEgr_Kee1h7-y138ROLmjyRwkNMSvK4YUt15osVoG9iHB-V3GJX1P-pe-OhtDNPh3Qhh4zPaMp7drpEERxv-rtzIpj_YXBFcaVyQdixZg5OEQ_QOD-cYEeLPR-SLQbqhzJcnZnrBu71teWl8uelgeQS-Z5oL-1DncN-EihO6c6nVuN4k0UF1p12mP6RPhd4cmB-yPMr8g0mJ3639_UyF-9w2nuwCEu1pI1E-vd6dVUjssRU57C5UbvbEtlevYzBHozxVZksWwTXD-aVtTcreTTzHXeRTQdj05YWTiELF3Pl3jqgEEb6CbmO2P5oTP7h4eT5ew-HYyv3Oq3ALMx4tCP3-nPNdSg-JRgaT9cbn2hnRtPSrF6mZDyHOG1hkpetbE9ocQFHO8UauAQqHSOY6SOCFQShA" charset="UTF-8"></script></head>
+    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=PvWfSGke0_fbT8nVc2ccB7oV2N-yINkMI-uKlLQHKqpb93Qt4euCdQgVhRczxtdozAZUuAUN70-BkP52-Ai_qszbLiEN_rBGyY_-sC1c9JDpOCgvRNpfNugbcqHc5BiYvttes8ssXM65LaurZURCW_DBOtxWe5JFLHUKX7teexqGnJZhGAOC_KnI3EXBclrDGRNzFKgrqobqoPo8qW3dBJv3WenzdsWGJzrEXDlr2HwxmbPX6zY5_MpBoxn6DmsMZZcI3j-YxTQCrRZ6SmGpzt2rexWos4_NXj_0usDBrJFnZyCfc8EQKXZxAP49KDFXUmSRiyxLcEg6b4MXn0_c7fP9JzG8w968qmq4JbwxlRpIXM12zIM73ki1AcpusFfG4mPL_nxO7vn73UlQGxdflJ87rlxTPebLKJKhWJGabiD-kNvwRiX-VMdz80RBgcz_-z6JaOu9zLGei3-RgWoFSagn3CUo88tHPeC3EbATQovZpYRE5WpnY7vD7aKFowYYtyI64z-U73SZjjCDdCwJNwBwN9Ycpw6jJIIhXiv7-HmwXR2B9J03bwXLgFM3HffGwZ7Ai8CCse7eJUGEYkb14xgNKBVuoTl3Dxdv2fn46utT6APQ59ha3mA3xNrasiHbWG02gjtUXWHBGpVQNlzUZA" charset="UTF-8"></script><style>
+        .protocol-year {
+            margin-top: 40px;
+        }
+        .protocol-year:first-child {
+            margin-top: 0;
+        }
+        .year-badge {
+            display: inline-block;
+            background: var(--fk-blue, #1565c0);
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 800;
+            padding: 8px 20px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        .protocol-item {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+            transition: all 0.2s;
+        }
+        .protocol-item:hover {
+            border-color: var(--fk-blue, #1565c0);
+            box-shadow: 0 6px 20px rgba(21,101,192,0.08);
+        }
+        .protocol-item h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--fk-dark, #1a1a2e);
+            margin: 0 0 6px 0;
+        }
+        .protocol-item .meta {
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 10px;
+        }
+        .protocol-item .meta .dot {
+            display: inline-block;
+            width: 4px;
+            height: 4px;
+            background: #ccc;
+            border-radius: 50%;
+            margin: 0 8px;
+            vertical-align: middle;
+        }
+        .protocol-item p {
+            font-size: 0.95rem;
+            color: #555;
+            line-height: 1.55;
+            margin: 0 0 14px 0;
+        }
+        .protocol-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid transparent;
+        }
+        .btn-primary {
+            background: var(--fk-blue, #1565c0);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: #0d47a1;
+            transform: translateY(-1px);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--fk-blue, #1565c0);
+            border-color: #e0e0e0;
+        }
+        .btn-outline:hover {
+            border-color: var(--fk-blue, #1565c0);
+            background: rgba(21,101,192,0.04);
+        }
+        .spinner-small {
+            width: 32px; height: 32px;
+            border: 3px solid #f0f0f0;
+            border-top-color: var(--fk-blue, #1565c0);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 12px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-state, .empty-state {
+            text-align: center;
+            padding: 48px 20px;
+            color: #888;
+        }
+    </style>
+</head>
 <body>
 
 <header class="header">
@@ -16,11 +121,10 @@
     <button class="menu-toggle" onclick="toggleMenu()" aria-label="Меню">☰</button>
     <nav class="nav">
       <a href="./index.html" class="">Главная</a>
-<a href="./documents.html" class="">Документы</a>
-<a href="./registry.html" class="">Реестр судей</a>
-<a href="./protocols.html" class="active">Протоколы</a>
-<a href="./rules.html" class="">Правила WKF</a>
-
+      <a href="./documents.html" class="">Документы</a>
+      <a href="./registry.html" class="">Реестр судей</a>
+      <a href="./protocols.html" class="active">Протоколы</a>
+      <a href="./rules.html" class="">Правила WKF</a>
     </nav>
   </div>
 </header>
@@ -33,49 +137,27 @@
 </section>
 
 <main class="container">
-    <h2 class="section-title">2025 год</h2>
-    <div class="protocol-item">
-        <h3>Протокол № 04/2025</h3>
-        <div class="meta">Заседание от 15 апреля 2025 г. | Формат: очный (Москва)</div>
-        <p>Рассмотрены результаты экзаменационной сессии по присвоению судейских категорий. Утверждён список из 12 кандидатов. Внесены изменения в состав комитета по регионам.</p>
-    </div>
-    <div class="protocol-item">
-        <h3>Протокол № 03/2025</h3>
-        <div class="meta">Заседание от 28 февраля 2025 г. | Формат: дистанционный</div>
-        <p>Обсуждены нарушения регламента на всероссийских соревнованиях «Кубок Урала». Принято решение о приостановке действия категории двух судей на срок 6 месяцев.</p>
-    </div>
-    <div class="protocol-item">
-        <h3>Протокол № 02/2025</h3>
-        <div class="meta">Заседание от 20 января 2025 г. | Формат: очный (Москва)</div>
-        <p>Утверждён календарный план экзаменов на 2025 год. Согласованы требования к кандидатам в судьи высшей категории.</p>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; margin-bottom:8px;">
+        <h2 class="section-title" style="margin-bottom:0;">Архив протоколов</h2>
+        <div id="protocols-count" style="font-size:13px; color:var(--fk-text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">Загрузка...</div>
     </div>
 
-    <h2 class="section-title" style="margin-top:48px;">2024 год</h2>
-    <div class="protocol-item">
-        <h3>Протокол № 05/2024</h3>
-        <div class="meta">Заседание от 10 декабря 2024 г. | Формат: дистанционный</div>
-        <p>Подведены итоги судейства на чемпионате России 2024. Выражена благодарность 8 судьям за безупречную работу. Внесены предложения по изменению критериев оценки ката.</p>
+    <div id="protocolsContainer">
+        <div class="loading-state"><div class="spinner-small"></div>Загрузка протоколов...</div>
     </div>
-    <div class="protocol-item">
-        <h3>Протокол № 04/2024</h3>
-        <div class="meta">Заседание от 15 сентября 2024 г. | Формат: очный (Казань)</div>
-        <p>Проведён семинар для судей первой и высшей категории. Аттестовано 14 судей. Обсуждены изменения в правилах WKF, вступающие в силу с 2025 года.</p>
+
+    <div class="mt-3" style="background: var(--fk-gray); padding: 20px; border-left: 4px solid var(--fk-blue); margin-top: 40px;">
+        <p style="font-size: 13px; color: var(--fk-text-muted); line-height:1.6;">
+            <strong style="color: var(--fk-blue);">Как добавить протокол:</strong><br>
+            1. Загрузите PDF в папку <code>docs/</code>.<br>
+            2. Откройте <code>data/protocols.json</code>.<br>
+            3. Найдите нужный год (или создайте новый объект <code>{"year": "...", "items": []}</code>).<br>
+            4. Добавьте в <code>items</code> объект с <code>number</code>, <code>date</code>, <code>format</code>, <code>text</code>, <code>url</code>.<br>
+            5. Сохраните (Commit) — протокол появится на странице автоматически.
+        </p>
     </div>
-    <div class="protocol-item">
-        <h3>Протокол № 03/2024</h3>
-        <div class="meta">Заседание от 22 июня 2024 г. | Формат: дистанционный</div>
-        <p>Рассмотрено обращение региональной федерации по спору в судействе. Принято решение о проведении дополнительного семинара для судей Сибирского федерального округа.</p>
-    </div>
-    <div class="protocol-item">
-        <h3>Протокол № 02/2024</h3>
-        <div class="meta">Заседание от 18 марта 2024 г. | Формат: очный (Москва)</div>
-        <p>Утверждён новый состав Судейского комитета. Назначены ответственные по федеральным округам. Обновлён регламент аттестации.</p>
-    </div>
-    <div class="protocol-item">
-        <h3>Протокол № 01/2024</h3>
-        <div class="meta">Заседание от 25 января 2024 г. | Формат: дистанционный</div>
-        <p>Плановое заседание. Обсуждены итоги работы за 2023 год. Утверждён бюджет комитета на семинары и командировки судей.</p>
-    </div>
+
 </main>
 
 <footer class="footer">
@@ -91,5 +173,72 @@
 </footer>
 
 <script src="./js/registry.js"></script>
+<script>
+/* ---------- Подгрузка протоколов ---------- */
+document.addEventListener('DOMContentLoaded', () => {
+    loadProtocols();
+});
+
+async function loadProtocols() {
+    const container = document.getElementById('protocolsContainer');
+    const countEl = document.getElementById('protocols-count');
+    try {
+        const res = await fetch('data/protocols.json');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+
+        if (!Array.isArray(data) || data.length === 0) {
+            container.innerHTML = '<div class="empty-state">Протоколов пока нет. Добавьте первый в data/protocols.json</div>';
+            countEl.textContent = '0 протоколов';
+            return;
+        }
+
+        // Считаем общее количество
+        let total = 0;
+        data.forEach(y => { total += (y.items ? y.items.length : 0); });
+        countEl.textContent = total + ' протоколов';
+
+        // Сортируем годы по убыванию (новые сверху)
+        data.sort((a, b) => +b.year - +a.year);
+
+        container.innerHTML = data.map(yearBlock => `
+            <div class="protocol-year">
+                <div class="year-badge">${esc(yearBlock.year)}</div>
+                ${(yearBlock.items || []).map(item => `
+                    <div class="protocol-item">
+                        <h3>Протокол № ${esc(item.number)}</h3>
+                        <div class="meta">
+                            Заседание от ${esc(item.date)}
+                            <span class="dot"></span>
+                            Формат: ${esc(item.format)}
+                        </div>
+                        <p>${esc(item.text)}</p>
+                        <div class="protocol-actions">
+                            ${item.url ? `
+                                <a href="${esc(item.url)}" target="_blank" class="btn btn-primary">📄 Открыть</a>
+                                <a href="${esc(item.url)}" download class="btn btn-outline">⬇ Скачать</a>
+                            ` : ''}
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `).join('');
+    } catch (e) {
+        container.innerHTML = `<div class="empty-state">
+            <h3>Не удалось загрузить протоколы</h3>
+            <p>Проверьте, что файл <code>data/protocols.json</code> находится рядом с protocols.html.<br>Ошибка: ${esc(e.message)}</p>
+        </div>`;
+        countEl.textContent = 'Ошибка загрузки';
+    }
+}
+
+function esc(t) {
+    if (t == null) return '';
+    const d = document.createElement('div');
+    d.textContent = t;
+    return d.innerHTML;
+}
+</script>
+
 </body>
 </html>
