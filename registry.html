@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Реестр судей — Судейский комитет ФКР</title>
     <link rel="stylesheet" href="./css/style.css">
-    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=JAKwqDdX4HMtDmXKfffn95Wji1FUJBHJFvnjKQb_4jR683-iu0KyFqLC_hQRGwIT2O7QcaIIlInL571r778CcjHwaGVNroedsmcT0H5NkeI5GnBmBuPJGJKCtDBqiprC5GL3DnuRRz5w6L1iG4qjwvmJH47KugOX-G7I_Jtd7r2vX8QNXYYOQT8-yXYtxJ0q3dkCDiwk-mcJDfJY2j0kel8ZTIMCC9ze8iW1R470Y01rfAcC8xQvP3iOYifGz5Qb6xy1E4vS48Q9I__tE478exqYBxDWXtN5kPiPqdRbr9NIObzCdHrawzClgyYqlwT-kbek02UKEJsOahdbhQlfV9_1YzV-NmsTZcg2t4_QRr9287Sz8kGZ9TUkq2opPws6X3IW8lofKXNXlQrjOW9nG8eV4aWsMuSrnf8QKTJ5XkGJ-KnSEukiYyG7LUhA1hhGG9fH_sgrVrw70xOj3DuzeThW79aHwvrVeOn71-YEIMg_KIvLX8ZGV4s8iHLqAyQKeFrY6Lg5ryXczENMpLyfBBu91jmFKxlJZodiGYE8bMlfHAiz-GJMJMkG-QKtx2XRVfDdiEgVkUSA5qEqraCXPyYT-KLfYoTqiFM4NMZvSObxyHWPkVZAnO7LHuok5aYi0gcbOTt1rNEiyv3_7keNJA" charset="UTF-8"></script><script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=3Wk7g7SNBlO984E_a_rv2ii4B-WwmOwpMESVjP-QlMVbwcq-7xgRuyDoXHtiqq6A3jz-qE6PhcdkeHegddWARWVQjp2AQIO2YLViyyGkum2Lz6C8Bh1EyYEdSMacoLno5SshiM1qUhr3PgcAE1S-L9FULif7ZFZAorJ1ohksr7939EybdBWIWeOdVdjRMrNLly7mAaecB92haKCj_hg8WoPIiE9pfgY41veRZYINXG7m52JuHHSQLURQAucaQ5Z8sjERBPZY-SKNXLErR3Z8HKLiqm9LP5uF0Nxps77LA-v5sJ1_EVJHbKNT1Ox7lCqNbdWLu3bKFS9z6GOA9v7JWVStZk1iltRtrXCaWDk0jWRsoTrLW0kLAoerboNNk7a5i738Bhq315mDfgMC_AWFuYW0LPF9SkNzZaqUjQ3DjLoidaRDhx1xnwpP9dceeZuS0F4mv5LAOLbnMbpQhEsUg6tIwpNIMmvlS19ODOfft4gf6XY0riDpkhLYOMZIBCHvO9VhJo-FttBHzBmZB5t3NM7R1RClQsfTNvjc1lQfxabH6ELdRPh7PbqKJgugTU8sotmsjWuyJJ4anx9_WmuphuReQi_CSvYuwZiMr8z-UpAnw4P58AsDWrVTGCzU4eMdgD8a1VfmqOKobjC5ud82WA" charset="UTF-8"></script><script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <style>
         /* Дополнительные стили для реестра */
         .registry-table th { cursor: pointer; user-select: none; }
@@ -107,11 +107,7 @@
 <header class="header">
   <div class="header-inner">
     <a href="./index.html" class="logo">
-      <img src="./images/logo.png" alt="Федерация Каратэ России" style="height:48px;width:auto;display:block;">
-      <div class="logo-text">
-        <div class="line1">Федерация</div>
-        <div class="line2">Каратэ России</div>
-      </div>
+      <img src="./images/logo.png" alt="Федерация Каратэ России" style="height:144px;width:auto;display:block;">
     </a>
     <button class="menu-toggle" onclick="toggleMenu()" aria-label="Меню">☰</button>
     <nav class="nav">
@@ -157,10 +153,11 @@
                     <th onclick="sortTable('Дата_присвоения')">Дата присвоения <span class="sort-icon">▲▼</span></th>
                     <th onclick="sortTable('Дата_продления')">Дата продления <span class="sort-icon">▲▼</span></th>
                     <th onclick="sortTable('Статус')">Статус <span class="sort-icon">▲▼</span></th>
+                    <th>Документы</th>
                 </tr>
             </thead>
             <tbody id="registry-body">
-                <tr><td colspan="8" class="loading-state"><div class="spinner"></div>Загрузка реестра судей...</td></tr>
+                <tr><td colspan="9" class="loading-state"><div class="spinner"></div>Загрузка реестра судей...</td></tr>
             </tbody>
         </table>
     </div>
@@ -216,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         error: function() {
             document.getElementById('registry-body').innerHTML = 
-                `<tr><td colspan="8" class="empty-state">
+                `<tr><td colspan="9" class="empty-state">
                     <h3>Не удалось загрузить data/judges.csv</h3>
                     <p>Убедитесь, что файл находится в папке <code>data/</code> рядом с registry.html</p>
                  </td></tr>`;
@@ -299,7 +296,7 @@ function renderTable() {
     const page = filteredData.slice(start, start + rowsPerPage);
 
     if (page.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" class="empty-state"><h3>Записи не найдены</h3><p>Попробуйте изменить параметры фильтра или поиска</p></td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="9" class="empty-state"><h3>Записи не найдены</h3><p>Попробуйте изменить параметры фильтра или поиска</p></td></tr>`;
         renderPagination(0); return;
     }
 
@@ -311,6 +308,13 @@ function renderTable() {
         else if (status.includes('90 дней')) sClass = 'status-warning';
         else if (status === 'Необходимо продление') sClass = 'status-danger';
 
+        const oa = (row['Приказ_присвоения']||'').trim();
+        const or_ = (row['Приказ_продления']||'').trim();
+        let docs = '';
+        if (oa && oa.startsWith('http')) docs += `<a href="${oa}" target="_blank" class="link-order">Присвоение</a>`;
+        if (or_ && or_.startsWith('http')) docs += (docs?' · ':'') + `<a href="${or_}" target="_blank" class="link-order">Продление</a>`;
+        if (!docs) docs = '<span style="color:#ccc;font-size:12px;">—</span>';
+
         return `<tr>
             <td class="cell-fio">${esc(row['ФИО'])}</td>
             <td class="cell-region">${esc(row['Регион'])}</td>
@@ -320,6 +324,7 @@ function renderTable() {
             <td>${esc(row['Дата_присвоения'])}</td>
             <td>${esc(row['Дата_продления'])}</td>
             <td><span class="badge-cat ${sClass}">${status}</span></td>
+            <td>${docs}</td>
         </tr>`;
     }).join('');
 
