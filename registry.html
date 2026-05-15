@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Реестр судей — Судейский комитет ФКР</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=-ZeT1CT0XqamrtnNPCBQpFQR2t77FrWCbgKDiTCqeZTXHU0UrPiZ0-oPMdP4iNjgw7ci3hpuwFDCWW0PXTYrvkBtEuKOhSGHHh0FxLBiUUz05Pvp2LP3E1uh32ThspOLxsN-55NA_526YzpALWk8SgiA5GX2aMjNB-wUckh5mQbXLXblemw9U6FCZQOqHdFw7F5vmUxY87hzYA5ipWmY8F6faH8O6ng7ueEfsW9YvZd8jFJghvSUTuaYjyUERJKmm2LzRIT-Qqz-rGAfOLqaW0y6ve_UKiU5qbOV9dKcMaMTabh-saWYXCUl6YK0s15uoKOCeyJYSdVuI4yofOS8CnTGExRoUf5V8GAcqVs9iQLC1uxzpGq3WNMn3mLPhkZcqIyT-iGySrBpX2EsDjrz7C1r2MItqiLYVIj8iPSkac1QdhR-lK7Bg5dO4ueCh5QO7rCZ0jkfKwNlH_UYduICbvsNZa8lN803NH4mwEH-3-JRtUKqkN_45fs75nOGEFi9xujx55TeTQEnT5YifnmbDibzzrG4hWYIiVf7q4lB55g8CfE8AoqGuR9cljJ12KniW0_SspqmJckarxwwNuTqqkUGvmYRrJMZfBTEEzEa0vPiU9XkIEqwVvAlgE0RZsujGTw5RLbdC1nMVJy1DbsnQQ" charset="UTF-8"></script><script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <style>
+        /* Дополнительные стили для реестра */
+        .registry-table th { cursor: pointer; user-select: none; }
+        .registry-table th:hover { background: #e9ecef; }
+        .registry-table th .sort-icon { margin-left: 5px; opacity: 0.3; font-size: 10px; }
+        .registry-table th.sort-asc .sort-icon::after { content: '▲'; opacity: 1; color: var(--fk-blue, #1565c0); }
+        .registry-table th.sort-desc .sort-icon::after { content: '▼'; opacity: 1; color: var(--fk-blue, #1565c0); }
+
+        .badge-cat {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .badge-c1k { background: #ffebee; color: #b71c1c; }
+        .badge-c2k { background: #ffebee; color: #c62828; }
+        .badge-c3k { background: #ffebee; color: #d32f2f; }
+        .badge-us  { background: #fce4ec; color: #ad1457; }
+        .badge-ssvk{ background: #efebe9; color: #5d4037; }
+
+        .badge-yes { background: #e8f5e9; color: #2e7d32; font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: 600; }
+        .badge-no  { background: #f5f5f5; color: #999; font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: 500; }
+
+        .status-normal  { background: #e8f5e9; color: #1b5e20; }
+        .status-warning { background: #fff3e0; color: #e65100; }
+        .status-danger  { background: #ffebee; color: #b71c1c; }
+        .status-unknown { background: #f5f5f5; color: #757575; }
+
+        .link-order {
+            color: var(--fk-blue, #1565c0);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .link-order:hover { text-decoration: underline; }
+
+        .pagination-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            padding: 16px 0;
+            flex-wrap: wrap;
+        }
+        .pagination-bar button {
+            padding: 8px 14px;
+            border: 1px solid #e0e0e0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .pagination-bar button:hover:not(:disabled) {
+            border-color: var(--fk-blue, #1565c0);
+            color: var(--fk-blue, #1565c0);
+        }
+        .pagination-bar button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .pagination-bar button.active {
+            background: var(--fk-blue, #1565c0);
+            color: white;
+            border-color: var(--fk-blue, #1565c0);
+            font-weight: 700;
+        }
+        .pagination-info {
+            font-size: 13px;
+            color: #666;
+            margin-left: 8px;
+        }
+
+        .cell-fio { font-weight: 700; color: var(--fk-dark, #1a1a2e); }
+        .cell-region { color: #555; font-size: 13px; }
+
+        .loading-state, .empty-state {
+            text-align: center;
+            padding: 48px 20px;
+            color: #666;
+        }
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid #f0f0f0;
+            border-top-color: var(--fk-blue, #1565c0);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 12px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <a href="./index.html" class="logo">
+      <svg viewBox="0 0 160 48" fill="white" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="2" width="12" height="44" fill="white" opacity="0.95"/>
+        <polygon points="18,2 44,24 18,46 30,24" fill="white" opacity="0.85"/>
+        <rect x="48" y="2" width="12" height="44" fill="white" opacity="0.95"/>
+        <polygon points="64,2 90,24 64,46 76,24" fill="white" opacity="0.85"/>
+        <circle cx="108" cy="12" r="6" fill="white"/>
+        <polygon points="102,18 126,14 134,24 118,28 108,38 96,28" fill="white"/>
+        <circle cx="132" cy="8" r="5" fill="white" opacity="0.7"/>
+        <polygon points="126,12 148,18 154,30 136,26 128,36 118,28" fill="white" opacity="0.7"/>
+      </svg>
+      <div class="logo-text">
+        <div class="line1">Федерация</div>
+        <div class="line2">Каратэ России</div>
+      </div>
+    </a>
+    <button class="menu-toggle" onclick="toggleMenu()" aria-label="Меню">☰</button>
+    <nav class="nav">
+      <a href="./index.html">Главная</a>
+      <a href="./documents.html">Документы</a>
+      <a href="./registry.html" class="active">Реестр судей</a>
+      <a href="./protocols.html">Протоколы</a>
+      <a href="./rules.html">Правила WKF</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero" style="padding: 48px 24px;">
+    <div class="hero-inner">
+        <h1>Реестр судей</h1>
+        <p>Актуальный список сертифицированных судей Федерации каратэ России. Данные обновляются по мере присвоения и изменения статусов.</p>
+    </div>
+</section>
+
+<main class="container">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; margin-bottom:8px;">
+        <h2 class="section-title" style="margin-bottom:0;">Список судей</h2>
+        <div id="registry-count" style="font-size:13px; color:var(--fk-text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">Загрузка...</div>
+    </div>
+
+    <div class="filters">
+        <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">Все</button>
+        <button class="filter-btn" data-filter="committee" onclick="setFilter('committee')">Судейский комитет</button>
+        <button class="filter-btn" data-filter="active" onclick="setFilter('active')">Действующие</button>
+        <button class="filter-btn" data-filter="suspended" onclick="setFilter('suspended')">Приостановлены / Лишены</button>
+        <input type="text" id="search-input" class="search-input" placeholder="Поиск по ФИО, региону, категории..." oninput="applyFilters()">
+    </div>
+
+    <div class="table-wrap">
+        <table class="data-table registry-table" id="judgesTable">
+            <thead>
+                <tr>
+                    <th onclick="sortTable('ФИО')">ФИО <span class="sort-icon">▲▼</span></th>
+                    <th onclick="sortTable('Регион')">Регион <span class="sort-icon">▲▼</span></th>
+                    <th onclick="sortTable('Категория')">Категория <span class="sort-icon">▲▼</span></th>
+                    <th onclick="sortTable('КУМИТЭ')">КУМИТЭ <span class="sort-icon">▲▼</span></th>
+                    <th onclick="sortTable('КАТА')">КАТА <span class="sort-icon">▲▼</span></th>
+                    <th onclick="sortTable('Дата_присвоения')">Дата присвоения <span class="sort-icon">▲▼</span></th>
+                    <th onclick="sortTable('Дата_продления')">Дата продления <span class="sort-icon">▲▼</span></th>
+                    <th onclick="sortTable('Статус')">Статус <span class="sort-icon">▲▼</span></th>
+                </tr>
+            </thead>
+            <tbody id="registry-body">
+                <tr><td colspan="8" class="loading-state"><div class="spinner"></div>Загрузка реестра судей...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination-bar" id="pagination"></div>
+
+    <div class="mt-3" style="background: var(--fk-gray); padding: 20px; border-left: 4px solid var(--fk-blue);">
+        <p style="font-size: 13px; color: var(--fk-text-muted); line-height:1.6;">
+            <strong style="color: var(--fk-blue);">Как обновить данные:</strong> Замените файл <code>data/judges.csv</code> в репозитории — изменения отобразятся на сайте в течение нескольких минут. 
+            Формат CSV: ФИО, Регион, КУМИТЭ, КАТА, Категория, Дата_присвоения, Дата_продления, Статус, Приказ_присвоения, Приказ_продления.
+        </p>
+    </div>
+</main>
+
+<footer class="footer">
+  <div class="footer-logo">Федерация каратэ России</div>
+  <div class="footer-links">
+    <a href="./index.html">Главная</a>
+    <a href="./documents.html">Документы</a>
+    <a href="./registry.html">Реестр судей</a>
+    <a href="./protocols.html">Протоколы</a>
+    <a href="./rules.html">Правила WKF</a>
+  </div>
+  <p>© 2026 Судейский комитет ФКР. Все права защищены.</p>
+</footer>
+
+<script>
+let allData = [];
+let filteredData = [];
+let currentPage = 1;
+const rowsPerPage = 50;
+let sortCol = 'ФИО';
+let sortAsc = true;
+let activeFilter = 'all';
+
+/* Загрузка CSV */
+document.addEventListener('DOMContentLoaded', () => {
+    Papa.parse('data/judges.csv', {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+            allData = results.data.filter(r => r['ФИО'] && r['ФИО'].trim() !== '');
+            allData.forEach(row => {
+                row['КУМИТЭ'] = (row['КУМИТЭ'] || '').trim().toLowerCase();
+                row['КАТА'] = (row['КАТА'] || '').trim().toLowerCase();
+                row['Категория'] = (row['Категория'] || '').trim();
+                row['Статус'] = (row['Статус'] || 'Нет данных').trim();
+            });
+            filteredData = [...allData];
+            updateCount();
+            renderTable();
+        },
+        error: function() {
+            document.getElementById('registry-body').innerHTML = 
+                `<tr><td colspan="8" class="empty-state">
+                    <h3>Не удалось загрузить data/judges.csv</h3>
+                    <p>Убедитесь, что файл находится в папке <code>data/</code> рядом с registry.html</p>
+                 </td></tr>`;
+            document.getElementById('registry-count').textContent = 'Ошибка загрузки';
+        }
+    });
+});
+
+function setFilter(type) {
+    activeFilter = type;
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filter === type);
+    });
+    applyFilters();
+}
+
+function applyFilters() {
+    const search = document.getElementById('search-input').value.toLowerCase();
+
+    filteredData = allData.filter(r => {
+        // Поиск
+        const okSearch = !search || 
+            ((r['ФИО']||'').toLowerCase().includes(search)) ||
+            ((r['Регион']||'').toLowerCase().includes(search)) ||
+            ((r['Категория']||'').toLowerCase().includes(search));
+
+        // Кнопки фильтров
+        let okFilter = true;
+        if (activeFilter === 'committee') {
+            okFilter = ['ССВК','С1К'].includes(r['Категория']);
+        } else if (activeFilter === 'active') {
+            okFilter = ['Всё в норме','Требуется продление (менее 90 дней)'].includes(r['Статус']);
+        } else if (activeFilter === 'suspended') {
+            okFilter = ['Необходимо продление','Нет данных'].includes(r['Статус']);
+        }
+
+        return okSearch && okFilter;
+    });
+
+    currentPage = 1;
+    updateCount();
+    renderTable();
+}
+
+function updateCount() {
+    const el = document.getElementById('registry-count');
+    if (filteredData.length === allData.length) {
+        el.textContent = allData.length + ' судей';
+    } else {
+        el.textContent = 'Показано ' + filteredData.length + ' из ' + allData.length;
+    }
+}
+
+function sortTable(col) {
+    if (sortCol === col) sortAsc = !sortAsc;
+    else { sortCol = col; sortAsc = true; }
+
+    filteredData.sort((a, b) => {
+        let va = (a[col] || '').toString().toLowerCase();
+        let vb = (b[col] || '').toString().toLowerCase();
+        const dateRe = /^\d{2}\.\d{2}\.\d{4}$/;
+        if (dateRe.test(va) && dateRe.test(vb)) {
+            const [da,ma,ya] = va.split('.'); const [db,mb,yb] = vb.split('.');
+            va = ya+ma+da; vb = yb+mb+db;
+        }
+        if (va < vb) return sortAsc ? -1 : 1;
+        if (va > vb) return sortAsc ? 1 : -1;
+        return 0;
+    });
+
+    document.querySelectorAll('.registry-table th').forEach(th => th.classList.remove('sort-asc','sort-desc'));
+    const map = {'ФИО':0,'Регион':1,'Категория':2,'КУМИТЭ':3,'КАТА':4,'Дата_присвоения':5,'Дата_продления':6,'Статус':7};
+    if (map[col] !== undefined) document.querySelectorAll('.registry-table th')[map[col]].classList.add(sortAsc ? 'sort-asc' : 'sort-desc');
+    renderTable();
+}
+
+function renderTable() {
+    const tbody = document.getElementById('registry-body');
+    const start = (currentPage - 1) * rowsPerPage;
+    const page = filteredData.slice(start, start + rowsPerPage);
+
+    if (page.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="empty-state"><h3>Записи не найдены</h3><p>Попробуйте изменить параметры фильтра или поиска</p></td></tr>`;
+        renderPagination(0); return;
+    }
+
+    tbody.innerHTML = page.map(row => {
+        const cat = row['Категория'] || '';
+        const status = row['Статус'] || 'Нет данных';
+        let sClass = 'status-unknown';
+        if (status === 'Всё в норме') sClass = 'status-normal';
+        else if (status.includes('90 дней')) sClass = 'status-warning';
+        else if (status === 'Необходимо продление') sClass = 'status-danger';
+
+        return `<tr>
+            <td class="cell-fio">${esc(row['ФИО'])}</td>
+            <td class="cell-region">${esc(row['Регион'])}</td>
+            <td><span class="badge-cat badge-${cat.toLowerCase()}">${cat}</span></td>
+            <td><span class="${row['КУМИТЭ']==='да'?'badge-yes':'badge-no'}">${row['КУМИТЭ']==='да'?'Да':'Нет'}</span></td>
+            <td><span class="${row['КАТА']==='да'?'badge-yes':'badge-no'}">${row['КАТА']==='да'?'Да':'Нет'}</span></td>
+            <td>${esc(row['Дата_присвоения'])}</td>
+            <td>${esc(row['Дата_продления'])}</td>
+            <td><span class="badge-cat ${sClass}">${status}</span></td>
+        </tr>`;
+    }).join('');
+
+    renderPagination(filteredData.length);
+}
+
+function renderPagination(total) {
+    const pages = Math.ceil(total / rowsPerPage);
+    const pag = document.getElementById('pagination');
+    if (pages <= 1) { pag.innerHTML = ''; return; }
+
+    let h = `<button onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>← Назад</button>`;
+    let s = Math.max(1, currentPage - 3);
+    let e = Math.min(pages, s + 6);
+    if (e - s < 6) s = Math.max(1, e - 6);
+
+    if (s > 1) h += `<button onclick="goPage(1)">1</button>${s>2?'<span style="color:#999;padding:0 4px;">…</span>':''}`;
+    for (let i=s; i<=e; i++) h += `<button class="${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+    if (e < pages) h += `${e<pages-1?'<span style="color:#999;padding:0 4px;">…</span>':''}<button onclick="goPage(${pages})">${pages}</button>`;
+    h += `<button onclick="goPage(${currentPage+1})" ${currentPage===pages?'disabled':''}>Вперёд →</button>`;
+    h += `<span class="pagination-info">Стр. ${currentPage} из ${pages}</span>`;
+    pag.innerHTML = h;
+}
+
+function goPage(p) {
+    const pages = Math.ceil(filteredData.length / rowsPerPage);
+    if (p < 1 || p > pages) return;
+    currentPage = p;
+    renderTable();
+    document.querySelector('.table-wrap').scrollTop = 0;
+    window.scrollTo({ top: document.querySelector('.table-wrap').offsetTop - 120, behavior: 'smooth' });
+}
+
+function esc(t) { if(!t) return ''; const d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
+</script>
+
+</body>
+</html>
