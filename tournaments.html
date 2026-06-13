@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Турниры — Судейский комитет ФКР</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=qAY7xnSPla-P7IV5VTweCgjJbaO92pIMv2EE9cghkpZHAzZk0Qqdm1HDIQGT9QV21VnVBSkKmS1eT5fEHTwqYN_OZD6ZU8rK_xGV5y_-kZO1zeFmMVIwXRnktjnSn4omI2GowS_WyPvVxL7a5XixeTSFuquTzKLGYLSViLcs-EF2THtDN2140XCXK6YdDxSZGTicN3mbTGtZP-Cni7qW-OtfhvNbnfY7SZrEnlCR2WZCBj0uuGz7TxPEDCJxvPyHDSPqVVbkgUWXisNDysx9_OZhpAm3yASEUgSNgEBzjZENgyAJRIQe4siipVu3kKaGFIAWjOYxl5hoq1FsT3oaQCE_HB2ioYL8RO2lKtADDyI8BD_nRe73iG20_wErQbvZtc8pAwj4YTfFv7T5aWlBphVEQ2ZUEXoeuUrnXdHB7TRKqn55xWT9n_XE6ps5ysoTSntwrLsRdqeTU8F1M6JQ497RICpNPT7lqrP74p4jcJHjecYtq1p6L1sec3OmFgVb4LMwBFCudVLYct_YdDOgaIUBN2aw1HOX6wzAmOdHyCmjGu9J2STH8G8TFDYho00dIl-ltsUwFDGJcwGqA4uBHbZrgJJBnRGaKvoP626xbnxrG38sJ2HvcVC8B6rJNKA5OxO8mFMl-IBajTaufqsqOQ" charset="UTF-8"></script><script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <style>
+        /* ===== Только функциональные стили, цвета из style.css ===== */
+        .tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            padding: 10px 24px;
+            background: #fff;
+            border: 1px solid var(--fk-border);
+            font-family: var(--font-body);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--fk-text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            clip-path: polygon(0 0, 100% 0, 100% 80%, 90% 100%, 0 100%);
+        }
+        .tab-btn:hover { color: var(--fk-blue); border-color: var(--fk-blue); }
+        .tab-btn.active {
+            background: var(--fk-blue);
+            color: #fff;
+            border-color: var(--fk-blue);
+        }
+
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ===== Карточки турниров ===== */
+        .tournaments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 28px;
+        }
+        .tournament-card {
+            background: #fff;
+            border-top: 4px solid var(--fk-red);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .tournament-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+            border-top-color: var(--fk-blue);
+        }
+        .tournament-card.expanded {
+            grid-column: 1 / -1;
+            cursor: default;
+        }
+        .tournament-card.expanded:hover { transform: none; }
+
+        .t-card-header {
+            padding: 28px 32px;
+            background: linear-gradient(135deg, #fff 0%, var(--fk-gray) 100%);
+            border-bottom: 1px solid var(--fk-border);
+        }
+        .t-card-header .status-badge {
+            display: inline-block;
+            background: var(--fk-red);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 12px;
+            clip-path: polygon(0 0, 100% 0, 100% 80%, 88% 100%, 0 100%);
+        }
+        .t-card-header h3 {
+            font-family: var(--font-heading);
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--fk-blue);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 1.3;
+        }
+        .t-card-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            font-size: 14px;
+            color: var(--fk-text-muted);
+        }
+        .t-card-meta span { display: flex; align-items: center; gap: 6px; }
+
+        .t-card-stats {
+            display: flex;
+            gap: 24px;
+            padding: 18px 32px;
+            background: var(--fk-gray);
+            border-bottom: 1px solid var(--fk-border);
+        }
+        .t-stat { text-align: center; }
+        .t-stat .num {
+            font-family: var(--font-heading);
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--fk-blue);
+        }
+        .t-stat .lbl {
+            font-size: 11px;
+            color: var(--fk-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .t-card-body {
+            padding: 24px 32px;
+            display: none;
+        }
+        .tournament-card.expanded .t-card-body { display: block; }
+        .t-card-body .close-btn {
+            float: right;
+            background: var(--fk-gray);
+            border: none;
+            width: 36px; height: 36px;
+            font-family: var(--font-heading);
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--fk-text-muted);
+            cursor: pointer;
+            transition: 0.2s;
+            clip-path: polygon(0 0, 100% 0, 100% 80%, 80% 100%, 0 100%);
+        }
+        .t-card-body .close-btn:hover { background: var(--fk-red); color: #fff; }
+
+        /* ===== Таблица судей ===== */
+        .judges-table-wrap {
+            overflow-x: auto;
+            box-shadow: var(--shadow-sm);
+            margin-top: 20px;
+        }
+        .judges-table-wrap table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            font-size: 14px;
+        }
+        .judges-table-wrap thead {
+            background: linear-gradient(135deg, var(--fk-blue), #1A2B5C);
+            color: #fff;
+        }
+        .judges-table-wrap th {
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            white-space: nowrap;
+        }
+        .judges-table-wrap td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--fk-border);
+            vertical-align: middle;
+        }
+        .judges-table-wrap tbody tr:hover td { background: #f8f9fa; }
+        .judges-table-wrap tbody tr:last-child td { border-bottom: none; }
+
+        .badge-t {
+            display: inline-block;
+            padding: 4px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            clip-path: polygon(0 0, 100% 0, 100% 80%, 88% 100%, 0 100%);
+        }
+        .badge-t-ssvk { background: #fff3cd; color: #856404; }
+        .badge-t-1k { background: #d1ecf1; color: #0c5460; }
+        .badge-t-2k { background: #d4edda; color: #155724; }
+
+        .score { font-weight: 700; font-family: var(--font-heading); }
+        .score-5 { color: #059669; }
+        .score-4 { color: #d97706; }
+        .score-null { color: #bbb; }
+
+        .filters-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+        .filters-row input, .filters-row select {
+            padding: 10px 14px;
+            border: 1px solid var(--fk-border);
+            font-family: var(--font-body);
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+            min-width: 220px;
+        }
+        .filters-row input:focus, .filters-row select:focus { border-color: var(--fk-blue); }
+
+        .signatures-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 2px solid var(--fk-red);
+        }
+        .sig-block .sig-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--fk-text-muted);
+            letter-spacing: 0.8px;
+            font-weight: 600;
+        }
+        .sig-block .sig-name {
+            font-family: var(--font-heading);
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--fk-blue);
+            margin-top: 6px;
+            text-transform: uppercase;
+        }
+        .sig-block .sig-cat {
+            font-size: 14px;
+            color: var(--fk-red);
+            font-weight: 700;
+        }
+
+        /* ===== Поиск судьи ===== */
+        .search-box {
+            background: #fff;
+            padding: 32px;
+            border-top: 4px solid var(--fk-blue);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 28px;
+        }
+        .search-input-wrap {
+            position: relative;
+            max-width: 500px;
+        }
+        .search-input-wrap input {
+            width: 100%;
+            padding: 14px 18px 14px 48px;
+            border: 2px solid var(--fk-border);
+            font-family: var(--font-body);
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .search-input-wrap input:focus { border-color: var(--fk-blue); }
+        .search-input-wrap::before {
+            content: "🔍";
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+        }
+        .search-hint {
+            margin-top: 12px;
+            font-size: 14px;
+            color: var(--fk-text-muted);
+        }
+
+        .judge-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 28px;
+        }
+        .judge-result-card {
+            background: #fff;
+            border-top: 4px solid var(--fk-red);
+            box-shadow: var(--shadow-sm);
+            padding: 28px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .judge-result-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+            border-top-color: var(--fk-blue);
+        }
+        .judge-result-card .j-name {
+            font-family: var(--font-heading);
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--fk-blue);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .judge-result-card .j-meta {
+            font-size: 14px;
+            color: var(--fk-text-muted);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+        .judge-result-card .j-count {
+            margin-top: 12px;
+            font-size: 14px;
+            color: var(--fk-blue);
+            font-weight: 700;
+        }
+
+        .judge-detail {
+            background: #fff;
+            border-top: 4px solid var(--fk-blue);
+            box-shadow: var(--shadow-sm);
+            padding: 32px;
+            margin-top: 24px;
+        }
+        .judge-detail .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--fk-gray);
+            border: 1px solid var(--fk-border);
+            font-family: var(--font-body);
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--fk-text);
+            cursor: pointer;
+            transition: 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            clip-path: polygon(0 0, 100% 0, 100% 80%, 90% 100%, 0 100%);
+            margin-bottom: 24px;
+        }
+        .judge-detail .back-btn:hover { background: var(--fk-blue); color: #fff; border-color: var(--fk-blue); }
+        .judge-detail h2 {
+            font-family: var(--font-heading);
+            font-size: 28px;
+            color: var(--fk-blue);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+        .judge-detail .j-cat { margin-bottom: 24px; }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            background: var(--fk-gray);
+            border-left: 4px solid var(--fk-red);
+            transition: all 0.2s;
+        }
+        .history-item:hover {
+            background: #fff;
+            box-shadow: var(--shadow-sm);
+            border-left-color: var(--fk-blue);
+        }
+        .history-item .h-info { flex: 1; }
+        .history-item .h-title {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            color: var(--fk-blue);
+            font-size: 18px;
+            text-transform: uppercase;
+        }
+        .history-item .h-meta {
+            font-size: 14px;
+            color: var(--fk-text-muted);
+            margin-top: 4px;
+        }
+        .history-item .h-role {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--fk-blue);
+            background: rgba(15,31,74,0.08);
+            padding: 5px 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            clip-path: polygon(0 0, 100% 0, 100% 80%, 88% 100%, 0 100%);
+        }
+        .history-item .h-score {
+            font-size: 14px;
+            font-weight: 700;
+            margin-left: 12px;
+            font-family: var(--font-heading);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 48px;
+            color: var(--fk-text-muted);
+            font-size: 16px;
+            background: var(--fk-gray);
+            border-top: 4px solid var(--fk-red);
+        }
+
+        @media (max-width: 768px) {
+            .tournaments-grid { grid-template-columns: 1fr; }
+            .tabs { width: 100%; }
+            .tab-btn { flex: 1; justify-content: center; }
+            .judges-table-wrap { overflow-x: auto; }
+            .judges-table-wrap table { min-width: 600px; }
+            .hide-mobile { display: none; }
+            .filters-row input { min-width: 100%; }
+            .history-item { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .t-card-header, .t-card-body, .search-box, .judge-detail { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <a href="./index.html" class="logo">
+      <img src="./images/logo.png" alt="Федерация Каратэ России" style="height:60px;width:auto;display:block;">
+    </a>
+    <button class="menu-toggle" onclick="toggleMenu()" aria-label="Меню">☰</button>
+    <nav class="nav" id="mainNav">
+      <a href="./index.html">Главная</a>
+      <a href="./documents.html">Документы</a>
+      <a href="./registry.html">Реестр судей</a>
+      <a href="./tournaments.html" class="active">Турниры</a>
+      <a href="./protocols.html">Протоколы</a>
+      <a href="./rules.html">Правила WKF</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+    <div class="hero-inner">
+        <h1>Турниры</h1>
+        <p>Судейские коллегии всероссийских и межрегиональных соревнований. Архив составов и история участия судей.</p>
+    </div>
+</section>
+
+<main class="container">
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('list')" id="tab-list">📋 Все турниры</button>
+        <button class="tab-btn" onclick="switchTab('search')" id="tab-search">🔍 Поиск судьи</button>
+    </div>
+
+    <div class="tab-panel active" id="panel-list">
+        <div class="tournaments-grid" id="tournamentsGrid"></div>
+    </div>
+
+    <div class="tab-panel" id="panel-search">
+        <div class="search-box">
+            <div class="search-input-wrap">
+                <input type="text" id="judgeSearch" placeholder="Введите фамилию судьи..." oninput="searchJudge()">
+            </div>
+            <div class="search-hint">Начните вводить фамилию — покажем все турниры, где судья принимал участие</div>
+        </div>
+        <div id="searchResults"></div>
+    </div>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-logo">Федерация каратэ России</div>
+  <div class="footer-links">
+    <a href="./index.html">Главная</a>
+    <a href="./documents.html">Документы</a>
+    <a href="./registry.html">Реестр судей</a>
+    <a href="./tournaments.html">Турниры</a>
+    <a href="./protocols.html">Протоколы</a>
+    <a href="./rules.html">Правила WKF</a>
+  </div>
+  <p>© 2026 Судейский комитет ФКР. Все права защищены.</p>
+</footer>
+
+<script src="./js/registry.js"></script>
+<script>
+let tournaments = [];
+let judgesIndex = {};
+
+document.addEventListener('DOMContentLoaded', () => {
+    Papa.parse('data/tournaments.csv', {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        delimiter: ';',
+        encoding: "UTF-8",
+        complete: function(results) {
+            const rows = results.data.filter(r => r.tournament_id && r.tournament_id.trim() !== '');
+            buildTournaments(rows);
+            buildJudgesIndex();
+            renderTournamentsList();
+        },
+        error: function(err) {
+            document.getElementById('tournamentsGrid').innerHTML = `
+                <div class="no-results" style="grid-column:1/-1;">
+                    <h3>Не удалось загрузить данные</h3>
+                    <p>Проверьте, что файл <code>data/tournaments.csv</code> находится рядом с tournaments.html</p>
+                </div>`;
+        }
+    });
+});
+
+function buildTournaments(rows) {
+    const map = {};
+    rows.forEach(r => {
+        const id = r.tournament_id.trim();
+        if (!map[id]) {
+            map[id] = {
+                id: id,
+                title: r.title.trim(),
+                shortTitle: r.short_title.trim(),
+                status: r.status.trim(),
+                location: r.location.trim(),
+                dates: r.dates.trim(),
+                ageGroups: r.age_groups.trim(),
+                chiefJudge: { name: r.chief_judge.trim(), category: r.chief_judge_cat.trim(), region: r.chief_judge_region.trim() },
+                chiefSecretary: { name: r.chief_secretary.trim(), category: r.chief_sec_cat.trim(), region: r.chief_sec_region.trim() },
+                judges: []
+            };
+        }
+        map[id].judges.push({
+            num: parseInt(r.num) || 0,
+            name: r.name.trim(),
+            role: r.role.trim(),
+            category: r.category.trim(),
+            region: r.region.trim(),
+            score: r.score.trim() === '' ? null : parseInt(r.score)
+        });
+    });
+    tournaments = Object.values(map);
+    tournaments.sort((a, b) => b.id.localeCompare(a.id));
+}
+
+function buildJudgesIndex() {
+    judgesIndex = {};
+    tournaments.forEach(t => {
+        t.judges.forEach(j => {
+            if (!judgesIndex[j.name]) judgesIndex[j.name] = [];
+            judgesIndex[j.name].push({
+                tournamentTitle: t.shortTitle || t.title,
+                tournamentDates: t.dates,
+                tournamentLocation: t.location,
+                role: j.role,
+                category: j.category,
+                score: j.score,
+                region: j.region
+            });
+        });
+    });
+}
+
+function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    document.getElementById('panel-' + tab).classList.add('active');
+}
+
+function renderTournamentsList() {
+    const grid = document.getElementById('tournamentsGrid');
+    if (tournaments.length === 0) {
+        grid.innerHTML = '<div class="no-results">Турниров пока нет</div>';
+        return;
+    }
+    grid.innerHTML = tournaments.map(t => renderTournamentCard(t)).join('');
+}
+
+function renderTournamentCard(t) {
+    const total = t.judges.length;
+    const ssyk = t.judges.filter(j => j.category === 'ССВК').length;
+    const k1 = t.judges.filter(j => j.category === '1К').length;
+    const k2 = t.judges.filter(j => j.category === '2К').length;
+
+    return `<div class="tournament-card" id="card-${t.id}" onclick="expandTournament('${t.id}')">
+        <div class="t-card-header">
+            <div class="status-badge">${esc(t.status)}</div>
+            <h3>${esc(t.title)}</h3>
+            <div class="t-card-meta">
+                <span>📅 ${esc(t.dates)}</span>
+                <span>📍 ${esc(t.location)}</span>
+            </div>
+        </div>
+        <div class="t-card-stats">
+            <div class="t-stat"><div class="num">${total}</div><div class="lbl">Судей</div></div>
+            <div class="t-stat"><div class="num">${ssyk}</div><div class="lbl">ССВК</div></div>
+            <div class="t-stat"><div class="num">${k1}</div><div class="lbl">1 категория</div></div>
+            <div class="t-stat"><div class="num">${k2}</div><div class="lbl">2 категория</div></div>
+        </div>
+        <div class="t-card-body" id="body-${t.id}">
+            <button class="close-btn" onclick="event.stopPropagation(); collapseTournament('${t.id}')">×</button>
+            <div style="clear:both;"></div>
+            <p style="font-size:14px;color:var(--fk-text-muted);margin-bottom:16px;line-height:1.6;">${esc(t.ageGroups)}</p>
+
+            <div class="filters-row">
+                <input type="text" placeholder="Поиск по ФИО или региону..." oninput="filterTable('${t.id}', this.value)">
+                <select onchange="filterCategory('${t.id}', this.value)">
+                    <option value="">Все категории</option>
+                    <option value="ССВК">ССВК</option>
+                    <option value="1К">1 категория</option>
+                    <option value="2К">2 категория</option>
+                </select>
+                <select onchange="filterRole('${t.id}', this.value)">
+                    <option value="">Все должности</option>
+                    ${[...new Set(t.judges.map(j => j.role))].sort().map(r => `<option value="${esc(r)}">${esc(r)}</option>`).join('')}
+                </select>
+            </div>
+
+            <div class="judges-table-wrap">
+                <table id="table-${t.id}">
+                    <thead><tr><th>№</th><th>Фамилия И.О.</th><th class="hide-mobile">Должность</th><th>Категория</th><th class="hide-mobile">Регион</th><th>Оценка</th></tr></thead>
+                    <tbody>
+                        ${t.judges.map(j => `
+                            <tr data-category="${esc(j.category)}" data-role="${esc(j.role)}" data-name="${esc(j.name)}" data-region="${esc(j.region)}">
+                                <td>${j.num}</td>
+                                <td><a href="./registry.html?name=${encodeURIComponent(j.name)}" style="color:var(--fk-blue);text-decoration:none;font-weight:700;">${esc(j.name)}</a></td>
+                                <td class="hide-mobile">${esc(j.role)}</td>
+                                <td><span class="badge-t ${getBadgeClass(j.category)}">${esc(j.category)}</span></td>
+                                <td class="hide-mobile">${esc(j.region)}</td>
+                                <td class="score ${getScoreClass(j.score)}">${j.score !== null ? j.score : '—'}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="signatures-row">
+                <div class="sig-block">
+                    <div class="sig-title">Главный судья</div>
+                    <div class="sig-name">${esc(t.chiefJudge.name)}</div>
+                    <div class="sig-cat">${esc(t.chiefJudge.category)}</div>
+                </div>
+                <div class="sig-block">
+                    <div class="sig-title">Главный секретарь</div>
+                    <div class="sig-name">${esc(t.chiefSecretary.name)}</div>
+                    <div class="sig-cat">${esc(t.chiefSecretary.category)}</div>
+                </div>
+            </div>
+        </div>
+    </div>`;
+}
+
+function expandTournament(id) {
+    document.querySelectorAll('.tournament-card').forEach(c => c.classList.toggle('expanded', c.id === 'card-' + id));
+}
+function collapseTournament(id) {
+    document.getElementById('card-' + id).classList.remove('expanded');
+}
+
+function filterTable(id, text) {
+    const t = text.toLowerCase();
+    document.querySelectorAll('#table-' + id + ' tbody tr').forEach(row => {
+        row.style.display = (row.dataset.name.toLowerCase().includes(t) || row.dataset.region.toLowerCase().includes(t) || row.dataset.role.toLowerCase().includes(t)) ? '' : 'none';
+    });
+}
+function filterCategory(id, cat) {
+    document.querySelectorAll('#table-' + id + ' tbody tr').forEach(row => {
+        row.style.display = (!cat || row.dataset.category === cat) ? '' : 'none';
+    });
+}
+function filterRole(id, role) {
+    document.querySelectorAll('#table-' + id + ' tbody tr').forEach(row => {
+        row.style.display = (!role || row.dataset.role === role) ? '' : 'none';
+    });
+}
+
+function searchJudge() {
+    const query = document.getElementById('judgeSearch').value.trim().toLowerCase();
+    const container = document.getElementById('searchResults');
+    if (query.length < 2) { container.innerHTML = ''; return; }
+
+    const matches = Object.keys(judgesIndex).filter(name => name.toLowerCase().includes(query));
+    if (matches.length === 0) {
+        container.innerHTML = '<div class="no-results">Судья не найден. Проверьте написание фамилии.</div>';
+        return;
+    }
+    if (matches.length === 1) { showJudgeDetail(matches[0]); return; }
+
+    container.innerHTML = `<div class="judge-results">${matches.map(name => {
+        const entries = judgesIndex[name];
+        const cats = [...new Set(entries.map(e => e.category))].join(', ');
+        const regions = [...new Set(entries.map(e => e.region))].join(', ');
+        return `<div class="judge-result-card" onclick="showJudgeDetail('${esc(name)}')">
+            <div class="j-name"><a href="./registry.html?name=${encodeURIComponent(name)}" style="color:var(--fk-blue);text-decoration:none;">${esc(name)}</a></div>
+            <div class="j-meta">
+                <span class="badge-t ${getBadgeClass(entries[0].category)}">${esc(cats)}</span>
+                <span>📍 ${esc(regions)}</span>
+            </div>
+            <div class="j-count">🏆 Участвовал в ${entries.length} турнире</div>
+        </div>`;
+    }).join('')}</div>`;
+}
+
+function showJudgeDetail(name) {
+    const entries = judgesIndex[name];
+    if (!entries) return;
+    const cats = [...new Set(entries.map(e => e.category))];
+    const regions = [...new Set(entries.map(e => e.region))];
+
+    document.getElementById('searchResults').innerHTML = `
+        <div class="judge-detail">
+            <button class="back-btn" onclick="backToSearch()">← Назад к результатам</button>
+            <h2><a href="./registry.html?name=${encodeURIComponent(name)}" style="color:var(--fk-blue);text-decoration:none;">${esc(name)}</a></h2>
+            <div class="j-cat">${cats.map(c => `<span class="badge-t ${getBadgeClass(c)}">${esc(c)}</span>`).join(' ')}</div>
+            <div style="font-size:14px;color:var(--fk-text-muted);margin-bottom:24px;">📍 ${esc(regions.join(', '))}</div>
+            <div class="history-list">
+                ${entries.map(e => `
+                    <div class="history-item">
+                        <div class="h-info">
+                            <div class="h-title">${esc(e.tournamentTitle)}</div>
+                            <div class="h-meta">${esc(e.tournamentDates)} • ${esc(e.tournamentLocation)}</div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <span class="h-role">${esc(e.role)}</span>
+                            <span class="h-score ${getScoreClass(e.score)}">${e.score !== null ? e.score + ' балл' : '—'}</span>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>`;
+}
+function backToSearch() { searchJudge(); }
+
+function getBadgeClass(cat) {
+    if (cat === 'ССВК') return 'badge-t-ssvk';
+    if (cat === '1К') return 'badge-t-1k';
+    if (cat === '2К') return 'badge-t-2k';
+    return '';
+}
+function getScoreClass(score) {
+    if (score === null || score === undefined) return 'score-null';
+    if (score >= 5) return 'score-5';
+    return 'score-4';
+}
+function esc(t) {
+    if (t == null) return '';
+    const d = document.createElement('div');
+    d.textContent = t;
+    return d.innerHTML;
+}
+function toggleMenu() {
+    document.getElementById('mainNav').classList.toggle('open');
+}
+</script>
+
+</body>
+</html>
