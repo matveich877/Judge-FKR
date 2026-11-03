@@ -1,1 +1,882 @@
-__PAYLOAD_2__
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тренерские лицензии — Судейский комитет ФКР</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <style>
+        /* ===== Статистика ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+        .stat-card {
+            background: #fff;
+            padding: 24px;
+            border-top: 4px solid var(--fk-red);
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+        .stat-card .stat-num {
+            font-family: var(--font-heading);
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--fk-blue);
+            line-height: 1.1;
+        }
+        .stat-card .stat-label {
+            font-size: 12px;
+            color: var(--fk-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        .stat-card.active { border-top-color: #059669; }
+        .stat-card.active .stat-num { color: #059669; }
+        .stat-card.warning { border-top-color: #d97706; }
+        .stat-card.warning .stat-num { color: #d97706; }
+        .stat-card.danger { border-top-color: var(--fk-red); }
+        .stat-card.danger .stat-num { color: var(--fk-red); }
+
+        /* ===== Фильтры ===== */
+        .filters-bar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+        .filter-pill {
+            padding: 8px 16px;
+            background: #fff;
+            border: 1px solid var(--fk-border);
+            font-family: var(--font-body);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--fk-text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .filter-pill:hover, .filter-pill.active {
+            background: var(--fk-blue);
+            color: #fff;
+            border-color: var(--fk-blue);
+        }
+        .search-wrap {
+            margin-left: auto;
+        }
+        .search-wrap input {
+            padding: 10px 16px;
+            border: 1px solid var(--fk-border);
+            font-family: var(--font-body);
+            font-size: 14px;
+            min-width: 260px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .search-wrap input:focus { border-color: var(--fk-blue); }
+
+        /* ===== Таблица ===== */
+        .licenses-table-wrap {
+            overflow-x: auto;
+            box-shadow: var(--shadow-sm);
+            margin-top: 8px;
+        }
+        .licenses-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            font-size: 14px;
+        }
+        .licenses-table th {
+            background: linear-gradient(135deg, var(--fk-blue), #1A2B5C);
+            color: #fff;
+            text-align: left;
+            padding: 14px 16px;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            white-space: nowrap;
+        }
+        .licenses-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--fk-border);
+            vertical-align: middle;
+        }
+        .licenses-table tbody tr { cursor: pointer; transition: background 0.15s; }
+        .licenses-table tbody tr:hover td { background: #f8f9fa; }
+        .licenses-table tbody tr:last-child td { border-bottom: none; }
+
+        /* Бейджи статусов */
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #fff;
+            clip-path: polygon(0 0, 100% 0, 100% 80%, 88% 100%, 0 100%);
+            white-space: nowrap;
+        }
+        .status-active { background: #059669; }
+        .status-expiring { background: #d97706; }
+        .status-critical { background: #ea580c; }
+        .status-overdue { background: var(--fk-red); }
+        .status-warning { background: #d97706; }
+        .status-sikaku { background: #7f1d1d; }
+        .status-suspension { background: var(--fk-red); }
+        .status-none { background: var(--fk-text-muted); }
+
+        /* ===== Пагинация ===== */
+        .pagination-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            padding: 20px 0;
+            flex-wrap: wrap;
+        }
+        .pagination-bar button {
+            padding: 8px 14px;
+            background: #fff;
+            border: 1px solid var(--fk-border);
+            font-family: var(--font-body);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--fk-text);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .pagination-bar button:hover:not(:disabled) {
+            background: var(--fk-blue);
+            color: #fff;
+            border-color: var(--fk-blue);
+        }
+        .pagination-bar button:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+        .pagination-bar button.current {
+            background: var(--fk-blue);
+            color: #fff;
+            border-color: var(--fk-blue);
+        }
+        .pagination-bar .page-info {
+            font-size: 13px;
+            color: var(--fk-text-muted);
+            margin-left: 8px;
+        }
+
+        /* ===== Документы ===== */
+        .docs-section {
+            margin-top: 48px;
+        }
+        .doc-link {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--fk-border);
+            background: #fff;
+            transition: background 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+        .doc-link:hover { background: var(--fk-gray); }
+        .doc-link .doc-icon {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, var(--fk-blue), var(--fk-red));
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-family: var(--font-heading);
+            font-size: 14px; font-weight: 700;
+            flex-shrink: 0;
+            clip-path: polygon(0 0, 100% 0, 100% 80%, 80% 100%, 0 100%);
+        }
+        .doc-link .doc-info h4 {
+            font-family: var(--font-heading);
+            font-size: 16px;
+            color: var(--fk-blue);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+        .doc-link .doc-info p {
+            font-size: 13px;
+            color: var(--fk-text-muted);
+        }
+
+        /* ===== Модальное окно ===== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            backdrop-filter: blur(2px);
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-box {
+            background: #fff;
+            max-width: 620px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            animation: modalIn 0.25s ease;
+        }
+        @keyframes modalIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        .modal-header {
+            background: linear-gradient(135deg, var(--fk-blue), #1A2B5C);
+            color: #fff;
+            padding: 20px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        .modal-header h2 {
+            font-family: var(--font-heading);
+            font-size: 22px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0;
+        }
+        .modal-header .modal-sub {
+            font-size: 13px;
+            opacity: 0.85;
+            margin-top: 4px;
+        }
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: #fff;
+            width: 36px; height: 36px;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .modal-close:hover { background: var(--fk-red); }
+        .modal-body {
+            padding: 24px;
+        }
+        .modal-body .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--fk-border);
+            font-size: 14px;
+        }
+        .modal-body .detail-row .label {
+            color: var(--fk-text-muted);
+            font-weight: 600;
+        }
+        .modal-body .detail-row .value {
+            color: var(--fk-text);
+            font-weight: 700;
+            text-align: right;
+        }
+        .modal-section-title {
+            font-family: var(--font-heading);
+            font-size: 16px;
+            color: var(--fk-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 20px 0 12px;
+            border-bottom: 2px solid var(--fk-red);
+            padding-bottom: 6px;
+        }
+        .violation-item {
+            background: var(--fk-gray);
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--fk-red);
+            font-size: 14px;
+        }
+        .violation-item .v-date {
+            font-weight: 700;
+            color: var(--fk-blue);
+            margin-bottom: 4px;
+        }
+        .violation-item .v-reason {
+            color: var(--fk-text);
+        }
+        .no-violations {
+            font-size: 14px;
+            color: var(--fk-text-muted);
+            padding: 12px 0;
+        }
+
+        /* ===== Адаптив ===== */
+        @media (max-width: 768px) {
+            .filters-bar { flex-direction: column; align-items: stretch; }
+            .search-wrap { margin-left: 0; }
+            .search-wrap input { width: 100%; min-width: auto; }
+            .licenses-table { min-width: 700px; }
+            .stat-card { padding: 18px; }
+            .stat-card .stat-num { font-size: 28px; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <a href="./index.html" class="logo">
+      <img src="./images/logo.png" alt="Федерация Каратэ России" style="height:144px;width:auto;display:block;">
+    </a>
+    <button class="menu-toggle" onclick="toggleMenu()" aria-label="Меню">☰</button>
+    <nav class="nav" id="mainNav">
+      <a href="./index.html">Главная</a>
+      <a href="./documents.html">Документы</a>
+      <a href="./registry.html">Реестр судей</a>
+      <a href="./prisvoenie/" target="_blank" rel="noopener">Присвоение категории</a>
+      <a href="./tournaments.html">Турниры</a>
+      <a href="./protocols.html">Протоколы</a>
+      <a href="./rules.html">Правила WKF</a>
+      <a href="./licenses.html" class="active">Тренерские лицензии</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+    <div class="hero-inner">
+        <h1>Тренерские лицензии ФКР</h1>
+        <p>Реестр лицензированных тренеров Федерации каратэ России. Статусы лицензий, нарушения, сроки действия.</p>
+    </div>
+</section>
+
+<main class="container">
+
+    <!-- Статистика -->
+    <div class="stats-grid" id="statsGrid">
+        <div class="stat-card">
+            <div class="stat-num" id="statTotal">—</div>
+            <div class="stat-label">Всего тренеров</div>
+        </div>
+        <div class="stat-card active">
+            <div class="stat-num" id="statActive">—</div>
+            <div class="stat-label">Лицензия активна</div>
+        </div>
+        <div class="stat-card warning">
+            <div class="stat-num" id="statWarning">—</div>
+            <div class="stat-label">Предупреждение / Сикаку</div>
+        </div>
+        <div class="stat-card danger">
+            <div class="stat-num" id="statDanger">—</div>
+            <div class="stat-label">Лишение / Просрочено</div>
+        </div>
+    </div>
+
+    <!-- Фильтры и поиск -->
+    <div class="filters-bar">
+        <button class="filter-pill active" data-filter="all" onclick="setFilter('all')">Все</button>
+        <button class="filter-pill" data-filter="Активна" onclick="setFilter('Активна')">Лицензия активна</button>
+        <button class="filter-pill" data-filter="Предупреждение" onclick="setFilter('Предупреждение')">Предупреждение</button>
+        <button class="filter-pill" data-filter="Сикаку" onclick="setFilter('Сикаку')">Сикаку</button>
+        <button class="filter-pill" data-filter="Лишение" onclick="setFilter('Лишение')">Лишение</button>
+        <button class="filter-pill" data-filter="Просрочена" onclick="setFilter('Просрочена')">Просрочено</button>
+        <div class="search-wrap">
+            <input type="text" id="searchInput" placeholder="Поиск по ФИО или региону..." oninput="onSearch()">
+        </div>
+    </div>
+
+    <!-- Таблица -->
+    <div class="licenses-table-wrap">
+        <table class="licenses-table" id="licensesTable">
+            <thead>
+                <tr>
+                    <th>ФИО</th>
+                    <th>Регион</th>
+                    <th>Место сдачи</th>
+                    <th>Дата начала</th>
+                    <th>Дата окончания</th>
+                    <th>Статус</th>
+                    <th>Осталось дней</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="7" style="text-align:center;color:#888;padding:40px;">Загрузка данных...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Пагинация -->
+    <div class="pagination-bar" id="paginationBar"></div>
+
+    <!-- Документы -->
+    <div class="docs-section">
+        <h2 class="section-title">Нормативные документы</h2>
+        <a href="docs/polozhenie-o-licenzirovanii-trenerov-fkr.pdf" class="doc-link" target="_blank">
+            <div class="doc-icon">PDF</div>
+            <div class="doc-info">
+                <h4>Положение о лицензировании тренеров ФКР</h4>
+                <p>Официальный документ, регламентирующий порядок выдачи и аннулирования тренерских лицензий.</p>
+            </div>
+        </a>
+        <a href="docs/instrukciya-registraciya-trenerov-judge-wkf.pdf" class="doc-link" target="_blank">
+            <div class="doc-icon">PDF</div>
+            <div class="doc-info">
+                <h4>Инструкция для регистрации тренеров на Judge-WKF</h4>
+                <p>Пошаговое руководство по регистрации тренеров в международной системе Judge-WKF.</p>
+            </div>
+        </a>
+    </div>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-logo">Федерация каратэ России</div>
+  <div class="footer-links">
+    <a href="./index.html">Главная</a>
+    <a href="./documents.html">Документы</a>
+    <a href="./registry.html">Реестр судей</a>
+    <a href="./tournaments.html">Турниры</a>
+    <a href="./protocols.html">Протоколы</a>
+    <a href="./rules.html">Правила WKF</a>
+    <a href="./licenses.html">Тренерские лицензии</a>
+    <a href="./prisvoenie/" target="_blank" rel="noopener">Присвоение категории</a>
+    <a href="./privacy.html">Персональные данные</a>
+  </div>
+  <p>© 2026 Судейский комитет ФКР. Все права защищены.</p>
+</footer>
+
+<!-- Модальное окно -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h2 id="modalTitle">ФИО</h2>
+            <div class="modal-sub" id="modalSub">Регион</div>
+            <button class="modal-close" onclick="closeModal()" aria-label="Закрыть">×</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+    </div>
+</div>
+
+<script>
+/* ---------- Общие утилиты ---------- */
+function toggleMenu() {
+    document.getElementById('mainNav').classList.toggle('open');
+}
+function esc(t) {
+    if (t == null) return '';
+    const d = document.createElement('div');
+    d.textContent = t;
+    return d.innerHTML;
+}
+
+/* ---------- Дата и CSV ---------- */
+function parseDate(str) {
+    if (!str) return null;
+    const s = String(str).trim();
+    let m = s.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+    if (m) return new Date(+m[3], +m[2] - 1, +m[1]);
+    m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+    if (m) return new Date(+m[1], +m[2] - 1, +m[3]);
+    m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (m) return new Date(+m[3], +m[2] - 1, +m[1]);
+    const d = new Date(s);
+    return isNaN(d.getTime()) ? null : d;
+}
+
+function formatDate(d) {
+    if (!d || isNaN(d.getTime())) return '—';
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const yyyy = d.getFullYear();
+    return dd + '.' + mm + '.' + yyyy;
+}
+
+function addMonths(date, months) {
+    const d = new Date(date);
+    d.setMonth(d.getMonth() + months);
+    return d;
+}
+
+function daysBetween(a, b) {
+    const msPerDay = 86400000;
+    return Math.floor((b - a) / msPerDay);
+}
+
+function parseCSV(text, delimiter = ';') {
+    const clean = text.replace(/^\uFEFF/, '');
+    const lines = clean.split(/\r?\n/);
+    if (lines.length === 0) return { headers: [], rows: [] };
+    const headers = lines[0].split(delimiter).map(h => h.trim());
+    const rows = [];
+    for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+        const parts = line.split(delimiter);
+        const obj = {};
+        headers.forEach((h, idx) => {
+            obj[h] = parts[idx] !== undefined ? parts[idx].trim() : '';
+        });
+        rows.push(obj);
+    }
+    return { headers, rows };
+}
+
+/* ---------- Состояние ---------- */
+let allCoaches = [];
+let filteredCoaches = [];
+let currentPage = 1;
+const perPage = 50;
+let currentFilter = 'all';
+let searchQuery = '';
+
+/* ---------- Загрузка ---------- */
+document.addEventListener('DOMContentLoaded', () => {
+    loadLicenses();
+});
+
+async function loadLicenses() {
+    try {
+        const res = await fetch('data/licenses.csv?v=' + Date.now());
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const text = await res.text();
+        const parsed = parseCSV(text, ';');
+        allCoaches = processAllCoaches(parsed.rows);
+        applyFilters();
+    } catch (e) {
+        document.getElementById('tableBody').innerHTML =
+            `<tr><td colspan="7" style="text-align:center;color:#888;padding:40px;">
+                <h3>Не удалось загрузить данные</h3>
+                <p>Проверьте, что файл <code>data/licenses.csv</code> находится рядом с licenses.html.<br>Ошибка: ${esc(e.message)}</p>
+            </td></tr>`;
+        updateStats();
+    }
+}
+
+function processAllCoaches(rows) {
+    const groups = {};
+    rows.forEach(r => {
+        const fio = (r['ФИО'] || '').trim();
+        if (!fio) return;
+        if (!groups[fio]) groups[fio] = [];
+        groups[fio].push(r);
+    });
+    return Object.values(groups).map(records => processPerson(records));
+}
+
+function processPerson(records) {
+    const now = new Date();
+
+    // Все лицензии человека (с датой начала)
+    const licenses = records
+        .map(r => ({
+            place: (r['Место сдачи'] || '').trim(),
+            startDate: parseDate(r['Дата начала лицензии']),
+            region: (r['Регион'] || '').trim()
+        }))
+        .filter(l => l.startDate)
+        .sort((a, b) => b.startDate - a.startDate);
+
+    const latestLicense = licenses[0] || null;
+
+    // Все нарушения из всех записей
+    const violations = [];
+    records.forEach(r => {
+        const suspensionMonths = (r['Срок лишения (мес)'] || '').trim();
+        const suspensionNum = suspensionMonths ? parseInt(suspensionMonths, 10) : NaN;
+        const susp = !isNaN(suspensionNum) && suspensionNum > 0 ? suspensionNum : null;
+
+        const v1Date = parseDate(r['Дата нарушения 1']);
+        const v1Reason = (r['Причина нарушения 1'] || '').trim();
+        if (v1Date || v1Reason) {
+            violations.push({ date: v1Date, reason: v1Reason, suspensionMonths: susp });
+        }
+
+        const v2Date = parseDate(r['Дата нарушения 2']);
+        const v2Reason = (r['Причина нарушения 2'] || '').trim();
+        if (v2Date || v2Reason) {
+            violations.push({ date: v2Date, reason: v2Reason, suspensionMonths: susp });
+        }
+    });
+
+    // Нарушения, которые произошли ПОСЛЕ самой свежей лицензии (или все, если лицензии нет)
+    const activeViolations = violations.filter(v => {
+        if (!v.date) return false;
+        if (!latestLicense) return true;
+        return v.date > latestLicense.startDate;
+    });
+
+    let status = 'Нет данных';
+    let statusClass = 'status-none';
+    let daysLeft = null;
+
+    // Приоритет: Сикаку > Лишение > Предупреждение > Лицензия
+    const hasSikaku = activeViolations.some(v => /сикаку/i.test(v.reason));
+
+    // Самое свежее активное лишение
+    let activeSuspension = null;
+    const suspensions = activeViolations
+        .filter(v => v.suspensionMonths && v.date)
+        .sort((a, b) => b.date - a.date);
+    if (suspensions.length > 0) {
+        const v = suspensions[0];
+        activeSuspension = {
+            months: v.suspensionMonths,
+            endDate: addMonths(v.date, v.suspensionMonths),
+            startDate: v.date
+        };
+    }
+
+    // Активное предупреждение: < 3 месяцев (90 дней) с момента нарушения
+    const hasActiveWarning = activeViolations.some(v => {
+        if (!v.date || /сикаку/i.test(v.reason) || v.suspensionMonths) return false;
+        return daysBetween(v.date, now) < 90;
+    });
+
+    if (hasSikaku) {
+        status = 'Сикаку';
+        statusClass = 'status-sikaku';
+    } else if (activeSuspension) {
+        status = 'Лишение';
+        statusClass = 'status-suspension';
+        daysLeft = daysBetween(now, activeSuspension.endDate);
+    } else if (hasActiveWarning) {
+        status = 'Предупреждение';
+        statusClass = 'status-warning';
+    } else if (latestLicense) {
+        const endDate = addMonths(latestLicense.startDate, 24);
+        daysLeft = daysBetween(now, endDate);
+        if (daysLeft < 0) {
+            status = 'Просрочена';
+            statusClass = 'status-overdue';
+        } else if (daysLeft < 30) {
+            status = 'Критично';
+            statusClass = 'status-critical';
+        } else if (daysLeft <= 60) {
+            status = 'Истекает';
+            statusClass = 'status-expiring';
+        } else {
+            status = 'Активна';
+            statusClass = 'status-active';
+        }
+    }
+
+    return {
+        fio: (records[0]['ФИО'] || '').trim(),
+        region: latestLicense ? latestLicense.region : (records[0]['Регион'] || '').trim(),
+        place: latestLicense ? latestLicense.place : '',
+        startDate: latestLicense ? latestLicense.startDate : null,
+        endDate: latestLicense ? addMonths(latestLicense.startDate, 24) : null,
+        status,
+        statusClass,
+        daysLeft,
+        licenses,
+        violations
+    };
+}
+
+/* ---------- Фильтры и поиск ---------- */
+function applyFilters() {
+    const q = searchQuery.trim().toLowerCase();
+    filteredCoaches = allCoaches.filter(c => {
+        const matchesSearch = !q ||
+            c.fio.toLowerCase().includes(q) ||
+            c.region.toLowerCase().includes(q);
+        const matchesFilter = currentFilter === 'all' || c.status === currentFilter;
+        return matchesSearch && matchesFilter;
+    });
+    currentPage = 1;
+    renderTable();
+    renderPagination();
+    updateStats();
+}
+
+function setFilter(filter) {
+    currentFilter = filter;
+    document.querySelectorAll('.filter-pill').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filter === filter);
+    });
+    applyFilters();
+}
+
+function onSearch() {
+    searchQuery = document.getElementById('searchInput').value;
+    applyFilters();
+}
+
+/* ---------- Статистика ---------- */
+function updateStats() {
+    const total = allCoaches.length;
+    const active = allCoaches.filter(c => c.status === 'Активна' || c.status === 'Истекает' || c.status === 'Критично').length;
+    const warning = allCoaches.filter(c => c.status === 'Предупреждение' || c.status === 'Сикаку').length;
+    const danger = allCoaches.filter(c => c.status === 'Лишение' || c.status === 'Просрочена').length;
+    document.getElementById('statTotal').textContent = total;
+    document.getElementById('statActive').textContent = active;
+    document.getElementById('statWarning').textContent = warning;
+    document.getElementById('statDanger').textContent = danger;
+}
+
+/* ---------- Таблица ---------- */
+function renderTable() {
+    const tbody = document.getElementById('tableBody');
+    if (filteredCoaches.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#888;padding:40px;">Ничего не найдено</td></tr>`;
+        return;
+    }
+    const start = (currentPage - 1) * perPage;
+    const page = filteredCoaches.slice(start, start + perPage);
+    tbody.innerHTML = page.map((c, idx) => `
+        <tr onclick="openModal(${start + idx})">
+            <td>${esc(c.fio) || '—'}</td>
+            <td>${esc(c.region) || '—'}</td>
+            <td>${esc(c.place) || '—'}</td>
+            <td>${formatDate(c.startDate)}</td>
+            <td>${formatDate(c.endDate)}</td>
+            <td><span class="status-badge ${c.statusClass}">${esc(c.status)}</span></td>
+            <td>${c.daysLeft !== null ? c.daysLeft : '—'}</td>
+        </tr>
+    `).join('');
+}
+
+/* ---------- Пагинация ---------- */
+function renderPagination() {
+    const pages = Math.ceil(filteredCoaches.length / perPage);
+    const pag = document.getElementById('paginationBar');
+    if (pages <= 1) { pag.innerHTML = ''; return; }
+
+    let h = `<button onclick="goPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>← Назад</button>`;
+    let s = Math.max(1, currentPage - 3);
+    let e = Math.min(pages, s + 6);
+    if (e - s < 6) s = Math.max(1, e - 6);
+
+    if (s > 1) h += `<button onclick="goPage(1)">1</button>${s > 2 ? '<span style="color:#999;padding:0 4px;">…</span>' : ''}`;
+    for (let i = s; i <= e; i++) {
+        h += `<button class="${i === currentPage ? 'current' : ''}" onclick="goPage(${i})">${i}</button>`;
+    }
+    if (e < pages) {
+        h += `${e < pages - 1 ? '<span style="color:#999;padding:0 4px;">…</span>' : ''}<button onclick="goPage(${pages})">${pages}</button>`;
+    }
+    h += `<button onclick="goPage(${currentPage + 1})" ${currentPage === pages ? 'disabled' : ''}>Вперёд →</button>`;
+    h += `<span class="page-info">Стр. ${currentPage} из ${pages}</span>`;
+    pag.innerHTML = h;
+}
+
+function goPage(p) {
+    const pages = Math.ceil(filteredCoaches.length / perPage);
+    if (p < 1 || p > pages) return;
+    currentPage = p;
+    renderTable();
+    renderPagination();
+    document.querySelector('.licenses-table-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ---------- Модальное окно ---------- */
+function openModal(index) {
+    const c = filteredCoaches[index];
+    if (!c) return;
+    document.getElementById('modalTitle').textContent = c.fio || '—';
+    document.getElementById('modalSub').textContent = (c.region || '—') + (c.place ? ' · Место сдачи: ' + c.place : '');
+
+    let body = `
+        <div class="detail-row"><span class="label">Статус</span><span class="value"><span class="status-badge ${c.statusClass}">${esc(c.status)}</span></span></div>
+    `;
+
+    // Все лицензии
+    if (c.licenses.length > 0) {
+        body += `<div class="modal-section-title">Лицензии</div>`;
+        c.licenses.forEach(l => {
+            const lEnd = addMonths(l.startDate, 24);
+            body += `
+                <div class="violation-item" style="border-left-color: #059669;">
+                    <div class="v-date">${formatDate(l.startDate)} — ${formatDate(lEnd)}</div>
+                    <div class="v-reason">Место сдачи: ${esc(l.place) || '—'}</div>
+                </div>
+            `;
+        });
+    }
+
+    // Все нарушения
+    if (c.violations.length > 0) {
+        body += `<div class="modal-section-title">Нарушения</div>`;
+        c.violations.forEach(v => {
+            const isCovered = c.startDate && v.date && v.date <= c.startDate;
+            const coveredText = isCovered ? ' <span style="color:#059669;font-size:12px;">(перекрыто новой лицензией)</span>' : '';
+            const suspText = v.suspensionMonths ? ` · Срок лишения: ${v.suspensionMonths} мес` : '';
+            body += `
+                <div class="violation-item">
+                    <div class="v-date">${formatDate(v.date) || 'Дата не указана'}${coveredText}</div>
+                    <div class="v-reason">${esc(v.reason) || 'Причина не указана'}${suspText}</div>
+                </div>
+            `;
+        });
+    } else {
+        body += `<div class="modal-section-title">Нарушения</div><div class="no-violations">Нарушений не зафиксировано.</div>`;
+    }
+
+    document.getElementById('modalBody').innerHTML = body;
+    document.getElementById('modalOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal(event) {
+    if (event && event.target !== document.getElementById('modalOverlay')) return;
+    document.getElementById('modalOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+});
+</script>
+
+<!-- ===== Окно согласия с Политикой ПДн ===== -->
+<div id="pdConsent" style="display:none; position:fixed; inset:0; z-index:1000; background:rgba(15,23,42,.55); align-items:center; justify-content:center; padding:16px;">
+  <div style="background:#fff; max-width:520px; width:100%; border-radius:16px; padding:28px 30px; box-shadow:0 20px 60px rgba(0,0,0,.25);">
+    <h3 style="margin:0 0 12px; font-size:1.15rem; color:var(--fk-dark,#1a1a2e);">🔒 Персональные данные</h3>
+    <p style="margin:0 0 18px; font-size:.92rem; color:#555; line-height:1.65;">
+      На сайте Судейского комитета ФКР размещаются персональные данные спортивных судей и тренеров
+      (ФИО, регион, категория) на основаниях, предусмотренных законодательством РФ.
+      Продолжая пользоваться сайтом, вы подтверждаете, что ознакомлены с
+      <a href="./privacy.html" target="_blank" style="color:var(--fk-blue,#1565c0); font-weight:700;">Политикой обработки персональных данных</a>.
+    </p>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <button onclick="pdAccept()" style="flex:1; min-width:200px; padding:13px 18px; border:none; border-radius:10px; background:var(--fk-blue,#1565c0); color:#fff; font-weight:700; font-size:.95rem; cursor:pointer;">Ознакомлен и согласен</button>
+      <a href="./privacy.html" target="_blank" style="padding:13px 18px; border:1px solid #e0e0e0; border-radius:10px; color:var(--fk-blue,#1565c0); font-weight:700; font-size:.95rem; text-decoration:none; text-align:center;">Читать политику</a>
+    </div>
+  </div>
+</div>
+<script>
+(function () {
+    try {
+        if (!localStorage.getItem('pd_consent_v1')) {
+            document.getElementById('pdConsent').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+    } catch (e) {
+        document.getElementById('pdConsent').style.display = 'flex';
+    }
+})();
+function pdAccept() {
+    try { localStorage.setItem('pd_consent_v1', new Date().toISOString()); } catch (e) {}
+    document.getElementById('pdConsent').style.display = 'none';
+    document.body.style.overflow = '';
+}
+</script>
+
+</body>
+</html>
