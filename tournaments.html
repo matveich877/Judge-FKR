@@ -5,186 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Турниры — Судейский комитет ФКР</title>
     <link rel="stylesheet" href="./css/style.css">
-    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=JTGCejwLSN5yyhBCCSf1bys9Kn9XgYSw5DTKNZkLYbzmIy-AhAa07PHNaOM8puui5FtaV1e_l2JsLEFCHP8vvcpWxnEDgnJK12QoFEDCIw0fhUvIkQLK_5LFT6qoERobpt5xjrmCMxJGBV0oRmtwzVMTm0s3BZknsHIFVXOeFN5f_GIyHcYjUxSXRTLVY5ewWrdjQ_icRY7DN7EqxnF6PuAceS3r2oN1YZTh664Gsrkw8lZmIDjintOfDEh7tP1BWE6tNEtzbMnbq3UAmCyZ3s8G30X1Yh_6OhArfEoOv65MkPaW4tjyeP7PjOleIoJbbgEe9yCKsfnZZcCEOzZOQFgtrba_Awh685-_qkV-GKDAu__w1o1BVfkSYvxb00cvcVax7jZzoq9iwBspX7epX3POXNoZmt7kCgw6i-FOdg-mpVhT7Hy3SeY-niV8xfzDRZlVzu6r23NT9dzz1RX4kQ2QbL7iO7QHf0n-lYYQCqJv9oYcjM10_eY7Tn0ef97dMuOb_0GQI7ab6tanehpr4Smxa2W9k9MYlfQKu8Tt37QMOifgkrN8q9VCc6bcmNbRVSrqMyC6ZITFzVKiSYsW64EQEsHqvwct5P2DG092As7H8O-bDyzyv2HXXAvh77x7OssHDu82_iC9vs41KSzU9A" charset="UTF-8"></script><script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=qAY7xnSPla-P7IV5VTweCgjJbaO92pIMv2EE9cghkpZHAzZk0Qqdm1HDIQGT9QV21VnVBSkKmS1eT5fEHTwqYN_OZD6ZU8rK_xGV5y_-kZO1zeFmMVIwXRnktjnSn4omI2GowS_WyPvVxL7a5XixeTSFuquTzKLGYLSViLcs-EF2THtDN2140XCXK6YdDxSZGTicN3mbTGtZP-Cni7qW-OtfhvNbnfY7SZrEnlCR2WZCBj0uuGz7TxPEDCJxvPyHDSPqVVbkgUWXisNDysx9_OZhpAm3yASEUgSNgEBzjZENgyAJRIQe4siipVu3kKaGFIAWjOYxl5hoq1FsT3oaQCE_HB2ioYL8RO2lKtADDyI8BD_nRe73iG20_wErQbvZtc8pAwj4YTfFv7T5aWlBphVEQ2ZUEXoeuUrnXdHB7TRKqn55xWT9n_XE6ps5ysoTSntwrLsRdqeTU8F1M6JQ497RICpNPT7lqrP74p4jcJHjecYtq1p6L1sec3OmFgVb4LMwBFCudVLYct_YdDOgaIUBN2aw1HOX6wzAmOdHyCmjGu9J2STH8G8TFDYho00dIl-ltsUwFDGJcwGqA4uBHbZrgJJBnRGaKvoP626xbnxrG38sJ2HvcVC8B6rJNKA5OxO8mFMl-IBajTaufqsqOQ" charset="UTF-8"></script>
     <style>
-        /* ===== Только функциональные стили, цвета из style.css ===== */
-        .tabs {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 32px;
-            flex-wrap: wrap;
-        }
-        .tab-btn {
-            padding: 10px 24px;
-            background: #fff;
-            border: 1px solid var(--fk-border);
-            font-family: var(--font-body);
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--fk-text-muted);
-            cursor: pointer;
-            transition: all 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            clip-path: polygon(0 0, 100% 0, 100% 80%, 90% 100%, 0 100%);
-        }
+        .tabs { display: flex; gap: 12px; margin-bottom: 32px; flex-wrap: wrap; }
+        .tab-btn { padding: 10px 24px; background: #fff; border: 1px solid var(--fk-border); font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--fk-text-muted); cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; clip-path: polygon(0 0, 100% 0, 100% 80%, 90% 100%, 0 100%); }
         .tab-btn:hover { color: var(--fk-blue); border-color: var(--fk-blue); }
-        .tab-btn.active {
-            background: var(--fk-blue);
-            color: #fff;
-            border-color: var(--fk-blue);
-        }
-
+        .tab-btn.active { background: var(--fk-blue); color: #fff; border-color: var(--fk-blue); }
         .tab-panel { display: none; }
         .tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ===== Карточки турниров ===== */
-        .tournaments-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 28px;
-        }
-        .tournament-card {
-            background: #fff;
-            border-top: 4px solid var(--fk-red);
-            box-shadow: var(--shadow-sm);
-            overflow: hidden;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        .tournament-card:hover {
-            transform: translateY(-6px);
-            box-shadow: var(--shadow-lg);
-            border-top-color: var(--fk-blue);
-        }
-        .tournament-card.expanded {
-            grid-column: 1 / -1;
-            cursor: default;
-        }
+        .tournaments-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 28px; }
+        .tournament-card { background: #fff; border-top: 4px solid var(--fk-red); box-shadow: var(--shadow-sm); overflow: hidden; cursor: pointer; transition: all 0.3s ease; position: relative; }
+        .tournament-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-top-color: var(--fk-blue); }
+        .tournament-card.expanded { grid-column: 1 / -1; cursor: default; }
         .tournament-card.expanded:hover { transform: none; }
 
-        .t-card-header {
-            padding: 28px 32px;
-            background: linear-gradient(135deg, #fff 0%, var(--fk-gray) 100%);
-            border-bottom: 1px solid var(--fk-border);
-        }
-        .t-card-header .status-badge {
-            display: inline-block;
-            background: var(--fk-red);
-            color: #fff;
-            font-size: 11px;
-            font-weight: 700;
-            padding: 5px 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: 12px;
-            clip-path: polygon(0 0, 100% 0, 100% 80%, 88% 100%, 0 100%);
-        }
-        .t-card-header h3 {
-            font-family: var(--font-heading);
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--fk-blue);
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            line-height: 1.3;
-        }
-        .t-card-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            font-size: 14px;
-            color: var(--fk-text-muted);
-        }
+        .t-card-header { padding: 28px 32px; background: linear-gradient(135deg, #fff 0%, var(--fk-gray) 100%); border-bottom: 1px solid var(--fk-border); }
+        .t-card-header .status-badge { display: inline-block; background: var(--fk-red); color: #fff; font-size: 11px; font-weight: 700; padding: 5px 14px; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px; clip-path: polygon(0 0, 100% 0, 100% 80%, 88% 100%, 0 100%); }
+        .t-card-header h3 { font-family: var(--font-heading); font-size: 20px; font-weight: 700; color: var(--fk-blue); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.3; }
+        .t-card-meta { display: flex; flex-wrap: wrap; gap: 20px; font-size: 14px; color: var(--fk-text-muted); }
         .t-card-meta span { display: flex; align-items: center; gap: 6px; }
+        .pdf-link { display: inline-flex; align-items: center; gap: 4px; color: var(--fk-red); font-size: 13px; font-weight: 700; text-decoration: none; padding: 4px 10px; background: #fff; border: 1px solid var(--fk-red); transition: all 0.2s; }
+        .pdf-link:hover { background: var(--fk-red); color: #fff; }
 
-        .t-card-stats {
-            display: flex;
-            gap: 24px;
-            padding: 18px 32px;
-            background: var(--fk-gray);
-            border-bottom: 1px solid var(--fk-border);
-        }
+        .t-card-stats { display: flex; gap: 24px; padding: 18px 32px; background: var(--fk-gray); border-bottom: 1px solid var(--fk-border); }
         .t-stat { text-align: center; }
-        .t-stat .num {
-            font-family: var(--font-heading);
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--fk-blue);
-        }
-        .t-stat .lbl {
-            font-size: 11px;
-            color: var(--fk-text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
-        }
+        .t-stat .num { font-family: var(--font-heading); font-size: 28px; font-weight: 700; color: var(--fk-blue); }
+        .t-stat .lbl { font-size: 11px; color: var(--fk-text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
 
-        .t-card-body {
-            padding: 24px 32px;
-            display: none;
-        }
+        .t-card-body { padding: 24px 32px; display: none; }
         .tournament-card.expanded .t-card-body { display: block; }
-        .t-card-body .close-btn {
-            float: right;
-            background: var(--fk-gray);
-            border: none;
-            width: 36px; height: 36px;
-            font-family: var(--font-heading);
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--fk-text-muted);
-            cursor: pointer;
-            transition: 0.2s;
-            clip-path: polygon(0 0, 100% 0, 100% 80%, 80% 100%, 0 100%);
-        }
+        .t-card-body .close-btn { float: right; background: var(--fk-gray); border: none; width: 36px; height: 36px; font-family: var(--font-heading); font-size: 18px; font-weight: 700; color: var(--fk-text-muted); cursor: pointer; transition: 0.2s; clip-path: polygon(0 0, 100% 0, 100% 80%, 80% 100%, 0 100%); }
         .t-card-body .close-btn:hover { background: var(--fk-red); color: #fff; }
 
-        /* ===== Таблица судей ===== */
-        .judges-table-wrap {
-            overflow-x: auto;
-            box-shadow: var(--shadow-sm);
-            margin-top: 20px;
-        }
-        .judges-table-wrap table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #fff;
-            font-size: 14px;
-        }
-        .judges-table-wrap thead {
-            background: linear-gradient(135deg, var(--fk-blue), #1A2B5C);
-            color: #fff;
-        }
-        .judges-table-wrap th {
-            padding: 14px 16px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            white-space: nowrap;
-        }
-        .judges-table-wrap td {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--fk-border);
-            vertical-align: middle;
-        }
+        .judges-table-wrap { overflow-x: auto; box-shadow: var(--shadow-sm); margin-top: 20px; }
+        .judges-table-wrap table { width: 100%; border-collapse: collapse; background: #fff; font-size: 14px; }
+        .judges-table-wrap thead { background: linear-gradient(135deg, var(--fk-blue), #1A2B5C); color: #fff; }
+        .judges-table-wrap th { padding: 14px 16px; text-align: left; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; white-space: nowrap; }
+        .judges-table-wrap td { padding: 12px 16px; border-bottom: 1px solid var(--fk-border); vertical-align: middle; }
         .judges-table-wrap tbody tr:hover td { background: #f8f9fa; }
         .judges-table-wrap tbody tr:last-child td { border-bottom: none; }
 
-        .badge-t {
-            display: inline-block;
-            padding: 4px 12px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            clip-path: polygon(0 0, 100% 0, 100% 80%, 88% 100%, 0 100%);
-        }
+        .badge-t { display: inline-block; padding: 4px 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; clip-path: polygon(0 0, 100% 0, 100% 80%, 88% 100%, 0 100%); }
         .badge-t-ssvk { background: #fff3cd; color: #856404; }
         .badge-t-1k { background: #d1ecf1; color: #0c5460; }
         .badge-t-2k { background: #d4edda; color: #155724; }
@@ -194,222 +56,44 @@
         .score-4 { color: #d97706; }
         .score-null { color: #bbb; }
 
-        .filters-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 16px;
-            align-items: center;
-        }
-        .filters-row input, .filters-row select {
-            padding: 10px 14px;
-            border: 1px solid var(--fk-border);
-            font-family: var(--font-body);
-            font-size: 14px;
-            outline: none;
-            transition: border-color 0.2s;
-            min-width: 220px;
-        }
+        .filters-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; align-items: center; }
+        .filters-row input, .filters-row select { padding: 10px 14px; border: 1px solid var(--fk-border); font-family: var(--font-body); font-size: 14px; outline: none; transition: border-color 0.2s; min-width: 220px; }
         .filters-row input:focus, .filters-row select:focus { border-color: var(--fk-blue); }
 
-        .signatures-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 24px;
-            margin-top: 24px;
-            padding-top: 20px;
-            border-top: 2px solid var(--fk-red);
-        }
-        .sig-block .sig-title {
-            font-size: 12px;
-            text-transform: uppercase;
-            color: var(--fk-text-muted);
-            letter-spacing: 0.8px;
-            font-weight: 600;
-        }
-        .sig-block .sig-name {
-            font-family: var(--font-heading);
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--fk-blue);
-            margin-top: 6px;
-            text-transform: uppercase;
-        }
-        .sig-block .sig-cat {
-            font-size: 14px;
-            color: var(--fk-red);
-            font-weight: 700;
-        }
+        .signatures-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-top: 24px; padding-top: 20px; border-top: 2px solid var(--fk-red); }
+        .sig-block .sig-title { font-size: 12px; text-transform: uppercase; color: var(--fk-text-muted); letter-spacing: 0.8px; font-weight: 600; }
+        .sig-block .sig-name { font-family: var(--font-heading); font-size: 18px; font-weight: 700; color: var(--fk-blue); margin-top: 6px; text-transform: uppercase; }
+        .sig-block .sig-cat { font-size: 14px; color: var(--fk-red); font-weight: 700; }
 
-        /* ===== Поиск судьи ===== */
-        .search-box {
-            background: #fff;
-            padding: 32px;
-            border-top: 4px solid var(--fk-blue);
-            box-shadow: var(--shadow-sm);
-            margin-bottom: 28px;
-        }
-        .search-input-wrap {
-            position: relative;
-            max-width: 500px;
-        }
-        .search-input-wrap input {
-            width: 100%;
-            padding: 14px 18px 14px 48px;
-            border: 2px solid var(--fk-border);
-            font-family: var(--font-body);
-            font-size: 15px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
+        .search-box { background: #fff; padding: 32px; border-top: 4px solid var(--fk-blue); box-shadow: var(--shadow-sm); margin-bottom: 28px; }
+        .search-input-wrap { position: relative; max-width: 500px; }
+        .search-input-wrap input { width: 100%; padding: 14px 18px 14px 48px; border: 2px solid var(--fk-border); font-family: var(--font-body); font-size: 15px; outline: none; transition: border-color 0.2s; }
         .search-input-wrap input:focus { border-color: var(--fk-blue); }
-        .search-input-wrap::before {
-            content: "🔍";
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 1.2rem;
-        }
-        .search-hint {
-            margin-top: 12px;
-            font-size: 14px;
-            color: var(--fk-text-muted);
-        }
+        .search-input-wrap::before { content: "🔍"; position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 1.2rem; }
+        .search-hint { margin-top: 12px; font-size: 14px; color: var(--fk-text-muted); }
 
-        .judge-results {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 28px;
-        }
-        .judge-result-card {
-            background: #fff;
-            border-top: 4px solid var(--fk-red);
-            box-shadow: var(--shadow-sm);
-            padding: 28px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .judge-result-card:hover {
-            transform: translateY(-6px);
-            box-shadow: var(--shadow-lg);
-            border-top-color: var(--fk-blue);
-        }
-        .judge-result-card .j-name {
-            font-family: var(--font-heading);
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--fk-blue);
-            margin-bottom: 8px;
-            text-transform: uppercase;
-        }
-        .judge-result-card .j-meta {
-            font-size: 14px;
-            color: var(--fk-text-muted);
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            align-items: center;
-        }
-        .judge-result-card .j-count {
-            margin-top: 12px;
-            font-size: 14px;
-            color: var(--fk-blue);
-            font-weight: 700;
-        }
+        .judge-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 28px; }
+        .judge-result-card { background: #fff; border-top: 4px solid var(--fk-red); box-shadow: var(--shadow-sm); padding: 28px; cursor: pointer; transition: all 0.3s ease; }
+        .judge-result-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-top-color: var(--fk-blue); }
+        .judge-result-card .j-name { font-family: var(--font-heading); font-size: 20px; font-weight: 700; color: var(--fk-blue); margin-bottom: 8px; text-transform: uppercase; }
+        .judge-result-card .j-meta { font-size: 14px; color: var(--fk-text-muted); display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+        .judge-result-card .j-count { margin-top: 12px; font-size: 14px; color: var(--fk-blue); font-weight: 700; }
 
-        .judge-detail {
-            background: #fff;
-            border-top: 4px solid var(--fk-blue);
-            box-shadow: var(--shadow-sm);
-            padding: 32px;
-            margin-top: 24px;
-        }
-        .judge-detail .back-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            background: var(--fk-gray);
-            border: 1px solid var(--fk-border);
-            font-family: var(--font-body);
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--fk-text);
-            cursor: pointer;
-            transition: 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            clip-path: polygon(0 0, 100% 0, 100% 80%, 90% 100%, 0 100%);
-            margin-bottom: 24px;
-        }
+        .judge-detail { background: #fff; border-top: 4px solid var(--fk-blue); box-shadow: var(--shadow-sm); padding: 32px; margin-top: 24px; }
+        .judge-detail .back-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: var(--fk-gray); border: 1px solid var(--fk-border); font-family: var(--font-body); font-size: 13px; font-weight: 700; color: var(--fk-text); cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 0.5px; clip-path: polygon(0 0, 100% 0, 100% 80%, 90% 100%, 0 100%); margin-bottom: 24px; }
         .judge-detail .back-btn:hover { background: var(--fk-blue); color: #fff; border-color: var(--fk-blue); }
-        .judge-detail h2 {
-            font-family: var(--font-heading);
-            font-size: 28px;
-            color: var(--fk-blue);
-            margin-bottom: 6px;
-            text-transform: uppercase;
-        }
+        .judge-detail h2 { font-family: var(--font-heading); font-size: 28px; color: var(--fk-blue); margin-bottom: 6px; text-transform: uppercase; }
         .judge-detail .j-cat { margin-bottom: 24px; }
-        .history-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        .history-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 24px;
-            background: var(--fk-gray);
-            border-left: 4px solid var(--fk-red);
-            transition: all 0.2s;
-        }
-        .history-item:hover {
-            background: #fff;
-            box-shadow: var(--shadow-sm);
-            border-left-color: var(--fk-blue);
-        }
+        .history-list { display: flex; flex-direction: column; gap: 16px; }
+        .history-item { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; background: var(--fk-gray); border-left: 4px solid var(--fk-red); transition: all 0.2s; }
+        .history-item:hover { background: #fff; box-shadow: var(--shadow-sm); border-left-color: var(--fk-blue); }
         .history-item .h-info { flex: 1; }
-        .history-item .h-title {
-            font-family: var(--font-heading);
-            font-weight: 700;
-            color: var(--fk-blue);
-            font-size: 18px;
-            text-transform: uppercase;
-        }
-        .history-item .h-meta {
-            font-size: 14px;
-            color: var(--fk-text-muted);
-            margin-top: 4px;
-        }
-        .history-item .h-role {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--fk-blue);
-            background: rgba(15,31,74,0.08);
-            padding: 5px 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            white-space: nowrap;
-            clip-path: polygon(0 0, 100% 0, 100% 80%, 88% 100%, 0 100%);
-        }
-        .history-item .h-score {
-            font-size: 14px;
-            font-weight: 700;
-            margin-left: 12px;
-            font-family: var(--font-heading);
-        }
+        .history-item .h-title { font-family: var(--font-heading); font-weight: 700; color: var(--fk-blue); font-size: 18px; text-transform: uppercase; }
+        .history-item .h-meta { font-size: 14px; color: var(--fk-text-muted); margin-top: 4px; }
+        .history-item .h-role { font-size: 13px; font-weight: 700; color: var(--fk-blue); background: rgba(15,31,74,0.08); padding: 5px 14px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; clip-path: polygon(0 0, 100% 0, 100% 80%, 88% 100%, 0 100%); }
+        .history-item .h-score { font-size: 14px; font-weight: 700; margin-left: 12px; font-family: var(--font-heading); }
 
-        .no-results {
-            text-align: center;
-            padding: 48px;
-            color: var(--fk-text-muted);
-            font-size: 16px;
-            background: var(--fk-gray);
-            border-top: 4px solid var(--fk-red);
-        }
+        .no-results { text-align: center; padding: 48px; color: var(--fk-text-muted); font-size: 16px; background: var(--fk-gray); border-top: 4px solid var(--fk-red); }
 
         @media (max-width: 768px) {
             .tournaments-grid { grid-template-columns: 1fr; }
@@ -436,9 +120,11 @@
       <a href="./index.html">Главная</a>
       <a href="./documents.html">Документы</a>
       <a href="./registry.html">Реестр судей</a>
+      <a href="./prisvoenie/">Присвоение категории</a>
       <a href="./tournaments.html" class="active">Турниры</a>
       <a href="./protocols.html">Протоколы</a>
       <a href="./rules.html">Правила WKF</a>
+      <a href="./licenses.html">Тренерские лицензии</a>
     </nav>
   </div>
 </header>
@@ -459,6 +145,7 @@
 
     <div class="tab-panel active" id="panel-list">
         <div class="tournaments-grid" id="tournamentsGrid"></div>
+        <div class="pagination-bar" id="tournamentsPagination" style="display:flex;justify-content:center;gap:6px;padding:16px 0;flex-wrap:wrap;"></div>
     </div>
 
     <div class="tab-panel" id="panel-search">
@@ -482,38 +169,123 @@
     <a href="./tournaments.html">Турниры</a>
     <a href="./protocols.html">Протоколы</a>
     <a href="./rules.html">Правила WKF</a>
+    <a href="./licenses.html">Тренерские лицензии</a>
+    <a href="./prisvoenie/">Присвоение категории</a>
+    <a href="./privacy.html">Персональные данные</a>
   </div>
   <p>© 2026 Судейский комитет ФКР. Все права защищены.</p>
 </footer>
 
-<script src="./js/registry.js"></script>
 <script>
+/* CSV парсер (разделитель ;, поддержка кавычек) */
+function parseCSV(text) {
+  text = text.replace(/^\uFEFF/, '');
+  const lines = text.split(/\r?\n/).filter(l => l.trim() !== '');
+  if (lines.length === 0) return [];
+  const headers = parseLine(lines[0]).map(h => h.trim());
+  const rows = [];
+  for (let i = 1; i < lines.length; i++) {
+    const values = parseLine(lines[i]);
+    if (values.length === 0) continue;
+    const row = {};
+    headers.forEach((h, j) => { row[h] = (values[j] || '').trim(); });
+    rows.push(row);
+  }
+  return rows;
+}
+function parseLine(line) {
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    if (char === '"') {
+      if (inQuotes && line[i + 1] === '"') { current += '"'; i++; }
+      else { inQuotes = !inQuotes; }
+    } else if (char === ';' && !inQuotes) {
+      result.push(current);
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  result.push(current);
+  return result;
+}
+
+/* Авто-определение статуса по названию */
+function detectStatus(title) {
+  const t = title.toLowerCase();
+  if (t.includes('чемпионат россии')) return 'Чемпионат России';
+  if (t.includes('кубок россии')) return 'Кубок России';
+  if (t.includes('первенство россии')) return 'Первенство России';
+  if (t.includes('всероссийск')) return 'Всероссийские';
+  if (t.includes('международн')) return 'Международные';
+  if (t.includes('межрегиональн')) return 'Межрегиональные';
+  if (t.includes('региональн') || t.includes('област') || t.includes('край') || t.includes('округ') || t.includes('город')) return 'Региональные';
+  return 'Всероссийские';
+}
+
+/* Авто-генерация short_title */
+function makeShortTitle(title) {
+  if (!title) return '';
+  const cleaned = title.replace(/по каратэ/gi, '').replace(/среди .*/gi, '').trim();
+  if (cleaned.length <= 40) return cleaned;
+  const words = cleaned.split(/\s+/);
+  let result = '';
+  for (const w of words) {
+    if ((result + ' ' + w).trim().length > 45) break;
+    result = result ? result + ' ' + w : w;
+  }
+  return result || cleaned.substring(0, 40) + '…';
+}
+
+/* Генерация tournament_id */
+function slugify(text) {
+  const trans = {
+    'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'e','ж':'zh','з':'z','и':'i','й':'y','к':'k','л':'l','м':'m',
+    'н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f','х':'h','ц':'ts','ч':'ch','ш':'sh','щ':'sch','ъ':'',
+    'ы':'y','ь':'','э':'e','ю':'yu','я':'ya'
+  };
+  let result = '';
+  for (const ch of text.toLowerCase()) {
+    result += trans[ch] || (ch.match(/[a-z0-9]/) ? ch : '-');
+  }
+  return result.replace(/-+/g, '-').replace(/^-|-$/g, '');
+}
+
+function extractYear(datesStr) {
+  const m = datesStr.match(/(20\d{2})/);
+  return m ? m[1] : '';
+}
+
 let tournaments = [];
 let judgesIndex = {};
+let currentPage = 1;
+const tournamentsPerPage = 6;
 
 document.addEventListener('DOMContentLoaded', () => {
-    Papa.parse('data/tournaments.csv', {
-        download: true,
-        header: true,
-        skipEmptyLines: true,
-        delimiter: ';',
-        encoding: "UTF-8",
-        complete: function(results) {
-            const rows = results.data.filter(r => r.tournament_id && r.tournament_id.trim() !== '');
-            buildTournaments(rows);
+    fetch('data/tournaments-grouped.json?v=' + Date.now())
+        .then(r => {
+            if (!r.ok) throw new Error('Файл не найден: ' + r.status);
+            return r.json();
+        })
+        .then(data => {
+            if (!Array.isArray(data) || !data.length) throw new Error('JSON пустой');
+            tournaments = data;
+            tournaments.sort((a, b) => parseTournamentDate(b.dates) - parseTournamentDate(a.dates));
             buildJudgesIndex();
             renderTournamentsList();
-        },
-        error: function(err) {
+        })
+        .catch(err => {
             document.getElementById('tournamentsGrid').innerHTML = `
                 <div class="no-results" style="grid-column:1/-1;">
                     <h3>Не удалось загрузить данные</h3>
-                    <p>Проверьте, что файл <code>data/tournaments.csv</code> находится рядом с tournaments.html</p>
+                    <p>Проверьте, что файл <code>data/tournaments-grouped.json</code> находится рядом с tournaments.html</p>
+                    <p style="font-size:12px;color:#999;">${esc(err.message)}</p>
                 </div>`;
-        }
-    });
+        });
 });
-
 
 function parseTournamentDate(dateStr) {
     const months = {
@@ -532,28 +304,41 @@ function parseTournamentDate(dateStr) {
 function buildTournaments(rows) {
     const map = {};
     rows.forEach(r => {
-        const id = r.tournament_id.trim();
+        const id = (r.tournament_id || '').trim();
+        if (!id) return;
+        const rawTitle = (r.title || '').trim();
+        const rawShort = (r.short_title || '').trim();
+        const rawStatus = (r.status || '').trim();
+        const rawDates = (r.dates || '').trim();
+        
+        const title = rawTitle || id;
+        const shortTitle = rawShort || makeShortTitle(rawTitle) || title;
+        const status = rawStatus || detectStatus(title);
+        const year = extractYear(rawDates);
+        const generatedId = id || (slugify(title) + (year ? '-' + year : ''));
+
         if (!map[id]) {
             map[id] = {
                 id: id,
-                title: r.title.trim(),
-                shortTitle: r.short_title.trim(),
-                status: r.status.trim(),
-                location: r.location.trim(),
-                dates: r.dates.trim(),
-                ageGroups: r.age_groups.trim(),
-                chiefJudge: { name: r.chief_judge.trim(), category: r.chief_judge_cat.trim(), region: r.chief_judge_region.trim() },
-                chiefSecretary: { name: r.chief_secretary.trim(), category: r.chief_sec_cat.trim(), region: r.chief_sec_region.trim() },
+                title: title,
+                shortTitle: shortTitle,
+                status: status,
+                location: (r.location || '').trim(),
+                dates: rawDates,
+                ageGroups: (r.age_groups || '').trim(),
+                pdfLink: (r.pdf_link || '').trim(),
+                chiefJudge: { name: (r.chief_judge || '').trim(), category: (r.chief_judge_cat || '').trim(), region: (r.chief_judge_region || '').trim() },
+                chiefSecretary: { name: (r.chief_secretary || '').trim(), category: (r.chief_sec_cat || '').trim(), region: (r.chief_sec_region || '').trim() },
                 judges: []
             };
         }
         map[id].judges.push({
             num: parseInt(r.num) || 0,
-            name: r.name.trim(),
-            role: r.role.trim(),
-            category: r.category.trim(),
-            region: r.region.trim(),
-            score: r.score.trim() === '' ? null : parseInt(r.score)
+            name: (r.name || '').trim(),
+            role: (r.role || '').trim(),
+            category: (r.category || '').trim(),
+            region: (r.region || '').trim(),
+            score: (r.score || '').trim() === '' ? null : parseInt(r.score)
         });
     });
     tournaments = Object.values(map);
@@ -589,9 +374,39 @@ function renderTournamentsList() {
     const grid = document.getElementById('tournamentsGrid');
     if (tournaments.length === 0) {
         grid.innerHTML = '<div class="no-results">Турниров пока нет</div>';
+        document.getElementById('tournamentsPagination').innerHTML = '';
         return;
     }
-    grid.innerHTML = tournaments.map(t => renderTournamentCard(t)).join('');
+    const start = (currentPage - 1) * tournamentsPerPage;
+    const page = tournaments.slice(start, start + tournamentsPerPage);
+    grid.innerHTML = page.map(t => renderTournamentCard(t)).join('');
+    renderTournamentsPagination();
+}
+
+function renderTournamentsPagination() {
+    const pages = Math.ceil(tournaments.length / tournamentsPerPage);
+    const pag = document.getElementById('tournamentsPagination');
+    if (pages <= 1) { pag.innerHTML = ''; return; }
+
+    let h = `<button onclick="goTournamentsPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>← Назад</button>`;
+    let s = Math.max(1, currentPage - 3);
+    let e = Math.min(pages, s + 6);
+    if (e - s < 6) s = Math.max(1, e - 6);
+
+    if (s > 1) h += `<button onclick="goTournamentsPage(1)">1</button>${s > 2 ? '<span style="color:#999;padding:0 4px;">…</span>' : ''}`;
+    for (let i = s; i <= e; i++) h += `<button class="${i === currentPage ? 'active' : ''}" onclick="goTournamentsPage(${i})">${i}</button>`;
+    if (e < pages) h += `${e < pages - 1 ? '<span style="color:#999;padding:0 4px;">…</span>' : ''}<button onclick="goTournamentsPage(${pages})">${pages}</button>`;
+    h += `<button onclick="goTournamentsPage(${currentPage + 1})" ${currentPage === pages ? 'disabled' : ''}>Вперёд →</button>`;
+    h += `<span style="font-size:13px;color:#666;margin-left:8px;">Стр. ${currentPage} из ${pages}</span>`;
+    pag.innerHTML = h;
+}
+
+function goTournamentsPage(p) {
+    const pages = Math.ceil(tournaments.length / tournamentsPerPage);
+    if (p < 1 || p > pages) return;
+    currentPage = p;
+    renderTournamentsList();
+    document.getElementById('tournamentsGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function renderTournamentCard(t) {
@@ -607,6 +422,7 @@ function renderTournamentCard(t) {
             <div class="t-card-meta">
                 <span>📅 ${esc(t.dates)}</span>
                 <span>📍 ${esc(t.location)}</span>
+                ${t.pdfLink ? `<a href="${esc(t.pdfLink)}" target="_blank" class="pdf-link" onclick="event.stopPropagation();">📄 PDF</a>` : ''}
             </div>
         </div>
         <div class="t-card-stats">
@@ -768,6 +584,40 @@ function esc(t) {
 }
 function toggleMenu() {
     document.getElementById('mainNav').classList.toggle('open');
+}
+</script>
+
+<!-- ===== Окно согласия с Политикой ПДн ===== -->
+<div id="pdConsent" style="display:none; position:fixed; inset:0; z-index:1000; background:rgba(15,23,42,.55); align-items:center; justify-content:center; padding:16px;">
+  <div style="background:#fff; max-width:520px; width:100%; border-radius:16px; padding:28px 30px; box-shadow:0 20px 60px rgba(0,0,0,.25);">
+    <h3 style="margin:0 0 12px; font-size:1.15rem; color:var(--fk-dark,#1a1a2e);">🔒 Персональные данные</h3>
+    <p style="margin:0 0 18px; font-size:.92rem; color:#555; line-height:1.65;">
+      На сайте Судейского комитета ФКР размещаются персональные данные спортивных судей и тренеров
+      (ФИО, регион, категория) на основаниях, предусмотренных законодательством РФ.
+      Продолжая пользоваться сайтом, вы подтверждаете, что ознакомлены с
+      <a href="./privacy.html" target="_blank" style="color:var(--fk-blue,#1565c0); font-weight:700;">Политикой обработки персональных данных</a>.
+    </p>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <button onclick="pdAccept()" style="flex:1; min-width:200px; padding:13px 18px; border:none; border-radius:10px; background:var(--fk-blue,#1565c0); color:#fff; font-weight:700; font-size:.95rem; cursor:pointer;">Ознакомлен и согласен</button>
+      <a href="./privacy.html" target="_blank" style="padding:13px 18px; border:1px solid #e0e0e0; border-radius:10px; color:var(--fk-blue,#1565c0); font-weight:700; font-size:.95rem; text-decoration:none; text-align:center;">Читать политику</a>
+    </div>
+  </div>
+</div>
+<script>
+(function () {
+    try {
+        if (!localStorage.getItem('pd_consent_v1')) {
+            document.getElementById('pdConsent').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+    } catch (e) {
+        document.getElementById('pdConsent').style.display = 'flex';
+    }
+})();
+function pdAccept() {
+    try { localStorage.setItem('pd_consent_v1', new Date().toISOString()); } catch (e) {}
+    document.getElementById('pdConsent').style.display = 'none';
+    document.body.style.overflow = '';
 }
 </script>
 

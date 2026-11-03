@@ -3,28 +3,56 @@
     "title": "Правила WKF 2026 — КАТА",
     "desc": "Официальная редакция правил по ката Всемирной федерации каратэ, вступившие в силу с 1 января 2026 года.",
     "date": "01.01.2026",
-    "size": "PDF",
-    "url": "./docs/ПРАВИЛА-WKF-KATA-2026-Утвержденные.pdf"
+    "size": "",
+    "url": "https://disk.yandex.ru/i/-Na6BGGmFTkdCg"
   },
   {
     "title": "Правила WKF 2026 - КУМИТЭ",
     "desc": "Официальная редакция правил по кумитэ Всемирной федерации каратэ, вступившие в силу с 1 января 2026 года.",
     "date": "01.01.2026",
-    "size": "PDF",
-    "url": "./docs/ПРАВИЛА-WKF-KUMITE-2026-Утвержденные.pdf"
+    "size": "",
+    "url": "https://disk.yandex.ru/i/RLyR6XTO-lay6A"
   },
-     {
-    "title": "Вопросы по кумитэ 2026 — русская версия",
+  {
+    "title": "Вопросы по КАТА 2026",
     "desc": "Официальный перевод одобренный Судейским комитетом Федерации каратэ России, вступивший в силу с 1 января 2026 года.",
-    "date": "01.01.2026",
-    "size": "PDF",
-    "url": "./docs/Вопросы_по_КУМИТЭ_2026.pdf"
+    "date": "01.10.2026",
+    "size": "",
+    "url": "https://disk.yandex.ru/i/-lQLv6veAqq4MA"
   },
-      {
-    "title": "Вопросы по кумитэ 2026 — английская версия",
-    "desc": "Examination Questions for Kumite Referees and Judges. Version 1st December 2025",
-    "date": "01.12.2025",
-    "size": "PDF",
-    "url": "./docs/Вопросы_по_КУМИТЭ_ENG.pdf"
+  {
+    "title": "Вопросы по КУМИТЭ 2026",
+    "desc": "Официальный перевод одобренный Судейским комитетом Федерации каратэ России, вступивший в силу с 1 января 2026 года.",
+    "date": "01.10.2026",
+    "size": "",
+    "url": "https://disk.yandex.ru/i/r0dH1cT4-8kssA"
+  },
+  {
+    "title": "Правила вида спорта Каратэ",
+    "desc": "",
+    "date": "01.10.2026",
+    "size": "",
+    "url": "https://disk.yandex.ru/i/l1Ped4p0hIGUVQ"
+  },
+  {
+    "title": "WKF 2026 Kumite Competition Rules",
+    "desc": "Английская версия правил по кумитэ",
+    "date": "01.10.2026",
+    "size": "",
+    "url": "https://disk.yandex.ru/i/AbaS8rnVjg-DBw"
+  },
+  {
+    "title": "WKF 2026 Para Karate Competition Rules",
+    "desc": "Английская версия правил по пара-каратэ",
+    "date": "01.10.2026",
+    "size": "",
+    "url": "https://disk.yandex.ru/i/7uJXMWEnyK4IBA"
+  },
+  {
+    "title": "WKF Kata Competition Rules 2026",
+    "desc": "Английская версия правил по ката",
+    "date": "01.10.2026",
+    "size": "",
+    "url": "https://disk.yandex.ru/i/0PFFV6vXfbFSvg"
   }
 ]

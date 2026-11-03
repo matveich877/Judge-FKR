@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Протоколы решений — Судейский комитет ФКР</title>
     <link rel="stylesheet" href="./css/style.css">
-    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=ofpYAAo1v257uunwdNopwufm4xSBbBmQf_81UY5i4KOuEgocJbYiVLnTeVQeAurMJBxmMQP3sebLqHXG6-tnkxmTL-n3b77ITBalQh6ZRN3GyXc8vzA-85vn40C4oowHPVljjTSPM-MNlnSIbG_6QVoguGYPff4DBWevcVm_Zh1EXbmVPmTb-UE5CMJVeMA8My4BYJHr9Zku3iT_NAKoidO82U4XwalTSU4ZX1w-W_RhpC-beIPvW_k827TYnyqtMejPL1CPodgH8LMXpBYkTFYOylHzv3UG8I8EYJQEA9TiJqcdsKSXXsw_lMukXlNbjVomgNNP7EtHhZAqNzd-BHYvJvnMuY8fvTT-lrj9-xzTvkmOPR0CWfiVlGdJGM-X6JpoT56kbrXfi9q7PW3LKZS4espjOaVoMX5yqqruV1A7DpkvYyJyHbGwJRNwhtJPr9QSKPpeBSsLLgE8G8zkm-RVrgkWHabUGqoOZb0MSf54iLxy7J3Ke6fJUabFghcScDxjstbo3Ti9g_GPB1dhQJJ8xJM5Ib4bps_fHhX9rgGwVUbUwuqD3SHDI23NF7UYVt6TGMU9japSkiiqkyT0VDsq2341YV5kZ0gCL9esOVjtbNtI5ocOxj_eBg9gOcACNOn6fVrpSlmgeV8vDIqN8w" charset="UTF-8"></script><script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=PvWfSGke0_fbT8nVc2ccB7oV2N-yINkMI-uKlLQHKqpb93Qt4euCdQgVhRczxtdozAZUuAUN70-BkP52-Ai_qszbLiEN_rBGyY_-sC1c9JDpOCgvRNpfNugbcqHc5BiYvttes8ssXM65LaurZURCW_DBOtxWe5JFLHUKX7teexqGnJZhGAOC_KnI3EXBclrDGRNzFKgrqobqoPo8qW3dBJv3WenzdsWGJzrEXDlr2HwxmbPX6zY5_MpBoxn6DmsMZZcI3j-YxTQCrRZ6SmGpzt2rexWos4_NXj_0usDBrJFnZyCfc8EQKXZxAP49KDFXUmSRiyxLcEg6b4MXn0_c7fP9JzG8w968qmq4JbwxlRpIXM12zIM73ki1AcpusFfG4mPL_nxO7vn73UlQGxdflJ87rlxTPebLKJKhWJGabiD-kNvwRiX-VMdz80RBgcz_-z6JaOu9zLGei3-RgWoFSagn3CUo88tHPeC3EbATQovZpYRE5WpnY7vD7aKFowYYtyI64z-U73SZjjCDdCwJNwBwN9Ycpw6jJIIhXiv7-HmwXR2B9J03bwXLgFM3HffGwZ7Ai8CCse7eJUGEYkb14xgNKBVuoTl3Dxdv2fn46utT6APQ59ha3mA3xNrasiHbWG02gjtUXWHBGpVQNlzUZA" charset="UTF-8"></script><style>
+    <style>
         .protocol-year {
             margin-top: 40px;
         }
@@ -123,9 +123,11 @@
       <a href="./index.html">Главная</a>
       <a href="./documents.html">Документы</a>
       <a href="./registry.html">Реестр судей</a>
+      <a href="./prisvoenie/">Присвоение категории</a>
       <a href="./tournaments.html">Турниры</a>
       <a href="./protocols.html" class="active">Протоколы</a>
       <a href="./rules.html">Правила WKF</a>
+      <a href="./licenses.html">Тренерские лицензии</a>
     </nav>
   </div>
 </header>
@@ -159,6 +161,9 @@
     <a href="./tournaments.html">Турниры</a>
     <a href="./protocols.html">Протоколы</a>
     <a href="./rules.html">Правила WKF</a>
+    <a href="./licenses.html">Тренерские лицензии</a>
+    <a href="./prisvoenie/">Присвоение категории</a>
+    <a href="./privacy.html">Персональные данные</a>
   </div>
   <p>© 2026 Судейский комитет ФКР. Все права защищены.</p>
 </footer>
@@ -228,6 +233,40 @@ function esc(t) {
     const d = document.createElement('div');
     d.textContent = t;
     return d.innerHTML;
+}
+</script>
+
+<!-- ===== Окно согласия с Политикой ПДн ===== -->
+<div id="pdConsent" style="display:none; position:fixed; inset:0; z-index:1000; background:rgba(15,23,42,.55); align-items:center; justify-content:center; padding:16px;">
+  <div style="background:#fff; max-width:520px; width:100%; border-radius:16px; padding:28px 30px; box-shadow:0 20px 60px rgba(0,0,0,.25);">
+    <h3 style="margin:0 0 12px; font-size:1.15rem; color:var(--fk-dark,#1a1a2e);">🔒 Персональные данные</h3>
+    <p style="margin:0 0 18px; font-size:.92rem; color:#555; line-height:1.65;">
+      На сайте Судейского комитета ФКР размещаются персональные данные спортивных судей и тренеров
+      (ФИО, регион, категория) на основаниях, предусмотренных законодательством РФ.
+      Продолжая пользоваться сайтом, вы подтверждаете, что ознакомлены с
+      <a href="./privacy.html" target="_blank" style="color:var(--fk-blue,#1565c0); font-weight:700;">Политикой обработки персональных данных</a>.
+    </p>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <button onclick="pdAccept()" style="flex:1; min-width:200px; padding:13px 18px; border:none; border-radius:10px; background:var(--fk-blue,#1565c0); color:#fff; font-weight:700; font-size:.95rem; cursor:pointer;">Ознакомлен и согласен</button>
+      <a href="./privacy.html" target="_blank" style="padding:13px 18px; border:1px solid #e0e0e0; border-radius:10px; color:var(--fk-blue,#1565c0); font-weight:700; font-size:.95rem; text-decoration:none; text-align:center;">Читать политику</a>
+    </div>
+  </div>
+</div>
+<script>
+(function () {
+    try {
+        if (!localStorage.getItem('pd_consent_v1')) {
+            document.getElementById('pdConsent').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+    } catch (e) {
+        document.getElementById('pdConsent').style.display = 'flex';
+    }
+})();
+function pdAccept() {
+    try { localStorage.setItem('pd_consent_v1', new Date().toISOString()); } catch (e) {}
+    document.getElementById('pdConsent').style.display = 'none';
+    document.body.style.overflow = '';
 }
 </script>
 

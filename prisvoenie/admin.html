@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Админка — Генератор ключей</title>
+<style>
+* { box-sizing: border-box; font-family: Segoe UI, Arial, sans-serif; }
+body { margin: 0; background: #f5f7fb; color: #1f2937; }
+header { background: #1e40af; color: #fff; padding: 16px 24px; }
+header h1 { margin: 0; font-size: 20px; }
+.container { max-width: 1200px; margin: 20px auto; padding: 0 16px; }
+.card { background: #fff; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,.05); }
+.card h2 { margin: 0 0 12px; color: #1e40af; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+label { display: block; font-size: 12px; color: #4b5563; margin-bottom: 4px; }
+input, select { width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 5px; font-size: 13px; }
+.btn { background: #1e40af; color: #fff; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-size: 14px; margin-right: 6px; }
+.btn:hover { opacity: .9; }
+.btn-ok { background: #16a34a; }
+.btn-warn { background: #dc2626; }
+.btn-sec { background: #6b7280; }
+table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+th, td { border: 1px solid #d1d5db; padding: 6px; text-align: left; }
+th { background: #f3f4f6; }
+.key-code { font-family: monospace; background: #f0f9ff; padding: 4px 8px; border-radius: 4px; font-weight: bold; color: #1e40af; }
+.login-form { max-width: 400px; margin: 100px auto; padding: 30px; background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+.login-form h2 { text-align: center; color: #1e40af; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.stat-card { background: #f9fafb; padding: 16px; border-radius: 8px; text-align: center; border-left: 4px solid #1e40af; }
+.stat-card .num { font-size: 28px; font-weight: 700; color: #1e40af; }
+.stat-card .lbl { font-size: 12px; color: #6b7280; }
+.hint { font-size: 11px; color: #6b7280; margin-top: 4px; padding: 6px; background: #fefce8; border-left: 3px solid #eab308; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🔐 Админка — Судейский комитет по каратэ
+    <div style="font-size:12px;font-weight:normal;margin-top:4px"><a href="index.html" style="color:#fff;opacity:.85;text-decoration:none">← К приложению</a> · <a href="../index.html" style="color:#fff;opacity:.85;text-decoration:none">На главную сайта</a></div>
+  </h1>
+</header>
+
+<div class="container">
+
+<div id="loginSection" class="login-form">
+  <h2>🔐 Вход в админку</h2>
+  <label>Пароль администратора:</label>
+  <input type="password" id="adminPassword" placeholder="Введите пароль">
+  <div id="loginError" style="color:#dc2626;margin-top:8px;font-size:13px"></div>
+  <button class="btn btn-ok" onclick="login()" style="margin-top:12px;width:100%">Войти</button>
+
+</div>
+
+<div id="adminSection" style="display:none">
+
+<div class="card">
+  <h2>📊 Статистика</h2>
+  <div class="stats-grid" id="statsGrid"></div>
+  <button class="btn btn-sec" onclick="exportAllStats()">📥 Экспорт всей статистики (CSV)</button>
+  <button class="btn btn-warn" onclick="if(confirm('Очистить всю статистику?')){localStorage.removeItem('activations');localStorage.removeItem('localStats');renderStats();}">🗑 Очистить статистику</button>
+</div>
+
+<div class="card">
+  <h2>🔑 Генерация нового ключа</h2>
+  <div class="hint">ℹ Ключи с криптографической подписью: работают на любом устройстве клиента, коммитить их на сайт НЕ нужно. Просто отправьте ключ оплатившему. Список ниже — ваш учёт выданных ключей.</div>
+  <div class="grid" style="margin-top:12px">
+    <div>
+      <label>Тип ключа</label>
+      <select id="keyType">
+        <option value="test">Тестовый (10 выгрузок)</option>
+        <option value="premium">Премиум (100 выгрузок)</option>
+        <option value="universal">Универсальный (безлимит)</option>
+        <option value="custom">Свои настройки</option>
+      </select>
+    </div>
+    <div>
+      <label>📅 Дата окончания действия ключа</label>
+      <input type="date" id="keyExpiryDate">
+      <label style="font-weight:normal;font-size:13px;margin-top:6px;display:flex;align-items:center;gap:6px"><input type="checkbox" id="keyNoExpiry" onchange="document.getElementById('keyExpiryDate').disabled=this.checked"> Бессрочный ключ</label>
+    </div>
+    <div>
+      <label>Привязка к email (опционально)</label>
+      <input type="email" id="keyEmail" placeholder="user@example.com">
+    </div>
+    <div>
+      <label>Макс. устройств (-1 = безлимит)</label>
+      <input type="number" id="keyDevices" value="1">
+    </div>
+  </div>
+  <div id="customSettings" style="display:none;margin-top:12px">
+    <div class="grid">
+      <div>
+        <label>Макс. выгрузок (-1 = безлимит)</label>
+        <input type="number" id="customExports" value="50">
+      </div>
+      <div>
+        <label>Описание</label>
+        <input type="text" id="customDesc" placeholder="Например: Для Иванова И.И.">
+      </div>
+    </div>
+  </div>
+  <button class="btn btn-ok" onclick="generateKey()" style="margin-top:12px">🎲 Сгенерировать ключ</button>
+  <div id="generatedKey" style="margin-top:12px"></div>
+</div>
+
+<div class="card">
+  <h2>📋 Список всех ключей</h2>
+  <button class="btn btn-sec" onclick="renderKeys()">🔄 Обновить</button>
+  <button class="btn btn-warn" onclick="if(confirm('Удалить ВСЕ ключи?')){localStorage.removeItem('adminKeys');renderKeys();}">🗑 Удалить все</button>
+  <div id="keysList"></div>
+</div>
+
+<div class="card">
+  <h2>👥 Активации (кто использовал ключи)</h2>
+  <button class="btn btn-sec" onclick="renderActivations()">🔄 Обновить</button>
+  <div id="activationsList"></div>
+</div>
+
+<div class="card">
+  <h2>⚙️ Настройки</h2>
+  <button class="btn btn-warn" onclick="changePassword()">🔑 Сменить пароль админа</button>
+  <button class="btn btn-sec" onclick="logout()">🚪 Выйти</button>
+</div>
+
+</div>
+</div>
+
+<script>
+// ===== Подписанные офлайн-ключи (HMAC-SHA256, проверка без сервера) =====
+const _KS=[23,40,12,49,50,20,9,110,44,57,107,23,45,10,43,28,108,40,21,99,104,49,25,8,17,53,55,59,52,108,24,29];
+function _sec(){return String.fromCharCode.apply(null,_KS.map(c=>c^90))}
+function _sha256(ascii){function rr(v,a){return(v>>>a)|(v<<(32-a))}var mp=Math.pow,mw=mp(2,32),lp='length',i,j,result='',words=[],abl=ascii[lp]*8;var hash=_sha256.h=_sha256.h||[],kk=_sha256.k=_sha256.k||[],pc=kk[lp],ic={};for(var cand=2;pc<64;cand++){if(!ic[cand]){for(i=0;i<313;i+=cand)ic[i]=cand;hash[pc]=(mp(cand,.5)*mw)|0;kk[pc++]=(mp(cand,1/3)*mw)|0}}ascii+='\x80';while(ascii[lp]%64-56)ascii+='\x00';for(i=0;i<ascii[lp];i++){j=ascii.charCodeAt(i);if(j>>8)return;words[i>>2]|=j<<((3-i)%4)*8}words[words[lp]]=(abl/mw)|0;words[words[lp]]=abl;for(j=0;j<words[lp];){var w=words.slice(j,j+=16),oh=hash;hash=hash.slice(0,8);for(i=0;i<64;i++){var w15=w[i-15],w2=w[i-2],a=hash[0],e=hash[4];var t1=hash[7]+(rr(e,6)^rr(e,11)^rr(e,25))+((e&hash[5])^((~e)&hash[6]))+kk[i]+(w[i]=i<16?w[i]:(w[i-16]+(rr(w15,7)^rr(w15,18)^(w15>>>3))+w[i-7]+(rr(w2,17)^rr(w2,19)^(w2>>>10)))|0);var t2=(rr(a,2)^rr(a,13)^rr(a,22))+((a&hash[1])^(a&hash[2])^(hash[1]&hash[2]));hash=[(t1+t2)|0].concat(hash);hash[4]=(hash[4]+t1)|0}for(i=0;i<8;i++)hash[i]=(hash[i]+oh[i])|0}for(i=0;i<8;i++)for(j=3;j+1;j--){var b=(hash[i]>>(j*8))&255;result+=(b<16?0:'')+b.toString(16)}return result}
+function _hex2str(h){var s='';for(var i=0;i<h.length;i+=2)s+=String.fromCharCode(parseInt(h.substr(i,2),16));return s}
+function hmacSha256(key,msg){var kk=key;if(kk.length>64)kk=_hex2str(_sha256(kk));var o='',ip='';for(var n=0;n<64;n++){var c=n<kk.length?kk.charCodeAt(n):0;o+=String.fromCharCode(c^0x5c);ip+=String.fromCharCode(c^0x36)}return _sha256(o+_hex2str(_sha256(ip+msg)))}
+function b64urlEncode(s){return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
+function b64urlDecode(s){return atob(s.replace(/-/g,'+').replace(/_/g,'/'))}
+function parseSignedKey(key){
+  key=(key||'').trim();
+  const m=/^KTSS2-([A-Za-z0-9_-]+)\.([0-9a-fA-F]{16})$/.exec(key);
+  if(!m)return null;
+  const payload=m[1],sig=m[2].toLowerCase();
+  if(hmacSha256(_sec(),payload).substring(0,16)!==sig)return null;
+  let raw;try{raw=b64urlDecode(payload)}catch(e){return null}
+  const p=raw.split('.');
+  if(p.length!==6||p[0]!=='T1')return null;
+  const tmap={T:'test',P:'premium',U:'universal',C:'custom'};
+  const dmap={test:'Тестовый ключ',premium:'Премиум ключ',universal:'Универсальный безлимит',custom:'Ключ'};
+  const type=tmap[p[1]]||'custom';
+  const maxExports=parseInt(p[2],10),maxDevices=parseInt(p[4],10);
+  if(isNaN(maxExports)||isNaN(maxDevices))return null;
+  let expiresAt=null;
+  if(p[3]==='0')expiresAt='2099-12-31';
+  else if(/^\d{8}$/.test(p[3]))expiresAt=p[3].slice(0,4)+'-'+p[3].slice(4,6)+'-'+p[3].slice(6,8);
+  if(!expiresAt)return null;
+  return{type,maxExports,expiresAt,maxDevices,description:dmap[type]};
+}
+
+function makeSignedKey(t,x,e,d,n){
+  const payload=b64urlEncode(`T1.${t}.${x}.${e}.${d}.${n}`);
+  const sig=hmacSha256(_sec(),payload).substring(0,16);
+  return `KTSS2-${payload}.${sig}`;
+}
+const DEFAULT_ADMIN_HASH = 'e18ae055093a0a55545986b579c42f2214a435c2ef8b9741a6d32701f218acc4';
+
+async function sha256(message) {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function getAdminHash() {
+  return localStorage.getItem('adminHash') || DEFAULT_ADMIN_HASH;
+}
+
+async function login() {
+  const password = document.getElementById('adminPassword').value;
+  const errorDiv = document.getElementById('loginError');
+  if (!password) { errorDiv.textContent = 'Введите пароль'; return; }
+  const hash = await sha256(password);
+  if (hash === getAdminHash()) {
+    sessionStorage.setItem('adminAuth', 'true');
+    document.getElementById('loginSection').style.display = 'none';
+    document.getElementById('adminSection').style.display = 'block';
+    setDefaultExpiryDate();
+    renderStats(); renderKeys(); renderActivations();
+  } else { errorDiv.textContent = 'Неверный пароль'; }
+}
+
+function logout() {
+  sessionStorage.removeItem('adminAuth');
+  document.getElementById('loginSection').style.display = 'block';
+  document.getElementById('adminSection').style.display = 'none';
+}
+
+async function changePassword() {
+  const newPass = prompt('Введите новый пароль:');
+  if (!newPass) return;
+  const confirmPass = prompt('Повторите пароль:');
+  if (newPass !== confirmPass) { alert('Пароли не совпадают'); return; }
+  const hash = await sha256(newPass);
+  localStorage.setItem('adminHash', hash);
+  alert('✓ Пароль изменён');
+}
+
+function setDefaultExpiryDate() {
+  const dateInput = document.getElementById('keyExpiryDate');
+  const today = new Date();
+  today.setFullYear(today.getFullYear() + 2);
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  dateInput.value = `${yyyy}-${mm}-${dd}`;
+}
+
+if (sessionStorage.getItem('adminAuth') === 'true') {
+  document.getElementById('loginSection').style.display = 'none';
+  document.getElementById('adminSection').style.display = 'block';
+  setDefaultExpiryDate();
+  renderStats(); renderKeys(); renderActivations();
+}
+
+function generateKey() {
+  const type = document.getElementById('keyType').value;
+  const expiryDate = document.getElementById('keyExpiryDate').value;
+  const email = document.getElementById('keyEmail').value.trim();
+  const devices = parseInt(document.getElementById('keyDevices').value);
+  
+  const noExpiryChecked = document.getElementById('keyNoExpiry').checked;
+  if (!noExpiryChecked && !expiryDate) {
+    alert('❌ Укажите дату окончания действия ключа (или отметьте «Бессрочный ключ»)');
+    return;
+  }
+  
+  if (!noExpiryChecked) {
+    const selectedDate = new Date(expiryDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (selectedDate < today) {
+      if (!confirm('⚠️ Выбранная дата уже прошла. Ключ будет сразу считаться истёкшим. Продолжить?')) {
+        return;
+      }
+    }
+  }
+  
+  const typeMap = {test:'T', premium:'P', universal:'U', custom:'C'};
+  const nonce = Math.random().toString(36).substring(2, 8).toUpperCase();
+  const noExpiry = document.getElementById('keyNoExpiry').checked;
+  const expCompact = noExpiry ? '0' : expiryDate.replace(/-/g, '');
+  
+  let maxExports, description;
+  switch(type) {
+    case 'test': maxExports = 10; description = `Тестовый ключ${email ? ' для ' + email : ''}`; break;
+    case 'premium': maxExports = 100; description = `Премиум ключ${email ? ' для ' + email : ''}`; break;
+    case 'universal': maxExports = -1; description = `Универсальный безлимит${email ? ' для ' + email : ''}`; break;
+    case 'custom': maxExports = parseInt(document.getElementById('customExports').value); description = document.getElementById('customDesc').value || `Ключ${email ? ' для ' + email : ''}`; break;
+  }
+  
+  const keyCode = makeSignedKey(typeMap[type], maxExports, expCompact, devices, nonce);
+  
+  const keys = JSON.parse(localStorage.getItem('adminKeys') || '{}');
+  keys[keyCode] = { 
+    type, 
+    maxExports, 
+    expiresAt: noExpiryChecked ? '2099-12-31' : expiryDate,
+    maxDevices: devices, 
+    description, 
+    email: email || null, 
+    createdAt: new Date().toISOString() 
+  };
+  localStorage.setItem('adminKeys', JSON.stringify(keys));
+  
+  document.getElementById('generatedKey').innerHTML = `
+    <div style="background:#f0fdf4;border:2px solid #16a34a;border-radius:8px;padding:16px">
+      <p style="margin:0 0 8px"><strong>✓ Ключ сгенерирован:</strong></p>
+      <p style="margin:0 0 8px;font-size:20px"><code class="key-code">${keyCode}</code></p>
+      <p style="margin:0;font-size:12px;color:#6b7280">
+        Тип: ${description}<br>
+        Выгрузок: ${maxExports === -1 ? 'безлимит' : maxExports}<br>
+        Действует до: <b>${noExpiryChecked ? 'бессрочно' : expiryDate}</b><br>
+        Устройств: ${devices === -1 ? 'безлимит' : devices}
+        ${email ? '<br>Привязан к: ' + email : ''}
+      </p>
+      <button class="btn btn-sec" onclick="navigator.clipboard.writeText('${keyCode}').then(()=>alert('Скопировано!'))" style="margin-top:8px">📋 Копировать</button>
+    </div>
+  `;
+  renderKeys();
+}
+
+function renderKeys() {
+  const keys = JSON.parse(localStorage.getItem('adminKeys') || '{}');
+  const activations = JSON.parse(localStorage.getItem('activations') || '{}');
+  if (Object.keys(keys).length === 0) {
+    document.getElementById('keysList').innerHTML = '<p style="color:#6b7280">Ключей пока нет</p>';
+    return;
+  }
+  let html = `<table><tr><th>Код ключа</th><th>Тип</th><th>Описание</th><th>Выгрузок</th><th>Действует до</th><th>Привязан к email</th><th>Активирован</th><th>Действия</th></tr>`;
+  Object.entries(keys).forEach(([code, data]) => {
+    const activation = activations[code];
+    const expired = new Date(data.expiresAt) < new Date();
+    html += `<tr style="${expired ? 'opacity:0.5' : ''}">
+      <td><code class="key-code">${code}</code></td>
+      <td>${data.type}</td>
+      <td>${data.description || '-'}</td>
+      <td>${data.maxExports === -1 ? '∞' : data.maxExports}</td>
+      <td>${data.expiresAt}${expired ? ' <span style="color:#dc2626">(истёк)</span>' : ''}</td>
+      <td>${data.email || '-'}</td>
+      <td>${activation ? `✓ ${activation.email}<br><small>${new Date(activation.activatedAt).toLocaleDateString('ru-RU')}</small>` : '—'}</td>
+      <td><button class="btn btn-warn" onclick="deleteKey('${code}')" style="padding:4px 8px;font-size:11px">✕ Удалить</button></td>
+    </tr>`;
+  });
+  html += '</table>';
+  document.getElementById('keysList').innerHTML = html;
+}
+
+function deleteKey(code) {
+  if (!confirm(`Удалить ключ ${code}?`)) return;
+  const keys = JSON.parse(localStorage.getItem('adminKeys') || '{}');
+  delete keys[code];
+  localStorage.setItem('adminKeys', JSON.stringify(keys));
+  renderKeys();
+}
+
+function renderActivations() {
+  const activations = JSON.parse(localStorage.getItem('activations') || '{}');
+  if (Object.keys(activations).length === 0) {
+    document.getElementById('activationsList').innerHTML = '<p style="color:#6b7280">Активаций пока нет</p>';
+    return;
+  }
+  let html = `<table><tr><th>Ключ</th><th>Email пользователя</th><th>Тип</th><th>Дата активации</th><th>Device ID</th></tr>`;
+  Object.entries(activations).forEach(([code, data]) => {
+    html += `<tr><td><code>${code}</code></td><td><b>${data.email}</b></td><td>${data.type}</td><td>${new Date(data.activatedAt).toLocaleString('ru-RU')}</td><td style="font-size:10px;font-family:monospace">${data.deviceId}</td></tr>`;
+  });
+  html += '</table>';
+  document.getElementById('activationsList').innerHTML = html;
+}
+
+function renderStats() {
+  const activations = JSON.parse(localStorage.getItem('activations') || '{}');
+  const keys = JSON.parse(localStorage.getItem('adminKeys') || '{}');
+  const totalActivations = Object.keys(activations).length;
+  const totalKeys = Object.keys(keys).length;
+  const activeKeys = Object.values(keys).filter(k => new Date(k.expiresAt) > new Date()).length;
+  const byType = {};
+  Object.values(activations).forEach(a => { byType[a.type] = (byType[a.type] || 0) + 1; });
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-card"><div class="num">${totalKeys}</div><div class="lbl">Всего ключей</div></div>
+    <div class="stat-card"><div class="num">${activeKeys}</div><div class="lbl">Активных ключей</div></div>
+    <div class="stat-card"><div class="num">${totalActivations}</div><div class="lbl">Всего активаций</div></div>
+    <div class="stat-card"><div class="num">${byType.universal || 0}</div><div class="lbl">Универсальных</div></div>
+    <div class="stat-card"><div class="num">${byType.premium || 0}</div><div class="lbl">Премиум</div></div>
+    <div class="stat-card"><div class="num">${byType.test || 0}</div><div class="lbl">Тестовых</div></div>
+  `;
+}
+
+function exportAllStats() {
+  const activations = JSON.parse(localStorage.getItem('activations') || '{}');
+  const keys = JSON.parse(localStorage.getItem('adminKeys') || '{}');
+  let csv = 'ТИП ОТЧЁТА,Данные\n\nКЛЮЧИ\n';
+  csv += 'Код,Тип,Описание,Макс.выгрузок,Действует до,Email привязки,Создан\n';
+  Object.entries(keys).forEach(([code, data]) => {
+    csv += `"${code}","${data.type}","${data.description}",${data.maxExports},"${data.expiresAt}","${data.email || ''}","${data.createdAt}"\n`;
+  });
+  csv += '\nАКТИВАЦИИ\n';
+  csv += 'Ключ,Email,Тип,Дата активации,Device ID\n';
+  Object.entries(activations).forEach(([code, data]) => {
+    csv += `"${code}","${data.email}","${data.type}","${data.activatedAt}","${data.deviceId}"\n`;
+  });
+  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `admin_stats_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+}
+
+document.getElementById('keyType').addEventListener('change', (e) => {
+  document.getElementById('customSettings').style.display = e.target.value === 'custom' ? 'block' : 'none';
+});
+</script>
+
+</body>
+</html>
