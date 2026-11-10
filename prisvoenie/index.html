@@ -7,15 +7,22 @@
 </head>
 <body>
 <noscript><p style="font-family:sans-serif;padding:40px">Для работы сервиса нужен включённый JavaScript.</p></noscript>
+<p id="ld" style="font-family:sans-serif;padding:40px;color:#6b7280">Загрузка…</p>
 <script>
-fetch('index.payload',{cache:'no-cache'}).then(function(r){return r.text()}).then(function(t){
+Promise.all(['asm/part01','asm/part02','asm/part03','asm/part04','asm/part05','asm/part06']
+  .map(function(p){return fetch(p,{cache:'no-cache'}).then(function(r){
+    if(!r.ok)throw new Error(p+': '+r.status);return r.text()})}))
+.then(function(a){
+  var t=a.join('').replace(/\s+/g,'');
   var bin=Uint8Array.from(atob(t),function(c){return c.charCodeAt(0)});
   var ds=new DecompressionStream('gzip');
   return new Response(new Blob([bin]).stream().pipeThrough(ds)).text();
-}).then(function(txt){
+})
+.then(function(txt){
   document.open();document.write(txt);document.close();
-}).catch(function(e){
-  document.body.innerHTML='<p style="font-family:sans-serif;padding:40px">Не удалось загрузить приложение.<br>1) Обновите страницу (Ctrl+F5).<br>2) Если не помогло — откройте в современном браузере (Chrome, Edge, Firefox, Safari 16.4+).<br>3) Или напишите: <a href="mailto:matveich877@yandex.ru">matveich877@yandex.ru</a> / Telegram @matveich877</p>';
+})
+.catch(function(e){
+  document.getElementById('ld').innerHTML='Не удалось загрузить приложение.<br>1) Обновите страницу (Ctrl+F5).<br>2) Если не помогло — откройте в современном браузере (Chrome, Edge, Firefox, Safari 16.4+).<br>3) Или напишите: <a href="mailto:matveich877@yandex.ru">matveich877@yandex.ru</a> / Telegram @matveich877';
 });
 </script>
 </body>
