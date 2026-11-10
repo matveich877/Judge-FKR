@@ -2,125 +2,225 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Админка — Генератор ключей</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Админка — Присвоение КТСС</title>
 <style>
 * { box-sizing: border-box; font-family: Segoe UI, Arial, sans-serif; }
 body { margin: 0; background: #f5f7fb; color: #1f2937; }
 header { background: #1e40af; color: #fff; padding: 16px 24px; }
 header h1 { margin: 0; font-size: 20px; }
+header .links { font-size: 12px; font-weight: normal; margin-top: 4px; }
+header .links a { color: #fff; opacity: .85; text-decoration: none; }
+.tabs { display: flex; gap: 4px; background: #fff; padding: 8px 16px 0; border-bottom: 2px solid #e5e7eb; flex-wrap: wrap; position: sticky; top: 0; z-index: 10; }
+.tab { background: none; border: none; padding: 10px 16px; font-size: 14px; cursor: pointer; border-bottom: 3px solid transparent; color: #4b5563; border-radius: 6px 6px 0 0; }
+.tab:hover { background: #f3f4f6; }
+.tab.active { color: #1e40af; border-bottom-color: #1e40af; font-weight: 600; }
+.tab .badge { background: #dc2626; color: #fff; border-radius: 10px; padding: 1px 7px; font-size: 11px; margin-left: 4px; }
 .container { max-width: 1200px; margin: 20px auto; padding: 0 16px; }
 .card { background: #fff; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,.05); }
-.card h2 { margin: 0 0 12px; color: #1e40af; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px; }
+.card h2 { margin: 0 0 12px; color: #1e40af; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px; font-size: 18px; }
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
 label { display: block; font-size: 12px; color: #4b5563; margin-bottom: 4px; }
-input, select { width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 5px; font-size: 13px; }
+input, select, textarea { width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 5px; font-size: 13px; }
+textarea { resize: vertical; min-height: 50px; }
 .btn { background: #1e40af; color: #fff; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-size: 14px; margin-right: 6px; }
 .btn:hover { opacity: .9; }
 .btn-ok { background: #16a34a; }
 .btn-warn { background: #dc2626; }
 .btn-sec { background: #6b7280; }
+.btn-sm { padding: 4px 10px; font-size: 12px; margin: 2px 2px 2px 0; }
 table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
-th, td { border: 1px solid #d1d5db; padding: 6px; text-align: left; }
+th, td { border: 1px solid #d1d5db; padding: 6px; text-align: left; vertical-align: top; }
 th { background: #f3f4f6; }
-.key-code { font-family: monospace; background: #f0f9ff; padding: 4px 8px; border-radius: 4px; font-weight: bold; color: #1e40af; }
+.key-code { font-family: monospace; background: #f0f9ff; padding: 4px 8px; border-radius: 4px; font-weight: bold; color: #1e40af; word-break: break-all; font-size: 12px; }
 .login-form { max-width: 400px; margin: 100px auto; padding: 30px; background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
 .login-form h2 { text-align: center; color: #1e40af; }
-.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px; }
-.stat-card { background: #f9fafb; padding: 16px; border-radius: 8px; text-align: center; border-left: 4px solid #1e40af; }
-.stat-card .num { font-size: 28px; font-weight: 700; color: #1e40af; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.stat-card { background: #f9fafb; padding: 14px; border-radius: 8px; text-align: center; border-left: 4px solid #1e40af; }
+.stat-card .num { font-size: 26px; font-weight: 700; color: #1e40af; }
 .stat-card .lbl { font-size: 12px; color: #6b7280; }
-.hint { font-size: 11px; color: #6b7280; margin-top: 4px; padding: 6px; background: #fefce8; border-left: 3px solid #eab308; border-radius: 3px; }
+.stat-card.attn { border-left-color: #dc2626; }
+.stat-card.attn .num { color: #dc2626; }
+.stat-card.money { border-left-color: #16a34a; }
+.stat-card.money .num { color: #16a34a; }
+.hint { font-size: 12px; color: #6b7280; margin-top: 8px; padding: 8px; background: #fefce8; border-left: 3px solid #eab308; border-radius: 3px; line-height: 1.5; }
+.hint.info { background: #eff6ff; border-left-color: #3b82f6; }
+.status-badge { display: inline-block; padding: 2px 10px; border-radius: 10px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.st-new { background: #dbeafe; color: #1e40af; }
+.st-paid { background: #fef3c7; color: #92400e; }
+.st-issued { background: #d1fae5; color: #065f46; }
+.st-closed { background: #e5e7eb; color: #4b5563; }
+.st-rejected { background: #fee2e2; color: #991b1b; }
+.req-card { background: #fff; border: 1px solid #e5e7eb; border-left: 5px solid #1e40af; border-radius: 8px; padding: 14px 16px; margin-bottom: 12px; }
+.req-card.st-new { border-left-color: #3b82f6; }
+.req-card.st-paid { border-left-color: #f59e0b; }
+.req-card.st-issued { border-left-color: #16a34a; }
+.req-card.st-closed { border-left-color: #9ca3af; opacity: .8; }
+.req-card.st-rejected { border-left-color: #dc2626; opacity: .8; }
+.req-head { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; }
+.req-name { font-size: 15px; font-weight: 700; }
+.req-meta { font-size: 12px; color: #6b7280; margin-top: 2px; }
+.req-body { margin-top: 8px; font-size: 13px; line-height: 1.6; }
+.req-actions { margin-top: 10px; }
+.filters { display: flex; gap: 10px; flex-wrap: wrap; align-items: end; margin-bottom: 14px; }
+.filters > div { min-width: 160px; }
+.attn-item { padding: 8px 10px; background: #fef2f2; border-radius: 6px; margin-bottom: 6px; font-size: 13px; }
+.attn-item.ok { background: #f0fdf4; }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>🔐 Админка — Судейский комитет по каратэ
-    <div style="font-size:12px;font-weight:normal;margin-top:4px"><a href="index.html" style="color:#fff;opacity:.85;text-decoration:none">← К приложению</a> · <a href="../index.html" style="color:#fff;opacity:.85;text-decoration:none">На главную сайта</a></div>
+  <h1>🔐 Админка — Присвоение КТСС
+    <div class="links"><a href="index.html">← К приложению</a> · <a href="../index.html">На главную сайта</a></div>
   </h1>
 </header>
-
-<div class="container">
 
 <div id="loginSection" class="login-form">
   <h2>🔐 Вход в админку</h2>
   <label>Пароль администратора:</label>
-  <input type="password" id="adminPassword" placeholder="Введите пароль">
+  <input type="password" id="adminPassword" placeholder="Введите пароль" onkeydown="if(event.key==='Enter')login()">
   <div id="loginError" style="color:#dc2626;margin-top:8px;font-size:13px"></div>
   <button class="btn btn-ok" onclick="login()" style="margin-top:12px;width:100%">Войти</button>
-
 </div>
 
 <div id="adminSection" style="display:none">
 
-<div class="card">
-  <h2>📊 Статистика</h2>
-  <div class="stats-grid" id="statsGrid"></div>
-  <button class="btn btn-sec" onclick="exportAllStats()">📥 Экспорт всей статистики (CSV)</button>
-  <button class="btn btn-warn" onclick="if(confirm('Очистить всю статистику?')){localStorage.removeItem('activations');localStorage.removeItem('localStats');renderStats();}">🗑 Очистить статистику</button>
-</div>
+<nav class="tabs">
+  <button class="tab active" data-tab="overview" onclick="switchTab('overview')">📊 Обзор</button>
+  <button class="tab" data-tab="requests" onclick="switchTab('requests')">📨 Заявки<span id="reqBadge"></span></button>
+  <button class="tab" data-tab="keys" onclick="switchTab('keys')">🔑 Ключи</button>
+  <button class="tab" data-tab="activations" onclick="switchTab('activations')">👥 Активации</button>
+  <button class="tab" data-tab="settings" onclick="switchTab('settings')">⚙️ Настройки</button>
+</nav>
 
-<div class="card">
-  <h2>🔑 Генерация нового ключа</h2>
-  <div class="hint">ℹ Ключи с криптографической подписью: работают на любом устройстве клиента, коммитить их на сайт НЕ нужно. Просто отправьте ключ оплатившему. Список ниже — ваш учёт выданных ключей.</div>
-  <div class="grid" style="margin-top:12px">
-    <div>
-      <label>Тип ключа</label>
-      <select id="keyType">
-        <option value="test">Тестовый (10 выгрузок)</option>
-        <option value="premium">Премиум (100 выгрузок)</option>
-        <option value="universal">Универсальный (безлимит)</option>
-        <option value="custom">Свои настройки</option>
-      </select>
-    </div>
-    <div>
-      <label>📅 Дата окончания действия ключа</label>
-      <input type="date" id="keyExpiryDate">
-      <label style="font-weight:normal;font-size:13px;margin-top:6px;display:flex;align-items:center;gap:6px"><input type="checkbox" id="keyNoExpiry" onchange="document.getElementById('keyExpiryDate').disabled=this.checked"> Бессрочный ключ</label>
-    </div>
-    <div>
-      <label>Привязка к email (опционально)</label>
-      <input type="email" id="keyEmail" placeholder="user@example.com">
-    </div>
-    <div>
-      <label>Макс. устройств (-1 = безлимит)</label>
-      <input type="number" id="keyDevices" value="1">
-    </div>
+<div class="container">
+
+<!-- ================= ОБЗОР ================= -->
+<section id="tab-overview">
+  <div class="card">
+    <h2>📊 Сводка</h2>
+    <div class="stats-grid" id="statsGrid"></div>
+    <button class="btn btn-sec" onclick="exportAllStats()">📥 Экспорт всего (CSV)</button>
   </div>
-  <div id="customSettings" style="display:none;margin-top:12px">
+  <div class="card">
+    <h2>⚠️ Требуют внимания</h2>
+    <div id="attentionList"></div>
+  </div>
+</section>
+
+<!-- ================= ЗАЯВКИ ================= -->
+<section id="tab-requests" style="display:none">
+  <div class="card">
+    <h2>📨 Реестр заявок на ключи</h2>
+    <div class="hint info">ℹ Заявки от клиентов приходят вам на почту (matveich877@yandex.ru, matveich87@yandex.ru) или в Telegram/WhatsApp — автоматически сюда они попасть не могут. Внесите заявку сюда один раз (20 секунд), и админка сама поведёт её по статусам: <b>Новая → Оплачена → Ключ выдан → Закрыта</b>.</div>
+    <h3 style="margin:16px 0 8px;font-size:15px">➕ Внести заявку</h3>
     <div class="grid">
+      <div><label>ФИО клиента *</label><input id="reqFio" placeholder="Иванов Иван Иванович"></div>
+      <div><label>Email клиента *</label><input id="reqEmail" type="email" placeholder="client@mail.ru"></div>
+      <div><label>Регион / организация</label><input id="reqRegion" placeholder="Кемеровская область"></div>
+      <div><label>Тариф *</label><select id="reqTariff"></select></div>
+      <div><label>Канал заявки</label><select id="reqChannel"><option>Email</option><option>Telegram</option><option>WhatsApp</option><option>Лично</option><option>Другое</option></select></div>
+      <div><label>Комментарий (из письма)</label><input id="reqComment" placeholder="Например: просит ключ на 2 устройства"></div>
+    </div>
+    <button class="btn btn-ok" onclick="addRequest()" style="margin-top:12px">💾 Сохранить заявку</button>
+  </div>
+
+  <div class="card">
+    <h2>📋 Список заявок</h2>
+    <div class="filters">
+      <div><label>Статус</label><select id="fltStatus" onchange="renderRequests()"><option value="">Все</option><option value="new">Новая</option><option value="paid">Оплачена — ждёт ключ</option><option value="issued">Ключ выдан</option><option value="closed">Закрыта</option><option value="rejected">Отказ</option></select></div>
+      <div style="flex:1"><label>Поиск (ФИО, email, регион)</label><input id="fltSearch" placeholder="введите текст…" oninput="renderRequests()"></div>
+      <div><button class="btn btn-sec" onclick="renderRequests()">🔄 Обновить</button></div>
+      <div><button class="btn btn-sec" onclick="exportRequests()">📥 Экспорт заявок (CSV)</button></div>
+    </div>
+    <div id="requestsList"></div>
+  </div>
+</section>
+
+<!-- ================= КЛЮЧИ ================= -->
+<section id="tab-keys" style="display:none">
+  <div class="card">
+    <h2>🔑 Генерация нового ключа</h2>
+    <div id="pendingReqBanner" style="display:none" class="hint info"></div>
+    <div class="hint">ℹ Ключи с криптоподписью: работают на любом устройстве клиента, коммитить на сайт НЕ нужно. Отправьте ключ оплатившему. Если генерируете из заявки — email и параметры подставятся сами, ключ прикрепится к заявке автоматически.</div>
+    <div class="grid" style="margin-top:12px">
       <div>
-        <label>Макс. выгрузок (-1 = безлимит)</label>
-        <input type="number" id="customExports" value="50">
+        <label>Тип ключа</label>
+        <select id="keyType">
+          <option value="test">Тестовый (10 выгрузок)</option>
+          <option value="premium">Премиум (100 выгрузок)</option>
+          <option value="universal">Универсальный (безлимит)</option>
+          <option value="custom">Свои настройки</option>
+        </select>
       </div>
       <div>
-        <label>Описание</label>
-        <input type="text" id="customDesc" placeholder="Например: Для Иванова И.И.">
+        <label>📅 Дата окончания действия ключа</label>
+        <input type="date" id="keyExpiryDate">
+        <label style="font-weight:normal;font-size:13px;margin-top:6px;display:flex;align-items:center;gap:6px"><input type="checkbox" id="keyNoExpiry" onchange="document.getElementById('keyExpiryDate').disabled=this.checked" style="width:auto"> Бессрочный ключ</label>
+      </div>
+      <div>
+        <label>Привязка к email (опционально)</label>
+        <input type="email" id="keyEmail" placeholder="user@example.com">
+      </div>
+      <div>
+        <label>Макс. устройств (-1 = безлимит)</label>
+        <input type="number" id="keyDevices" value="1">
       </div>
     </div>
+    <div id="customSettings" style="display:none;margin-top:12px">
+      <div class="grid">
+        <div>
+          <label>Макс. выгрузок (-1 = безлимит)</label>
+          <input type="number" id="customExports" value="50">
+        </div>
+        <div>
+          <label>Описание</label>
+          <input type="text" id="customDesc" placeholder="Например: Для Иванова И.И.">
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-ok" onclick="generateKey()" style="margin-top:12px">🎲 Сгенерировать ключ</button>
+    <div id="generatedKey" style="margin-top:12px"></div>
   </div>
-  <button class="btn btn-ok" onclick="generateKey()" style="margin-top:12px">🎲 Сгенерировать ключ</button>
-  <div id="generatedKey" style="margin-top:12px"></div>
-</div>
 
-<div class="card">
-  <h2>📋 Список всех ключей</h2>
-  <button class="btn btn-sec" onclick="renderKeys()">🔄 Обновить</button>
-  <button class="btn btn-warn" onclick="if(confirm('Удалить ВСЕ ключи?')){localStorage.removeItem('adminKeys');renderKeys();}">🗑 Удалить все</button>
-  <div id="keysList"></div>
-</div>
+  <div class="card">
+    <h2>📋 Список всех ключей</h2>
+    <div class="filters">
+      <div><label>Показать</label><select id="fltKeys" onchange="renderKeys()"><option value="">Все</option><option value="active">Только активные</option><option value="expired">Только истёкшие</option><option value="activated">Только активированные</option></select></div>
+      <div><button class="btn btn-sec" onclick="renderKeys()">🔄 Обновить</button></div>
+    </div>
+    <div id="keysList"></div>
+  </div>
+</section>
 
-<div class="card">
-  <h2>👥 Активации (кто использовал ключи)</h2>
-  <button class="btn btn-sec" onclick="renderActivations()">🔄 Обновить</button>
-  <div id="activationsList"></div>
-</div>
+<!-- ================= АКТИВАЦИИ ================= -->
+<section id="tab-activations" style="display:none">
+  <div class="card">
+    <h2>👥 Активации (кто и когда ввёл ключ)</h2>
+    <div class="hint info">ℹ Активация фиксируется только если клиент активировал ключ <b>в этом же браузере</b>. Клиенты на своих устройствах здесь не отображаются — их учёт ведите по реестру заявок и Excel.</div>
+    <button class="btn btn-sec" onclick="renderActivations()">🔄 Обновить</button>
+    <div id="activationsList"></div>
+  </div>
+</section>
 
-<div class="card">
-  <h2>⚙️ Настройки</h2>
-  <button class="btn btn-warn" onclick="changePassword()">🔑 Сменить пароль админа</button>
-  <button class="btn btn-sec" onclick="logout()">🚪 Выйти</button>
-</div>
+<!-- ================= НАСТРОЙКИ ================= -->
+<section id="tab-settings" style="display:none">
+  <div class="card">
+    <h2>⚙️ Настройки</h2>
+    <button class="btn btn-warn" onclick="changePassword()">🔑 Сменить пароль админа</button>
+    <button class="btn btn-sec" onclick="logout()">🚪 Выйти</button>
+  </div>
+  <div class="card">
+    <h2>🗑 Опасная зона</h2>
+    <div class="hint">⚠ Данные хранятся в localStorage этого браузера. При очистке восстановить их будет нельзя — перед чисткой сделайте экспорт CSV.</div>
+    <div style="margin-top:10px">
+      <button class="btn btn-warn btn-sm" onclick="if(confirm('Очистить статистику активаций?')){localStorage.removeItem('activations');localStorage.removeItem('localStats');renderAll();}">Очистить статистику</button>
+      <button class="btn btn-warn btn-sm" onclick="if(confirm('Удалить ВСЕ ключи?')){localStorage.removeItem('adminKeys');renderAll();}">Удалить все ключи</button>
+      <button class="btn btn-warn btn-sm" onclick="if(confirm('Удалить ВСЕ заявки?')){localStorage.removeItem('adminRequests');renderAll();}">Удалить все заявки</button>
+    </div>
+  </div>
+</section>
 
 </div>
 </div>
@@ -154,7 +254,6 @@ function parseSignedKey(key){
   if(!expiresAt)return null;
   return{type,maxExports,expiresAt,maxDevices,description:dmap[type]};
 }
-
 function makeSignedKey(t,x,e,d,n){
   const payload=b64urlEncode(`T1.${t}.${x}.${e}.${d}.${n}`);
   const sig=hmacSha256(_sec(),payload).substring(0,16);
@@ -162,16 +261,35 @@ function makeSignedKey(t,x,e,d,n){
 }
 const DEFAULT_ADMIN_HASH = 'e18ae055093a0a55545986b579c42f2214a435c2ef8b9741a6d32701f218acc4';
 
+// ===== Тарифы (как в index.html) =====
+const TARIFFS = [
+  {id:'pack1',  name:'1 выгрузка',  price:500,  exports:1,  days:30,  devices:1},
+  {id:'pack5',  name:'5 выгрузок',  price:2000, exports:5,  days:365, devices:2},
+  {id:'pack10', name:'10 выгрузок', price:3500, exports:10, days:365, devices:2},
+  {id:'pack20', name:'20 выгрузок', price:6000, exports:20, days:365, devices:2},
+];
+function tariffById(id){return TARIFFS.find(t=>t.id===id)||null}
+function fmtMoney(n){return (n||0).toLocaleString('ru-RU')+' ₽'}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function fmtDate(iso){if(!iso)return '—';const d=new Date(iso);return isNaN(d)?'—':d.toLocaleDateString('ru-RU')}
+function fmtDateTime(iso){if(!iso)return '—';const d=new Date(iso);return isNaN(d)?'—':d.toLocaleString('ru-RU')}
+
+// ===== Хранилище =====
+function getRequests(){try{return JSON.parse(localStorage.getItem('adminRequests')||'[]')}catch(e){return[]}}
+function saveRequests(l){localStorage.setItem('adminRequests',JSON.stringify(l))}
+function getKeys(){try{return JSON.parse(localStorage.getItem('adminKeys')||'{}')}catch(e){return{}}}
+function saveKeys(k){localStorage.setItem('adminKeys',JSON.stringify(k))}
+function getActivations(){try{return JSON.parse(localStorage.getItem('activations')||'{}')}catch(e){return{}}}
+
+const REQ_STATUSES = {new:'Новая',paid:'Оплачена — ждёт ключ',issued:'Ключ выдан',closed:'Закрыта',rejected:'Отказ'};
+
+// ===== Авторизация =====
 async function sha256(message) {
   const msgBuffer = new TextEncoder().encode(message);
   const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
   return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
-
-function getAdminHash() {
-  return localStorage.getItem('adminHash') || DEFAULT_ADMIN_HASH;
-}
-
+function getAdminHash() { return localStorage.getItem('adminHash') || DEFAULT_ADMIN_HASH; }
 async function login() {
   const password = document.getElementById('adminPassword').value;
   const errorDiv = document.getElementById('loginError');
@@ -182,16 +300,15 @@ async function login() {
     document.getElementById('loginSection').style.display = 'none';
     document.getElementById('adminSection').style.display = 'block';
     setDefaultExpiryDate();
-    renderStats(); renderKeys(); renderActivations();
+    initTariffSelect();
+    renderAll();
   } else { errorDiv.textContent = 'Неверный пароль'; }
 }
-
 function logout() {
   sessionStorage.removeItem('adminAuth');
   document.getElementById('loginSection').style.display = 'block';
   document.getElementById('adminSection').style.display = 'none';
 }
-
 async function changePassword() {
   const newPass = prompt('Введите новый пароль:');
   if (!newPass) return;
@@ -201,52 +318,240 @@ async function changePassword() {
   localStorage.setItem('adminHash', hash);
   alert('✓ Пароль изменён');
 }
+if (sessionStorage.getItem('adminAuth') === 'true') {
+  document.getElementById('loginSection').style.display = 'none';
+  document.getElementById('adminSection').style.display = 'block';
+}
+
+// ===== Навигация =====
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===name));
+  ['overview','requests','keys','activations','settings'].forEach(n=>{
+    document.getElementById('tab-'+n).style.display = n===name?'block':'none';
+  });
+  if(name==='overview')renderOverview();
+  if(name==='requests')renderRequests();
+  if(name==='keys')renderKeys();
+  if(name==='activations')renderActivations();
+}
+function renderAll(){renderOverview();renderRequests();renderKeys();renderActivations();updateBadge()}
 
 function setDefaultExpiryDate() {
   const dateInput = document.getElementById('keyExpiryDate');
   const today = new Date();
   today.setFullYear(today.getFullYear() + 2);
-  const yyyy = today.getFullYear();
-  const mm = String(today.getMonth() + 1).padStart(2, '0');
-  const dd = String(today.getDate()).padStart(2, '0');
-  dateInput.value = `${yyyy}-${mm}-${dd}`;
+  dateInput.value = today.toISOString().split('T')[0];
+}
+function initTariffSelect(){
+  const sel=document.getElementById('reqTariff');
+  if(sel.options.length)return;
+  sel.innerHTML=TARIFFS.map(t=>`<option value="${t.id}">${t.name} — ${fmtMoney(t.price)}</option>`).join('');
+}
+function updateBadge(){
+  const n=getRequests().filter(r=>r.status==='new'||r.status==='paid').length;
+  document.getElementById('reqBadge').innerHTML=n?`<span class="badge">${n}</span>`:'';
 }
 
-if (sessionStorage.getItem('adminAuth') === 'true') {
-  document.getElementById('loginSection').style.display = 'none';
-  document.getElementById('adminSection').style.display = 'block';
-  setDefaultExpiryDate();
-  renderStats(); renderKeys(); renderActivations();
+// ================= ЗАЯВКИ =================
+function addRequest(){
+  const fio=document.getElementById('reqFio').value.trim();
+  const email=document.getElementById('reqEmail').value.trim();
+  const tariffId=document.getElementById('reqTariff').value;
+  if(!fio||!email){alert('❌ Заполните ФИО и email клиента');return}
+  if(!tariffById(tariffId)){alert('❌ Выберите тариф');return}
+  const req={
+    id:'A-'+Date.now().toString(36).toUpperCase(),
+    createdAt:new Date().toISOString(),
+    fio, email,
+    region:document.getElementById('reqRegion').value.trim(),
+    tariffId,
+    channel:document.getElementById('reqChannel').value,
+    comment:document.getElementById('reqComment').value.trim(),
+    status:'new',
+    paidAt:null, issuedAt:null, closedAt:null,
+    keyCode:null
+  };
+  const list=getRequests();list.unshift(req);saveRequests(list);
+  ['reqFio','reqEmail','reqRegion','reqComment'].forEach(id=>document.getElementById(id).value='');
+  renderRequests();renderOverview();updateBadge();
+  alert('✓ Заявка '+req.id+' сохранена ('+fio+')');
 }
 
+function setReqStatus(id,status){
+  const list=getRequests();const r=list.find(x=>x.id===id);if(!r)return;
+  r.status=status;
+  const now=new Date().toISOString();
+  if(status==='paid'&&!r.paidAt)r.paidAt=now;
+  if(status==='issued'&&!r.issuedAt)r.issuedAt=now;
+  if(status==='closed'&&!r.closedAt)r.closedAt=now;
+  saveRequests(list);renderRequests();renderOverview();updateBadge();
+}
+
+function deleteRequest(id){
+  if(!confirm('Удалить заявку '+id+'?'))return;
+  saveRequests(getRequests().filter(r=>r.id!==id));
+  renderRequests();renderOverview();updateBadge();
+}
+
+function renderRequests(){
+  const el=document.getElementById('requestsList');if(!el)return;
+  const flt=document.getElementById('fltStatus').value;
+  const q=(document.getElementById('fltSearch').value||'').toLowerCase();
+  let list=getRequests();
+  if(flt)list=list.filter(r=>r.status===flt);
+  if(q)list=list.filter(r=>(r.fio+' '+r.email+' '+(r.region||'')).toLowerCase().includes(q));
+  if(!list.length){el.innerHTML='<p style="color:#6b7280">Заявок нет — добавьте первую выше ☝</p>';return}
+  el.innerHTML=list.map(r=>{
+    const t=tariffById(r.tariffId);
+    const sum=t?t.price:0;
+    let actions='';
+    if(r.status==='new')actions=`
+      <button class="btn btn-ok btn-sm" onclick="setReqStatus('${r.id}','paid')">💰 Оплата получена</button>
+      <button class="btn btn-warn btn-sm" onclick="setReqStatus('${r.id}','rejected')">✕ Отказ</button>`;
+    else if(r.status==='paid')actions=`
+      <button class="btn btn-ok btn-sm" onclick="issueKeyFor('${r.id}')">🔑 Выдать ключ</button>
+      <button class="btn btn-sec btn-sm" onclick="attachExistingKey('${r.id}')">🔗 Привязать готовый ключ</button>
+      <button class="btn btn-warn btn-sm" onclick="setReqStatus('${r.id}','rejected')">✕ Отказ</button>`;
+    else if(r.status==='issued')actions=`
+      <button class="btn btn-ok btn-sm" onclick="setReqStatus('${r.id}','closed')">✔ Закрыть</button>
+      <button class="btn btn-sec btn-sm" onclick="mailKeyTo('${r.id}')">✉ Письмо клиенту с ключом</button>
+      <button class="btn btn-sec btn-sm" onclick="setReqStatus('${r.id}','paid')">↩ Вернуть в «оплачена»</button>`;
+    else actions=`<button class="btn btn-sec btn-sm" onclick="setReqStatus('${r.id}','new')">↩ Переоткрыть</button>`;
+    return `<div class="req-card st-${r.status}">
+      <div class="req-head">
+        <div>
+          <span class="req-name">${esc(r.fio)}</span>
+          <span class="status-badge st-${r.status}">${REQ_STATUSES[r.status]}</span>
+          <div class="req-meta">${r.id} · ${fmtDateTime(r.createdAt)} · канал: ${esc(r.channel||'—')}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-weight:700;color:#16a34a">${t?esc(t.name):'?'} · ${fmtMoney(sum)}</div>
+          <div class="req-meta">${r.paidAt?'оплачено '+fmtDate(r.paidAt):''}${r.issuedAt?' · ключ '+fmtDate(r.issuedAt):''}</div>
+        </div>
+      </div>
+      <div class="req-body">
+        ✉ <a href="mailto:${esc(r.email)}">${esc(r.email)}</a>${r.region?' · 📍 '+esc(r.region):''}
+        ${r.comment?'<br>💬 '+esc(r.comment):''}
+        ${r.keyCode?'<br>🔑 <code class="key-code">'+esc(r.keyCode)+'</code> <button class="btn btn-sec btn-sm" onclick="navigator.clipboard.writeText(\''+esc(r.keyCode)+'\').then(()=>alert(\'Скопировано!\'))">📋</button>':''}
+      </div>
+      <div class="req-actions">${actions}
+        <button class="btn btn-warn btn-sm" onclick="deleteRequest('${r.id}')" title="Удалить безвозвратно">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// --- Выдача ключа из заявки ---
+let _pendingReqId=null;
+function issueKeyFor(reqId){
+  const r=getRequests().find(x=>x.id===reqId);if(!r)return;
+  const t=tariffById(r.tariffId);
+  _pendingReqId=reqId;
+  // Предзаполняем генератор параметрами тарифа
+  document.getElementById('keyType').value='custom';
+  document.getElementById('customSettings').style.display='block';
+  document.getElementById('customExports').value=t?t.exports:1;
+  document.getElementById('customDesc').value='Заявка '+r.id+' — '+r.fio;
+  document.getElementById('keyEmail').value=r.email;
+  document.getElementById('keyDevices').value=t?t.devices:1;
+  document.getElementById('keyNoExpiry').checked=false;
+  document.getElementById('keyExpiryDate').disabled=false;
+  const d=new Date();d.setDate(d.getDate()+(t?t.days:30));
+  document.getElementById('keyExpiryDate').value=d.toISOString().split('T')[0];
+  const b=document.getElementById('pendingReqBanner');
+  b.style.display='block';
+  b.innerHTML='🔗 Генерируете ключ по заявке <b>'+r.id+'</b> ('+esc(r.fio)+', '+(t?esc(t.name):'')+'). Параметры подставлены по тарифу — проверьте и нажмите «Сгенерировать». Ключ прикрепится к заявке автоматически. <a href="#" onclick="cancelPendingReq();return false" style="color:#1e40af">Отменить связку</a>';
+  switchTab('keys');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function cancelPendingReq(){
+  _pendingReqId=null;
+  document.getElementById('pendingReqBanner').style.display='none';
+}
+function attachExistingKey(reqId){
+  const r=getRequests().find(x=>x.id===reqId);if(!r)return;
+  const code=prompt('Вставьте код готового ключа (KTSS2-...):');
+  if(!code)return;
+  const parsed=parseSignedKey(code.trim());
+  if(!parsed){alert('❌ Ключ не распознан или подпись не сошлась. Проверьте код.');return}
+  r.keyCode=code.trim();
+  setReqStatus(reqId,'issued');
+  alert('✓ Ключ привязан к заявке '+reqId);
+}
+function mailKeyTo(reqId){
+  const r=getRequests().find(x=>x.id===reqId);if(!r||!r.keyCode)return;
+  const t=tariffById(r.tariffId);
+  const body=encodeURIComponent(
+'Здравствуйте, '+r.fio+'!\n\n'+
+'Оплата получена, спасибо! Ваш ключ активации сервиса «Присвоение КТСС»:\n\n'+
+r.keyCode+'\n\n'+
+'Тариф: '+(t?t.name:'')+'\n'+
+'Как активировать: откройте сервис, нажмите «Активировать ключ» и вставьте код выше.\n\n'+
+'С уважением,\nСудейский комитет');
+  location.href='mailto:'+r.email+'?subject='+encodeURIComponent('Ваш ключ активации — '+r.id)+'&body='+body;
+}
+
+function exportRequests(){
+  const list=getRequests();
+  let csv='\ufeffID;Дата заявки;ФИО;Email;Регион;Тариф;Сумма;Канал;Статус;Оплачено;Ключ выдан;Ключ;Комментарий\n';
+  list.forEach(r=>{
+    const t=tariffById(r.tariffId);
+    csv+=[r.id,fmtDateTime(r.createdAt),r.fio,r.email,r.region||'',t?t.name:'',t?t.price:'',r.channel||'',REQ_STATUSES[r.status]||r.status,fmtDate(r.paidAt),fmtDate(r.issuedAt),r.keyCode||'',r.comment||''].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')+'\n';
+  });
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='zayavki_ktss_'+new Date().toISOString().split('T')[0]+'.csv';
+  a.click();
+}
+
+// ================= ОБЗОР =================
+function renderOverview(){
+  const el=document.getElementById('statsGrid');if(!el)return;
+  const keys=getKeys(),activations=getActivations(),reqs=getRequests();
+  const activeKeys=Object.values(keys).filter(k=>new Date(k.expiresAt)>new Date()).length;
+  const rNew=reqs.filter(r=>r.status==='new').length;
+  const rPaid=reqs.filter(r=>r.status==='paid').length;
+  const rIssued=reqs.filter(r=>r.status==='issued').length;
+  const revenue=reqs.filter(r=>['paid','issued','closed'].includes(r.status)).reduce((s,r)=>{const t=tariffById(r.tariffId);return s+(t?t.price:0)},0);
+  el.innerHTML=`
+    <div class="stat-card${rNew?' attn':''}"><div class="num">${rNew}</div><div class="lbl">Новых заявок</div></div>
+    <div class="stat-card${rPaid?' attn':''}"><div class="num">${rPaid}</div><div class="lbl">Оплачено, ждут ключ</div></div>
+    <div class="stat-card"><div class="num">${rIssued}</div><div class="lbl">Ключей выдано</div></div>
+    <div class="stat-card money"><div class="num">${fmtMoney(revenue)}</div><div class="lbl">Оплачено всего</div></div>
+    <div class="stat-card"><div class="num">${Object.keys(keys).length}</div><div class="lbl">Всего ключей</div></div>
+    <div class="stat-card"><div class="num">${activeKeys}</div><div class="lbl">Активных ключей</div></div>
+    <div class="stat-card"><div class="num">${Object.keys(activations).length}</div><div class="lbl">Активаций (локально)</div></div>`;
+  // Требуют внимания
+  const attn=document.getElementById('attentionList');
+  let h='';
+  reqs.filter(r=>r.status==='new').forEach(r=>{
+    const t=tariffById(r.tariffId);
+    h+=`<div class="attn-item">📨 <b>${esc(r.fio)}</b> (${esc(r.email)}) — новая заявка ${r.id}, ${t?esc(t.name)+' · '+fmtMoney(t.price):''}, ${fmtDate(r.createdAt)}. Ждёт оплаты / подтверждения.</div>`;
+  });
+  reqs.filter(r=>r.status==='paid').forEach(r=>{
+    h+=`<div class="attn-item">💰 <b>${esc(r.fio)}</b> — заявка ${r.id} ОПЛАЧЕНА ${fmtDate(r.paidAt)}, ключ ещё не выдан! <a href="#" onclick="issueKeyFor('${r.id}');return false" style="color:#1e40af">Выдать ключ →</a></div>`;
+  });
+  if(!h)h='<div class="attn-item ok">✓ Всё обработано, незакрытых заявок нет.</div>';
+  attn.innerHTML=h;
+}
+
+// ================= КЛЮЧИ =================
 function generateKey() {
   const type = document.getElementById('keyType').value;
   const expiryDate = document.getElementById('keyExpiryDate').value;
   const email = document.getElementById('keyEmail').value.trim();
   const devices = parseInt(document.getElementById('keyDevices').value);
-  
   const noExpiryChecked = document.getElementById('keyNoExpiry').checked;
-  if (!noExpiryChecked && !expiryDate) {
-    alert('❌ Укажите дату окончания действия ключа (или отметьте «Бессрочный ключ»)');
-    return;
-  }
-  
+  if (!noExpiryChecked && !expiryDate) { alert('❌ Укажите дату окончания действия ключа (или отметьте «Бессрочный ключ»)'); return; }
   if (!noExpiryChecked) {
     const selectedDate = new Date(expiryDate);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    if (selectedDate < today) {
-      if (!confirm('⚠️ Выбранная дата уже прошла. Ключ будет сразу считаться истёкшим. Продолжить?')) {
-        return;
-      }
-    }
+    const today = new Date(); today.setHours(0,0,0,0);
+    if (selectedDate < today && !confirm('⚠️ Выбранная дата уже прошла. Ключ будет сразу считаться истёкшим. Продолжить?')) return;
   }
-  
   const typeMap = {test:'T', premium:'P', universal:'U', custom:'C'};
   const nonce = Math.random().toString(36).substring(2, 8).toUpperCase();
-  const noExpiry = document.getElementById('keyNoExpiry').checked;
-  const expCompact = noExpiry ? '0' : expiryDate.replace(/-/g, '');
-  
+  const expCompact = noExpiryChecked ? '0' : expiryDate.replace(/-/g, '');
   let maxExports, description;
   switch(type) {
     case 'test': maxExports = 10; description = `Тестовый ключ${email ? ' для ' + email : ''}`; break;
@@ -254,129 +559,122 @@ function generateKey() {
     case 'universal': maxExports = -1; description = `Универсальный безлимит${email ? ' для ' + email : ''}`; break;
     case 'custom': maxExports = parseInt(document.getElementById('customExports').value); description = document.getElementById('customDesc').value || `Ключ${email ? ' для ' + email : ''}`; break;
   }
-  
   const keyCode = makeSignedKey(typeMap[type], maxExports, expCompact, devices, nonce);
-  
-  const keys = JSON.parse(localStorage.getItem('adminKeys') || '{}');
-  keys[keyCode] = { 
-    type, 
-    maxExports, 
-    expiresAt: noExpiryChecked ? '2099-12-31' : expiryDate,
-    maxDevices: devices, 
-    description, 
-    email: email || null, 
-    createdAt: new Date().toISOString() 
-  };
-  localStorage.setItem('adminKeys', JSON.stringify(keys));
-  
+  const keys = getKeys();
+  keys[keyCode] = { type, maxExports, expiresAt: noExpiryChecked ? '2099-12-31' : expiryDate, maxDevices: devices, description, email: email || null, createdAt: new Date().toISOString() };
+  saveKeys(keys);
+
+  // Привязка к заявке, если генерировали из неё
+  let linkedMsg='';
+  if(_pendingReqId){
+    const list=getRequests();const r=list.find(x=>x.id===_pendingReqId);
+    if(r){r.keyCode=keyCode;r.status='issued';if(!r.issuedAt)r.issuedAt=new Date().toISOString();saveRequests(list);
+      linkedMsg='<p style="margin:8px 0 0;color:#065f46">🔗 Ключ автоматически прикреплён к заявке <b>'+r.id+'</b> ('+esc(r.fio)+'), статус → «Ключ выдан».</p>';}
+    cancelPendingReq();
+  }
+
   document.getElementById('generatedKey').innerHTML = `
     <div style="background:#f0fdf4;border:2px solid #16a34a;border-radius:8px;padding:16px">
       <p style="margin:0 0 8px"><strong>✓ Ключ сгенерирован:</strong></p>
-      <p style="margin:0 0 8px;font-size:20px"><code class="key-code">${keyCode}</code></p>
+      <p style="margin:0 0 8px;font-size:16px"><code class="key-code">${keyCode}</code></p>
       <p style="margin:0;font-size:12px;color:#6b7280">
-        Тип: ${description}<br>
+        Тип: ${esc(description)}<br>
         Выгрузок: ${maxExports === -1 ? 'безлимит' : maxExports}<br>
         Действует до: <b>${noExpiryChecked ? 'бессрочно' : expiryDate}</b><br>
         Устройств: ${devices === -1 ? 'безлимит' : devices}
-        ${email ? '<br>Привязан к: ' + email : ''}
+        ${email ? '<br>Привязан к: ' + esc(email) : ''}
       </p>
+      ${linkedMsg}
       <button class="btn btn-sec" onclick="navigator.clipboard.writeText('${keyCode}').then(()=>alert('Скопировано!'))" style="margin-top:8px">📋 Копировать</button>
-    </div>
-  `;
-  renderKeys();
+    </div>`;
+  renderKeys();renderOverview();updateBadge();
 }
 
 function renderKeys() {
-  const keys = JSON.parse(localStorage.getItem('adminKeys') || '{}');
-  const activations = JSON.parse(localStorage.getItem('activations') || '{}');
-  if (Object.keys(keys).length === 0) {
-    document.getElementById('keysList').innerHTML = '<p style="color:#6b7280">Ключей пока нет</p>';
-    return;
-  }
-  let html = `<table><tr><th>Код ключа</th><th>Тип</th><th>Описание</th><th>Выгрузок</th><th>Действует до</th><th>Привязан к email</th><th>Активирован</th><th>Действия</th></tr>`;
-  Object.entries(keys).forEach(([code, data]) => {
+  const el=document.getElementById('keysList');if(!el)return;
+  const keys = getKeys(), activations = getActivations();
+  const flt=(document.getElementById('fltKeys')||{}).value||'';
+  let entries=Object.entries(keys);
+  entries.sort((a,b)=>(b[1].createdAt||'').localeCompare(a[1].createdAt||''));
+  if(flt)entries=entries.filter(([c,d])=>{
+    const expired=new Date(d.expiresAt)<new Date();
+    if(flt==='active')return !expired;
+    if(flt==='expired')return expired;
+    if(flt==='activated')return !!activations[c];
+    return true;
+  });
+  if (!entries.length) { el.innerHTML = '<p style="color:#6b7280">Ключей пока нет</p>'; return; }
+  let html = `<table><tr><th>Ключ</th><th>Кому / описание</th><th>Лимиты</th><th>Действует до</th><th>Статус</th><th>Действия</th></tr>`;
+  entries.forEach(([code, data]) => {
     const activation = activations[code];
     const expired = new Date(data.expiresAt) < new Date();
-    html += `<tr style="${expired ? 'opacity:0.5' : ''}">
-      <td><code class="key-code">${code}</code></td>
-      <td>${data.type}</td>
-      <td>${data.description || '-'}</td>
-      <td>${data.maxExports === -1 ? '∞' : data.maxExports}</td>
-      <td>${data.expiresAt}${expired ? ' <span style="color:#dc2626">(истёк)</span>' : ''}</td>
-      <td>${data.email || '-'}</td>
-      <td>${activation ? `✓ ${activation.email}<br><small>${new Date(activation.activatedAt).toLocaleDateString('ru-RU')}</small>` : '—'}</td>
-      <td><button class="btn btn-warn" onclick="deleteKey('${code}')" style="padding:4px 8px;font-size:11px">✕ Удалить</button></td>
+    let status;
+    if(expired)status='<span class="status-badge st-rejected">Истёк</span>';
+    else if(activation)status='<span class="status-badge st-issued">Активирован</span>';
+    else status='<span class="status-badge st-new">Не активирован</span>';
+    html += `<tr style="${expired ? 'opacity:0.55' : ''}">
+      <td style="max-width:260px"><code class="key-code">${code}</code><br><small style="color:#9ca3af">${data.type} · создан ${fmtDate(data.createdAt)}</small></td>
+      <td>${data.email ? '<b>'+esc(data.email)+'</b><br>' : ''}<small>${esc(data.description || '-')}</small>${activation ? '<br><small style="color:#065f46">✓ ввёл: '+esc(activation.email)+', '+fmtDate(activation.activatedAt)+'</small>' : ''}</td>
+      <td><small>Выгрузок: ${data.maxExports === -1 ? '∞' : data.maxExports}<br>Устройств: ${data.maxDevices === -1 ? '∞' : data.maxDevices}</small></td>
+      <td>${data.expiresAt}</td>
+      <td>${status}</td>
+      <td><button class="btn btn-sec btn-sm" onclick="navigator.clipboard.writeText('${code}').then(()=>alert('Скопировано!'))">📋</button><button class="btn btn-warn btn-sm" onclick="deleteKey('${code}')">✕</button></td>
     </tr>`;
   });
   html += '</table>';
-  document.getElementById('keysList').innerHTML = html;
+  el.innerHTML = html;
 }
-
 function deleteKey(code) {
-  if (!confirm(`Удалить ключ ${code}?`)) return;
-  const keys = JSON.parse(localStorage.getItem('adminKeys') || '{}');
-  delete keys[code];
-  localStorage.setItem('adminKeys', JSON.stringify(keys));
-  renderKeys();
+  if (!confirm('Удалить ключ '+code+'?')) return;
+  const keys = getKeys(); delete keys[code]; saveKeys(keys);
+  renderKeys(); renderOverview();
 }
 
+// ================= АКТИВАЦИИ =================
 function renderActivations() {
-  const activations = JSON.parse(localStorage.getItem('activations') || '{}');
-  if (Object.keys(activations).length === 0) {
-    document.getElementById('activationsList').innerHTML = '<p style="color:#6b7280">Активаций пока нет</p>';
-    return;
-  }
+  const el=document.getElementById('activationsList');if(!el)return;
+  const activations = getActivations();
+  if (!Object.keys(activations).length) { el.innerHTML = '<p style="color:#6b7280">Активаций пока нет</p>'; return; }
   let html = `<table><tr><th>Ключ</th><th>Email пользователя</th><th>Тип</th><th>Дата активации</th><th>Device ID</th></tr>`;
   Object.entries(activations).forEach(([code, data]) => {
-    html += `<tr><td><code>${code}</code></td><td><b>${data.email}</b></td><td>${data.type}</td><td>${new Date(data.activatedAt).toLocaleString('ru-RU')}</td><td style="font-size:10px;font-family:monospace">${data.deviceId}</td></tr>`;
+    html += `<tr><td><code class="key-code">${code}</code></td><td><b>${esc(data.email)}</b></td><td>${esc(data.type)}</td><td>${fmtDateTime(data.activatedAt)}</td><td style="font-size:10px;font-family:monospace">${esc(data.deviceId)}</td></tr>`;
   });
   html += '</table>';
-  document.getElementById('activationsList').innerHTML = html;
+  el.innerHTML = html;
 }
 
-function renderStats() {
-  const activations = JSON.parse(localStorage.getItem('activations') || '{}');
-  const keys = JSON.parse(localStorage.getItem('adminKeys') || '{}');
-  const totalActivations = Object.keys(activations).length;
-  const totalKeys = Object.keys(keys).length;
-  const activeKeys = Object.values(keys).filter(k => new Date(k.expiresAt) > new Date()).length;
-  const byType = {};
-  Object.values(activations).forEach(a => { byType[a.type] = (byType[a.type] || 0) + 1; });
-  document.getElementById('statsGrid').innerHTML = `
-    <div class="stat-card"><div class="num">${totalKeys}</div><div class="lbl">Всего ключей</div></div>
-    <div class="stat-card"><div class="num">${activeKeys}</div><div class="lbl">Активных ключей</div></div>
-    <div class="stat-card"><div class="num">${totalActivations}</div><div class="lbl">Всего активаций</div></div>
-    <div class="stat-card"><div class="num">${byType.universal || 0}</div><div class="lbl">Универсальных</div></div>
-    <div class="stat-card"><div class="num">${byType.premium || 0}</div><div class="lbl">Премиум</div></div>
-    <div class="stat-card"><div class="num">${byType.test || 0}</div><div class="lbl">Тестовых</div></div>
-  `;
-}
-
+// ================= ЭКСПОРТ =================
 function exportAllStats() {
-  const activations = JSON.parse(localStorage.getItem('activations') || '{}');
-  const keys = JSON.parse(localStorage.getItem('adminKeys') || '{}');
-  let csv = 'ТИП ОТЧЁТА,Данные\n\nКЛЮЧИ\n';
-  csv += 'Код,Тип,Описание,Макс.выгрузок,Действует до,Email привязки,Создан\n';
+  const activations = getActivations(), keys = getKeys(), reqs = getRequests();
+  let csv = '\ufeffТИП ОТЧЁТА;Данные\n\nЗАЯВКИ\n';
+  csv += 'ID;Дата;ФИО;Email;Регион;Тариф;Сумма;Канал;Статус;Оплачено;Ключ выдан;Ключ\n';
+  reqs.forEach(r=>{const t=tariffById(r.tariffId);
+    csv+=[r.id,fmtDateTime(r.createdAt),r.fio,r.email,r.region||'',t?t.name:'',t?t.price:'',r.channel||'',REQ_STATUSES[r.status]||r.status,fmtDate(r.paidAt),fmtDate(r.issuedAt),r.keyCode||''].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')+'\n';
+  });
+  csv += '\nКЛЮЧИ\nКод;Тип;Описание;Макс.выгрузок;Действует до;Email привязки;Создан\n';
   Object.entries(keys).forEach(([code, data]) => {
-    csv += `"${code}","${data.type}","${data.description}",${data.maxExports},"${data.expiresAt}","${data.email || ''}","${data.createdAt}"\n`;
+    csv += `"${code}";"${data.type}";"${data.description}";${data.maxExports};"${data.expiresAt}";"${data.email || ''}";"${data.createdAt}"\n`;
   });
-  csv += '\nАКТИВАЦИИ\n';
-  csv += 'Ключ,Email,Тип,Дата активации,Device ID\n';
+  csv += '\nАКТИВАЦИИ\nКлюч;Email;Тип;Дата активации;Device ID\n';
   Object.entries(activations).forEach(([code, data]) => {
-    csv += `"${code}","${data.email}","${data.type}","${data.activatedAt}","${data.deviceId}"\n`;
+    csv += `"${code}";"${data.email}";"${data.type}";"${data.activatedAt}";"${data.deviceId}"\n`;
   });
-  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
   const a = document.createElement('a');
-  a.href = url;
+  a.href = URL.createObjectURL(blob);
   a.download = `admin_stats_${new Date().toISOString().split('T')[0]}.csv`;
   a.click();
 }
 
+// ===== Инициализация =====
 document.getElementById('keyType').addEventListener('change', (e) => {
   document.getElementById('customSettings').style.display = e.target.value === 'custom' ? 'block' : 'none';
 });
+if (sessionStorage.getItem('adminAuth') === 'true') {
+  setDefaultExpiryDate();
+  initTariffSelect();
+  renderAll();
+}
 </script>
-
 </body>
 </html>
