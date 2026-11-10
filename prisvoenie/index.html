@@ -9,7 +9,7 @@
 <noscript><p style="font-family:sans-serif;padding:40px">Для работы сервиса нужен включённый JavaScript.</p></noscript>
 <p id="ld" style="font-family:sans-serif;padding:40px;color:#6b7280">Загрузка…</p>
 <script>
-Promise.all(['asm/part01','asm/part02','asm/part03','asm/part04','asm/part05','asm/part06']
+Promise.all(['asm/part01','asm/part02a','asm/part02b','asm/part02c','asm/part02d','asm/part03','asm/part04','asm/part05a','asm/part05b','asm/part05c','asm/part05d','asm/part06']
   .map(function(p){return fetch(p,{cache:'no-cache'}).then(function(r){
     if(!r.ok)throw new Error(p+': '+r.status);return r.text()})}))
 .then(function(a){
