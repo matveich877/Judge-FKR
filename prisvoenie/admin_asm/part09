@@ -1,0 +1,68 @@
+on)status='<span class="status-badge st-issued">Активирован</span>';
+    else status='<span class="status-badge st-new">Не активирован</span>';
+    html += `<tr style="${expired ? 'opacity:0.55' : ''}">
+      <td style="max-width:260px"><code class="key-code">${code}</code><br><small style="color:#9ca3af">${data.type} · создан ${fmtDate(data.createdAt)}</small></td>
+      <td>${data.email ? '<b>'+esc(data.email)+'</b><br>' : ''}<small>${esc(data.description || '-')}</small>${activation ? '<br><small style="color:#065f46">✓ ввёл: '+esc(activation.email)+', '+fmtDate(activation.activatedAt)+'</small>' : ''}</td>
+      <td><small>Выгрузок: ${data.maxExports === -1 ? '∞' : data.maxExports}<br>Устройств: ${data.maxDevices === -1 ? '∞' : data.maxDevices}</small></td>
+      <td>${data.expiresAt}</td>
+      <td>${status}</td>
+      <td><button class="btn btn-sec btn-sm" onclick="navigator.clipboard.writeText('${code}').then(()=>alert('Скопировано!'))">📋</button><button class="btn btn-warn btn-sm" onclick="deleteKey('${code}')">✕</button></td>
+    </tr>`;
+  });
+  html += '</table>';
+  el.innerHTML = html;
+}
+function deleteKey(code) {
+  if (!confirm('Удалить ключ '+code+'?')) return;
+  const keys = getKeys(); delete keys[code]; saveKeys(keys);
+  renderKeys(); renderOverview();
+}
+
+// ================= АКТИВАЦИИ =================
+function renderActivations() {
+  const el=document.getElementById('activationsList');if(!el)return;
+  const activations = getActivations();
+  if (!Object.keys(activations).length) { el.innerHTML = '<p style="color:#6b7280">Активаций пока нет</p>'; return; }
+  let html = `<table><tr><th>Ключ</th><th>Email пользователя</th><th>Тип</th><th>Дата активации</th><th>Device ID</th></tr>`;
+  Object.entries(activations).forEach(([code, data]) => {
+    html += `<tr><td><code class="key-code">${code}</code></td><td><b>${esc(data.email)}</b></td><td>${esc(data.type)}</td><td>${fmtDateTime(data.activatedAt)}</td><td style="font-size:10px;font-family:monospace">${esc(data.deviceId)}</td></tr>`;
+  });
+  html += '</table>';
+  el.innerHTML = html;
+}
+
+// ================= ЭКСПОРТ =================
+function exportAllStats() {
+  const activations = getActivations(), keys = getKeys(), reqs = getRequests();
+  let csv = '\ufeffТИП ОТЧЁТА;Данные\n\nЗАЯВКИ\n';
+  csv += 'ID;Дата;ФИО;Email;Регион;Тариф;Сумма;Канал;Статус;Оплачено;Ключ выдан;Ключ\n';
+  reqs.forEach(r=>{const t=tariffById(r.tariffId);
+    csv+=[r.id,fmtDateTime(r.createdAt),r.fio,r.email,r.region||'',t?t.name:'',t?t.price:'',r.channel||'',REQ_STATUSES[r.status]||r.status,fmtDate(r.paidAt),fmtDate(r.issuedAt),r.keyCode||''].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')+'\n';
+  });
+  csv += '\nКЛЮЧИ\nКод;Тип;Описание;Макс.выгрузок;Действует до;Email привязки;Создан\n';
+  Object.entries(keys).forEach(([code, data]) => {
+    csv += `"${code}";"${data.type}";"${data.description}";${data.maxExports};"${data.expiresAt}";"${data.email || ''}";"${data.createdAt}"\n`;
+  });
+  csv += '\nАКТИВАЦИИ\nКлюч;Email;Тип;Дата активации;Device ID\n';
+  Object.entries(activations).forEach(([code, data]) => {
+    csv += `"${code}";"${data.email}";"${data.type}";"${data.activatedAt}";"${data.deviceId}"\n`;
+  });
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `admin_stats_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+}
+
+// ===== Инициализация =====
+document.getElementById('keyType').addEventListener('change', (e) => {
+  document.getElementById('customSettings').style.display = e.target.value === 'custom' ? 'block' : 'none';
+});
+if (sessionStorage.getItem('adminAuth') === 'true') {
+  setDefaultExpiryDate();
+  initTariffSelect();
+  renderAll();
+}
+</script>
+</body>
+</html>

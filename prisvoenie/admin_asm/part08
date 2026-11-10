@@ -1,0 +1,78 @@
+tn.innerHTML=h;
+}
+
+// ================= КЛЮЧИ =================
+function generateKey() {
+  const type = document.getElementById('keyType').value;
+  const expiryDate = document.getElementById('keyExpiryDate').value;
+  const email = document.getElementById('keyEmail').value.trim();
+  const devices = parseInt(document.getElementById('keyDevices').value);
+  const noExpiryChecked = document.getElementById('keyNoExpiry').checked;
+  if (!noExpiryChecked && !expiryDate) { alert('❌ Укажите дату окончания действия ключа (или отметьте «Бессрочный ключ»)'); return; }
+  if (!noExpiryChecked) {
+    const selectedDate = new Date(expiryDate);
+    const today = new Date(); today.setHours(0,0,0,0);
+    if (selectedDate < today && !confirm('⚠️ Выбранная дата уже прошла. Ключ будет сразу считаться истёкшим. Продолжить?')) return;
+  }
+  const typeMap = {test:'T', premium:'P', universal:'U', custom:'C'};
+  const nonce = Math.random().toString(36).substring(2, 8).toUpperCase();
+  const expCompact = noExpiryChecked ? '0' : expiryDate.replace(/-/g, '');
+  let maxExports, description;
+  switch(type) {
+    case 'test': maxExports = 10; description = `Тестовый ключ${email ? ' для ' + email : ''}`; break;
+    case 'premium': maxExports = 100; description = `Премиум ключ${email ? ' для ' + email : ''}`; break;
+    case 'universal': maxExports = -1; description = `Универсальный безлимит${email ? ' для ' + email : ''}`; break;
+    case 'custom': maxExports = parseInt(document.getElementById('customExports').value); description = document.getElementById('customDesc').value || `Ключ${email ? ' для ' + email : ''}`; break;
+  }
+  const keyCode = makeSignedKey(typeMap[type], maxExports, expCompact, devices, nonce);
+  const keys = getKeys();
+  keys[keyCode] = { type, maxExports, expiresAt: noExpiryChecked ? '2099-12-31' : expiryDate, maxDevices: devices, description, email: email || null, createdAt: new Date().toISOString() };
+  saveKeys(keys);
+
+  // Привязка к заявке, если генерировали из неё
+  let linkedMsg='';
+  if(_pendingReqId){
+    const list=getRequests();const r=list.find(x=>x.id===_pendingReqId);
+    if(r){r.keyCode=keyCode;r.status='issued';if(!r.issuedAt)r.issuedAt=new Date().toISOString();saveRequests(list);
+      linkedMsg='<p style="margin:8px 0 0;color:#065f46">🔗 Ключ автоматически прикреплён к заявке <b>'+r.id+'</b> ('+esc(r.fio)+'), статус → «Ключ выдан».</p>';}
+    cancelPendingReq();
+  }
+
+  document.getElementById('generatedKey').innerHTML = `
+    <div style="background:#f0fdf4;border:2px solid #16a34a;border-radius:8px;padding:16px">
+      <p style="margin:0 0 8px"><strong>✓ Ключ сгенерирован:</strong></p>
+      <p style="margin:0 0 8px;font-size:16px"><code class="key-code">${keyCode}</code></p>
+      <p style="margin:0;font-size:12px;color:#6b7280">
+        Тип: ${esc(description)}<br>
+        Выгрузок: ${maxExports === -1 ? 'безлимит' : maxExports}<br>
+        Действует до: <b>${noExpiryChecked ? 'бессрочно' : expiryDate}</b><br>
+        Устройств: ${devices === -1 ? 'безлимит' : devices}
+        ${email ? '<br>Привязан к: ' + esc(email) : ''}
+      </p>
+      ${linkedMsg}
+      <button class="btn btn-sec" onclick="navigator.clipboard.writeText('${keyCode}').then(()=>alert('Скопировано!'))" style="margin-top:8px">📋 Копировать</button>
+    </div>`;
+  renderKeys();renderOverview();updateBadge();
+}
+
+function renderKeys() {
+  const el=document.getElementById('keysList');if(!el)return;
+  const keys = getKeys(), activations = getActivations();
+  const flt=(document.getElementById('fltKeys')||{}).value||'';
+  let entries=Object.entries(keys);
+  entries.sort((a,b)=>(b[1].createdAt||'').localeCompare(a[1].createdAt||''));
+  if(flt)entries=entries.filter(([c,d])=>{
+    const expired=new Date(d.expiresAt)<new Date();
+    if(flt==='active')return !expired;
+    if(flt==='expired')return expired;
+    if(flt==='activated')return !!activations[c];
+    return true;
+  });
+  if (!entries.length) { el.innerHTML = '<p style="color:#6b7280">Ключей пока нет</p>'; return; }
+  let html = `<table><tr><th>Ключ</th><th>Кому / описание</th><th>Лимиты</th><th>Действует до</th><th>Статус</th><th>Действия</th></tr>`;
+  entries.forEach(([code, data]) => {
+    const activation = activations[code];
+    const expired = new Date(data.expiresAt) < new Date();
+    let status;
+    if(expired)status='<span class="status-badge st-rejected">Истёк</span>';
+    else if(activati

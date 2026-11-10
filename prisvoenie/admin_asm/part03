@@ -1,0 +1,89 @@
+== -->
+<section id="tab-keys" style="display:none">
+  <div class="card">
+    <h2>🔑 Генерация нового ключа</h2>
+    <div id="pendingReqBanner" style="display:none" class="hint info"></div>
+    <div class="hint">ℹ Ключи с криптоподписью: работают на любом устройстве клиента, коммитить на сайт НЕ нужно. Отправьте ключ оплатившему. Если генерируете из заявки — email и параметры подставятся сами, ключ прикрепится к заявке автоматически.</div>
+    <div class="grid" style="margin-top:12px">
+      <div>
+        <label>Тип ключа</label>
+        <select id="keyType">
+          <option value="test">Тестовый (10 выгрузок)</option>
+          <option value="premium">Премиум (100 выгрузок)</option>
+          <option value="universal">Универсальный (безлимит)</option>
+          <option value="custom">Свои настройки</option>
+        </select>
+      </div>
+      <div>
+        <label>📅 Дата окончания действия ключа</label>
+        <input type="date" id="keyExpiryDate">
+        <label style="font-weight:normal;font-size:13px;margin-top:6px;display:flex;align-items:center;gap:6px"><input type="checkbox" id="keyNoExpiry" onchange="document.getElementById('keyExpiryDate').disabled=this.checked" style="width:auto"> Бессрочный ключ</label>
+      </div>
+      <div>
+        <label>Привязка к email (опционально)</label>
+        <input type="email" id="keyEmail" placeholder="user@example.com">
+      </div>
+      <div>
+        <label>Макс. устройств (-1 = безлимит)</label>
+        <input type="number" id="keyDevices" value="1">
+      </div>
+    </div>
+    <div id="customSettings" style="display:none;margin-top:12px">
+      <div class="grid">
+        <div>
+          <label>Макс. выгрузок (-1 = безлимит)</label>
+          <input type="number" id="customExports" value="50">
+        </div>
+        <div>
+          <label>Описание</label>
+          <input type="text" id="customDesc" placeholder="Например: Для Иванова И.И.">
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-ok" onclick="generateKey()" style="margin-top:12px">🎲 Сгенерировать ключ</button>
+    <div id="generatedKey" style="margin-top:12px"></div>
+  </div>
+
+  <div class="card">
+    <h2>📋 Список всех ключей</h2>
+    <div class="filters">
+      <div><label>Показать</label><select id="fltKeys" onchange="renderKeys()"><option value="">Все</option><option value="active">Только активные</option><option value="expired">Только истёкшие</option><option value="activated">Только активированные</option></select></div>
+      <div><button class="btn btn-sec" onclick="renderKeys()">🔄 Обновить</button></div>
+    </div>
+    <div id="keysList"></div>
+  </div>
+</section>
+
+<!-- ================= АКТИВАЦИИ ================= -->
+<section id="tab-activations" style="display:none">
+  <div class="card">
+    <h2>👥 Активации (кто и когда ввёл ключ)</h2>
+    <div class="hint info">ℹ Активация фиксируется только если клиент активировал ключ <b>в этом же браузере</b>. Клиенты на своих устройствах здесь не отображаются — их учёт ведите по реестру заявок и Excel.</div>
+    <button class="btn btn-sec" onclick="renderActivations()">🔄 Обновить</button>
+    <div id="activationsList"></div>
+  </div>
+</section>
+
+<!-- ================= НАСТРОЙКИ ================= -->
+<section id="tab-settings" style="display:none">
+  <div class="card">
+    <h2>⚙️ Настройки</h2>
+    <button class="btn btn-warn" onclick="changePassword()">🔑 Сменить пароль админа</button>
+    <button class="btn btn-sec" onclick="logout()">🚪 Выйти</button>
+  </div>
+  <div class="card">
+    <h2>🗑 Опасная зона</h2>
+    <div class="hint">⚠ Данные хранятся в localStorage этого браузера. При очистке восстановить их будет нельзя — перед чисткой сделайте экспорт CSV.</div>
+    <div style="margin-top:10px">
+      <button class="btn btn-warn btn-sm" onclick="if(confirm('Очистить статистику активаций?')){localStorage.removeItem('activations');localStorage.removeItem('localStats');renderAll();}">Очистить статистику</button>
+      <button class="btn btn-warn btn-sm" onclick="if(confirm('Удалить ВСЕ ключи?')){localStorage.removeItem('adminKeys');renderAll();}">Удалить все ключи</button>
+      <button class="btn btn-warn btn-sm" onclick="if(confirm('Удалить ВСЕ заявки?')){localStorage.removeItem('adminRequests');renderAll();}">Удалить все заявки</button>
+    </div>
+  </div>
+</section>
+
+</div>
+</div>
+
+<script>
+// ===== Подписанные офлайн-ключи (HMAC-SHA256, проверка

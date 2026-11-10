@@ -1,0 +1,103 @@
+torage.setItem('adminKeys',JSON.stringify(k))}
+function getActivations(){try{return JSON.parse(localStorage.getItem('activations')||'{}')}catch(e){return{}}}
+
+const REQ_STATUSES = {new:'Новая',paid:'Оплачена — ждёт ключ',issued:'Ключ выдан',closed:'Закрыта',rejected:'Отказ'};
+
+// ===== Авторизация =====
+async function sha256(message) {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+function getAdminHash() { return localStorage.getItem('adminHash') || DEFAULT_ADMIN_HASH; }
+async function login() {
+  const password = document.getElementById('adminPassword').value;
+  const errorDiv = document.getElementById('loginError');
+  if (!password) { errorDiv.textContent = 'Введите пароль'; return; }
+  const hash = await sha256(password);
+  if (hash === getAdminHash()) {
+    sessionStorage.setItem('adminAuth', 'true');
+    document.getElementById('loginSection').style.display = 'none';
+    document.getElementById('adminSection').style.display = 'block';
+    setDefaultExpiryDate();
+    initTariffSelect();
+    renderAll();
+  } else { errorDiv.textContent = 'Неверный пароль'; }
+}
+function logout() {
+  sessionStorage.removeItem('adminAuth');
+  document.getElementById('loginSection').style.display = 'block';
+  document.getElementById('adminSection').style.display = 'none';
+}
+async function changePassword() {
+  const newPass = prompt('Введите новый пароль:');
+  if (!newPass) return;
+  const confirmPass = prompt('Повторите пароль:');
+  if (newPass !== confirmPass) { alert('Пароли не совпадают'); return; }
+  const hash = await sha256(newPass);
+  localStorage.setItem('adminHash', hash);
+  alert('✓ Пароль изменён');
+}
+if (sessionStorage.getItem('adminAuth') === 'true') {
+  document.getElementById('loginSection').style.display = 'none';
+  document.getElementById('adminSection').style.display = 'block';
+}
+
+// ===== Навигация =====
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===name));
+  ['overview','requests','keys','activations','settings'].forEach(n=>{
+    document.getElementById('tab-'+n).style.display = n===name?'block':'none';
+  });
+  if(name==='overview')renderOverview();
+  if(name==='requests')renderRequests();
+  if(name==='keys')renderKeys();
+  if(name==='activations')renderActivations();
+}
+function renderAll(){renderOverview();renderRequests();renderKeys();renderActivations();updateBadge()}
+
+function setDefaultExpiryDate() {
+  const dateInput = document.getElementById('keyExpiryDate');
+  const today = new Date();
+  today.setFullYear(today.getFullYear() + 2);
+  dateInput.value = today.toISOString().split('T')[0];
+}
+function initTariffSelect(){
+  const sel=document.getElementById('reqTariff');
+  if(sel.options.length)return;
+  sel.innerHTML=TARIFFS.map(t=>`<option value="${t.id}">${t.name} — ${fmtMoney(t.price)}</option>`).join('');
+}
+function updateBadge(){
+  const n=getRequests().filter(r=>r.status==='new'||r.status==='paid').length;
+  document.getElementById('reqBadge').innerHTML=n?`<span class="badge">${n}</span>`:'';
+}
+
+// ================= ЗАЯВКИ =================
+function addRequest(){
+  const fio=document.getElementById('reqFio').value.trim();
+  const email=document.getElementById('reqEmail').value.trim();
+  const tariffId=document.getElementById('reqTariff').value;
+  if(!fio||!email){alert('❌ Заполните ФИО и email клиента');return}
+  if(!tariffById(tariffId)){alert('❌ Выберите тариф');return}
+  const req={
+    id:'A-'+Date.now().toString(36).toUpperCase(),
+    createdAt:new Date().toISOString(),
+    fio, email,
+    region:document.getElementById('reqRegion').value.trim(),
+    tariffId,
+    channel:document.getElementById('reqChannel').value,
+    comment:document.getElementById('reqComment').value.trim(),
+    status:'new',
+    paidAt:null, issuedAt:null, closedAt:null,
+    keyCode:null
+  };
+  const list=getRequests();list.unshift(req);saveRequests(list);
+  ['reqFio','reqEmail','reqRegion','reqComment'].forEach(id=>document.getElementById(id).value='');
+  renderRequests();renderOverview();updateBadge();
+  alert('✓ Заявка '+req.id+' сохранена ('+fio+')');
+}
+
+function setReqStatus(id,status){
+  const list=getRequests();const r=list.find(x=>x.id===id);if(!r)return;
+  r.status=status;
+ 

@@ -1,0 +1,81 @@
+ const now=new Date().toISOString();
+  if(status==='paid'&&!r.paidAt)r.paidAt=now;
+  if(status==='issued'&&!r.issuedAt)r.issuedAt=now;
+  if(status==='closed'&&!r.closedAt)r.closedAt=now;
+  saveRequests(list);renderRequests();renderOverview();updateBadge();
+}
+
+function deleteRequest(id){
+  if(!confirm('Удалить заявку '+id+'?'))return;
+  saveRequests(getRequests().filter(r=>r.id!==id));
+  renderRequests();renderOverview();updateBadge();
+}
+
+function renderRequests(){
+  const el=document.getElementById('requestsList');if(!el)return;
+  const flt=document.getElementById('fltStatus').value;
+  const q=(document.getElementById('fltSearch').value||'').toLowerCase();
+  let list=getRequests();
+  if(flt)list=list.filter(r=>r.status===flt);
+  if(q)list=list.filter(r=>(r.fio+' '+r.email+' '+(r.region||'')).toLowerCase().includes(q));
+  if(!list.length){el.innerHTML='<p style="color:#6b7280">Заявок нет — добавьте первую выше ☝</p>';return}
+  el.innerHTML=list.map(r=>{
+    const t=tariffById(r.tariffId);
+    const sum=t?t.price:0;
+    let actions='';
+    if(r.status==='new')actions=`
+      <button class="btn btn-ok btn-sm" onclick="setReqStatus('${r.id}','paid')">💰 Оплата получена</button>
+      <button class="btn btn-warn btn-sm" onclick="setReqStatus('${r.id}','rejected')">✕ Отказ</button>`;
+    else if(r.status==='paid')actions=`
+      <button class="btn btn-ok btn-sm" onclick="issueKeyFor('${r.id}')">🔑 Выдать ключ</button>
+      <button class="btn btn-sec btn-sm" onclick="attachExistingKey('${r.id}')">🔗 Привязать готовый ключ</button>
+      <button class="btn btn-warn btn-sm" onclick="setReqStatus('${r.id}','rejected')">✕ Отказ</button>`;
+    else if(r.status==='issued')actions=`
+      <button class="btn btn-ok btn-sm" onclick="setReqStatus('${r.id}','closed')">✔ Закрыть</button>
+      <button class="btn btn-sec btn-sm" onclick="mailKeyTo('${r.id}')">✉ Письмо клиенту с ключом</button>
+      <button class="btn btn-sec btn-sm" onclick="setReqStatus('${r.id}','paid')">↩ Вернуть в «оплачена»</button>`;
+    else actions=`<button class="btn btn-sec btn-sm" onclick="setReqStatus('${r.id}','new')">↩ Переоткрыть</button>`;
+    return `<div class="req-card st-${r.status}">
+      <div class="req-head">
+        <div>
+          <span class="req-name">${esc(r.fio)}</span>
+          <span class="status-badge st-${r.status}">${REQ_STATUSES[r.status]}</span>
+          <div class="req-meta">${r.id} · ${fmtDateTime(r.createdAt)} · канал: ${esc(r.channel||'—')}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-weight:700;color:#16a34a">${t?esc(t.name):'?'} · ${fmtMoney(sum)}</div>
+          <div class="req-meta">${r.paidAt?'оплачено '+fmtDate(r.paidAt):''}${r.issuedAt?' · ключ '+fmtDate(r.issuedAt):''}</div>
+        </div>
+      </div>
+      <div class="req-body">
+        ✉ <a href="mailto:${esc(r.email)}">${esc(r.email)}</a>${r.region?' · 📍 '+esc(r.region):''}
+        ${r.comment?'<br>💬 '+esc(r.comment):''}
+        ${r.keyCode?'<br>🔑 <code class="key-code">'+esc(r.keyCode)+'</code> <button class="btn btn-sec btn-sm" onclick="navigator.clipboard.writeText(\''+esc(r.keyCode)+'\').then(()=>alert(\'Скопировано!\'))">📋</button>':''}
+      </div>
+      <div class="req-actions">${actions}
+        <button class="btn btn-warn btn-sm" onclick="deleteRequest('${r.id}')" title="Удалить безвозвратно">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// --- Выдача ключа из заявки ---
+let _pendingReqId=null;
+function issueKeyFor(reqId){
+  const r=getRequests().find(x=>x.id===reqId);if(!r)return;
+  const t=tariffById(r.tariffId);
+  _pendingReqId=reqId;
+  // Предзаполняем генератор параметрами тарифа
+  document.getElementById('keyType').value='custom';
+  document.getElementById('customSettings').style.display='block';
+  document.getElementById('customExports').value=t?t.exports:1;
+  document.getElementById('customDesc').value='Заявка '+r.id+' — '+r.fio;
+  document.getElementById('keyEmail').value=r.email;
+  document.getElementById('keyDevices').value=t?t.devices:1;
+  document.getElementById('keyNoExpiry').checked=false;
+  document.getElementById('keyExpiryDate').disabled=false;
+  const d=new Date();d.setDate(d.getDate()+(t?t.days:30));
+  document.getElementById('keyExpiryDate').value=d.toISOString().split('T')[0];
+  const b=document.getElementById('pendingReqBanner');
+  b.style.display='block';
+  b.innerHTML='🔗 Генерируете кл

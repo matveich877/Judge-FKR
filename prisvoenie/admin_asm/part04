@@ -1,0 +1,53 @@
+ без сервера) =====
+const _KS=[23,40,12,49,50,20,9,110,44,57,107,23,45,10,43,28,108,40,21,99,104,49,25,8,17,53,55,59,52,108,24,29];
+function _sec(){return String.fromCharCode.apply(null,_KS.map(c=>c^90))}
+function _sha256(ascii){function rr(v,a){return(v>>>a)|(v<<(32-a))}var mp=Math.pow,mw=mp(2,32),lp='length',i,j,result='',words=[],abl=ascii[lp]*8;var hash=_sha256.h=_sha256.h||[],kk=_sha256.k=_sha256.k||[],pc=kk[lp],ic={};for(var cand=2;pc<64;cand++){if(!ic[cand]){for(i=0;i<313;i+=cand)ic[i]=cand;hash[pc]=(mp(cand,.5)*mw)|0;kk[pc++]=(mp(cand,1/3)*mw)|0}}ascii+='\x80';while(ascii[lp]%64-56)ascii+='\x00';for(i=0;i<ascii[lp];i++){j=ascii.charCodeAt(i);if(j>>8)return;words[i>>2]|=j<<((3-i)%4)*8}words[words[lp]]=(abl/mw)|0;words[words[lp]]=abl;for(j=0;j<words[lp];){var w=words.slice(j,j+=16),oh=hash;hash=hash.slice(0,8);for(i=0;i<64;i++){var w15=w[i-15],w2=w[i-2],a=hash[0],e=hash[4];var t1=hash[7]+(rr(e,6)^rr(e,11)^rr(e,25))+((e&hash[5])^((~e)&hash[6]))+kk[i]+(w[i]=i<16?w[i]:(w[i-16]+(rr(w15,7)^rr(w15,18)^(w15>>>3))+w[i-7]+(rr(w2,17)^rr(w2,19)^(w2>>>10)))|0);var t2=(rr(a,2)^rr(a,13)^rr(a,22))+((a&hash[1])^(a&hash[2])^(hash[1]&hash[2]));hash=[(t1+t2)|0].concat(hash);hash[4]=(hash[4]+t1)|0}for(i=0;i<8;i++)hash[i]=(hash[i]+oh[i])|0}for(i=0;i<8;i++)for(j=3;j+1;j--){var b=(hash[i]>>(j*8))&255;result+=(b<16?0:'')+b.toString(16)}return result}
+function _hex2str(h){var s='';for(var i=0;i<h.length;i+=2)s+=String.fromCharCode(parseInt(h.substr(i,2),16));return s}
+function hmacSha256(key,msg){var kk=key;if(kk.length>64)kk=_hex2str(_sha256(kk));var o='',ip='';for(var n=0;n<64;n++){var c=n<kk.length?kk.charCodeAt(n):0;o+=String.fromCharCode(c^0x5c);ip+=String.fromCharCode(c^0x36)}return _sha256(o+_hex2str(_sha256(ip+msg)))}
+function b64urlEncode(s){return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
+function b64urlDecode(s){return atob(s.replace(/-/g,'+').replace(/_/g,'/'))}
+function parseSignedKey(key){
+  key=(key||'').trim();
+  const m=/^KTSS2-([A-Za-z0-9_-]+)\.([0-9a-fA-F]{16})$/.exec(key);
+  if(!m)return null;
+  const payload=m[1],sig=m[2].toLowerCase();
+  if(hmacSha256(_sec(),payload).substring(0,16)!==sig)return null;
+  let raw;try{raw=b64urlDecode(payload)}catch(e){return null}
+  const p=raw.split('.');
+  if(p.length!==6||p[0]!=='T1')return null;
+  const tmap={T:'test',P:'premium',U:'universal',C:'custom'};
+  const dmap={test:'Тестовый ключ',premium:'Премиум ключ',universal:'Универсальный безлимит',custom:'Ключ'};
+  const type=tmap[p[1]]||'custom';
+  const maxExports=parseInt(p[2],10),maxDevices=parseInt(p[4],10);
+  if(isNaN(maxExports)||isNaN(maxDevices))return null;
+  let expiresAt=null;
+  if(p[3]==='0')expiresAt='2099-12-31';
+  else if(/^\d{8}$/.test(p[3]))expiresAt=p[3].slice(0,4)+'-'+p[3].slice(4,6)+'-'+p[3].slice(6,8);
+  if(!expiresAt)return null;
+  return{type,maxExports,expiresAt,maxDevices,description:dmap[type]};
+}
+function makeSignedKey(t,x,e,d,n){
+  const payload=b64urlEncode(`T1.${t}.${x}.${e}.${d}.${n}`);
+  const sig=hmacSha256(_sec(),payload).substring(0,16);
+  return `KTSS2-${payload}.${sig}`;
+}
+const DEFAULT_ADMIN_HASH = 'e18ae055093a0a55545986b579c42f2214a435c2ef8b9741a6d32701f218acc4';
+
+// ===== Тарифы (как в index.html) =====
+const TARIFFS = [
+  {id:'pack1',  name:'1 выгрузка',  price:500,  exports:1,  days:30,  devices:1},
+  {id:'pack5',  name:'5 выгрузок',  price:2000, exports:5,  days:365, devices:2},
+  {id:'pack10', name:'10 выгрузок', price:3500, exports:10, days:365, devices:2},
+  {id:'pack20', name:'20 выгрузок', price:6000, exports:20, days:365, devices:2},
+];
+function tariffById(id){return TARIFFS.find(t=>t.id===id)||null}
+function fmtMoney(n){return (n||0).toLocaleString('ru-RU')+' ₽'}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function fmtDate(iso){if(!iso)return '—';const d=new Date(iso);return isNaN(d)?'—':d.toLocaleDateString('ru-RU')}
+function fmtDateTime(iso){if(!iso)return '—';const d=new Date(iso);return isNaN(d)?'—':d.toLocaleString('ru-RU')}
+
+// ===== Хранилище =====
+function getRequests(){try{return JSON.parse(localStorage.getItem('adminRequests')||'[]')}catch(e){return[]}}
+function saveRequests(l){localStorage.setItem('adminRequests',JSON.stringify(l))}
+function getKeys(){try{return JSON.parse(localStorage.getItem('adminKeys')||'{}')}catch(e){return{}}}
+function saveKeys(k){localS

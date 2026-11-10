@@ -1,0 +1,74 @@
+юч по заявке <b>'+r.id+'</b> ('+esc(r.fio)+', '+(t?esc(t.name):'')+'). Параметры подставлены по тарифу — проверьте и нажмите «Сгенерировать». Ключ прикрепится к заявке автоматически. <a href="#" onclick="cancelPendingReq();return false" style="color:#1e40af">Отменить связку</a>';
+  switchTab('keys');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function cancelPendingReq(){
+  _pendingReqId=null;
+  document.getElementById('pendingReqBanner').style.display='none';
+}
+function attachExistingKey(reqId){
+  const r=getRequests().find(x=>x.id===reqId);if(!r)return;
+  const code=prompt('Вставьте код готового ключа (KTSS2-...):');
+  if(!code)return;
+  const parsed=parseSignedKey(code.trim());
+  if(!parsed){alert('❌ Ключ не распознан или подпись не сошлась. Проверьте код.');return}
+  r.keyCode=code.trim();
+  setReqStatus(reqId,'issued');
+  alert('✓ Ключ привязан к заявке '+reqId);
+}
+function mailKeyTo(reqId){
+  const r=getRequests().find(x=>x.id===reqId);if(!r||!r.keyCode)return;
+  const t=tariffById(r.tariffId);
+  const body=encodeURIComponent(
+'Здравствуйте, '+r.fio+'!\n\n'+
+'Оплата получена, спасибо! Ваш ключ активации сервиса «Присвоение КТСС»:\n\n'+
+r.keyCode+'\n\n'+
+'Тариф: '+(t?t.name:'')+'\n'+
+'Как активировать: откройте сервис, нажмите «Активировать ключ» и вставьте код выше.\n\n'+
+'С уважением,\nСудейский комитет');
+  location.href='mailto:'+r.email+'?subject='+encodeURIComponent('Ваш ключ активации — '+r.id)+'&body='+body;
+}
+
+function exportRequests(){
+  const list=getRequests();
+  let csv='\ufeffID;Дата заявки;ФИО;Email;Регион;Тариф;Сумма;Канал;Статус;Оплачено;Ключ выдан;Ключ;Комментарий\n';
+  list.forEach(r=>{
+    const t=tariffById(r.tariffId);
+    csv+=[r.id,fmtDateTime(r.createdAt),r.fio,r.email,r.region||'',t?t.name:'',t?t.price:'',r.channel||'',REQ_STATUSES[r.status]||r.status,fmtDate(r.paidAt),fmtDate(r.issuedAt),r.keyCode||'',r.comment||''].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')+'\n';
+  });
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='zayavki_ktss_'+new Date().toISOString().split('T')[0]+'.csv';
+  a.click();
+}
+
+// ================= ОБЗОР =================
+function renderOverview(){
+  const el=document.getElementById('statsGrid');if(!el)return;
+  const keys=getKeys(),activations=getActivations(),reqs=getRequests();
+  const activeKeys=Object.values(keys).filter(k=>new Date(k.expiresAt)>new Date()).length;
+  const rNew=reqs.filter(r=>r.status==='new').length;
+  const rPaid=reqs.filter(r=>r.status==='paid').length;
+  const rIssued=reqs.filter(r=>r.status==='issued').length;
+  const revenue=reqs.filter(r=>['paid','issued','closed'].includes(r.status)).reduce((s,r)=>{const t=tariffById(r.tariffId);return s+(t?t.price:0)},0);
+  el.innerHTML=`
+    <div class="stat-card${rNew?' attn':''}"><div class="num">${rNew}</div><div class="lbl">Новых заявок</div></div>
+    <div class="stat-card${rPaid?' attn':''}"><div class="num">${rPaid}</div><div class="lbl">Оплачено, ждут ключ</div></div>
+    <div class="stat-card"><div class="num">${rIssued}</div><div class="lbl">Ключей выдано</div></div>
+    <div class="stat-card money"><div class="num">${fmtMoney(revenue)}</div><div class="lbl">Оплачено всего</div></div>
+    <div class="stat-card"><div class="num">${Object.keys(keys).length}</div><div class="lbl">Всего ключей</div></div>
+    <div class="stat-card"><div class="num">${activeKeys}</div><div class="lbl">Активных ключей</div></div>
+    <div class="stat-card"><div class="num">${Object.keys(activations).length}</div><div class="lbl">Активаций (локально)</div></div>`;
+  // Требуют внимания
+  const attn=document.getElementById('attentionList');
+  let h='';
+  reqs.filter(r=>r.status==='new').forEach(r=>{
+    const t=tariffById(r.tariffId);
+    h+=`<div class="attn-item">📨 <b>${esc(r.fio)}</b> (${esc(r.email)}) — новая заявка ${r.id}, ${t?esc(t.name)+' · '+fmtMoney(t.price):''}, ${fmtDate(r.createdAt)}. Ждёт оплаты / подтверждения.</div>`;
+  });
+  reqs.filter(r=>r.status==='paid').forEach(r=>{
+    h+=`<div class="attn-item">💰 <b>${esc(r.fio)}</b> — заявка ${r.id} ОПЛАЧЕНА ${fmtDate(r.paidAt)}, ключ ещё не выдан! <a href="#" onclick="issueKeyFor('${r.id}');return false" style="color:#1e40af">Выдать ключ →</a></div>`;
+  });
+  if(!h)h='<div class="attn-item ok">✓ Всё обработано, незакрытых заявок нет.</div>';
+  at

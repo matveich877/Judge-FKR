@@ -1,0 +1,82 @@
+n-items: flex-start; flex-wrap: wrap; gap: 8px; }
+.req-name { font-size: 15px; font-weight: 700; }
+.req-meta { font-size: 12px; color: #6b7280; margin-top: 2px; }
+.req-body { margin-top: 8px; font-size: 13px; line-height: 1.6; }
+.req-actions { margin-top: 10px; }
+.filters { display: flex; gap: 10px; flex-wrap: wrap; align-items: end; margin-bottom: 14px; }
+.filters > div { min-width: 160px; }
+.attn-item { padding: 8px 10px; background: #fef2f2; border-radius: 6px; margin-bottom: 6px; font-size: 13px; }
+.attn-item.ok { background: #f0fdf4; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🔐 Админка — Присвоение КТСС
+    <div class="links"><a href="index.html">← К приложению</a> · <a href="../index.html">На главную сайта</a></div>
+  </h1>
+</header>
+
+<div id="loginSection" class="login-form">
+  <h2>🔐 Вход в админку</h2>
+  <label>Пароль администратора:</label>
+  <input type="password" id="adminPassword" placeholder="Введите пароль" onkeydown="if(event.key==='Enter')login()">
+  <div id="loginError" style="color:#dc2626;margin-top:8px;font-size:13px"></div>
+  <button class="btn btn-ok" onclick="login()" style="margin-top:12px;width:100%">Войти</button>
+</div>
+
+<div id="adminSection" style="display:none">
+
+<nav class="tabs">
+  <button class="tab active" data-tab="overview" onclick="switchTab('overview')">📊 Обзор</button>
+  <button class="tab" data-tab="requests" onclick="switchTab('requests')">📨 Заявки<span id="reqBadge"></span></button>
+  <button class="tab" data-tab="keys" onclick="switchTab('keys')">🔑 Ключи</button>
+  <button class="tab" data-tab="activations" onclick="switchTab('activations')">👥 Активации</button>
+  <button class="tab" data-tab="settings" onclick="switchTab('settings')">⚙️ Настройки</button>
+</nav>
+
+<div class="container">
+
+<!-- ================= ОБЗОР ================= -->
+<section id="tab-overview">
+  <div class="card">
+    <h2>📊 Сводка</h2>
+    <div class="stats-grid" id="statsGrid"></div>
+    <button class="btn btn-sec" onclick="exportAllStats()">📥 Экспорт всего (CSV)</button>
+  </div>
+  <div class="card">
+    <h2>⚠️ Требуют внимания</h2>
+    <div id="attentionList"></div>
+  </div>
+</section>
+
+<!-- ================= ЗАЯВКИ ================= -->
+<section id="tab-requests" style="display:none">
+  <div class="card">
+    <h2>📨 Реестр заявок на ключи</h2>
+    <div class="hint info">ℹ Заявки от клиентов приходят вам на почту (matveich87@yandex.ru) или в Telegram/WhatsApp — автоматически сюда они попасть не могут. Внесите заявку сюда один раз (20 секунд), и админка сама поведёт её по статусам: <b>Новая → Оплачена → Ключ выдан → Закрыта</b>.</div>
+    <h3 style="margin:16px 0 8px;font-size:15px">➕ Внести заявку</h3>
+    <div class="grid">
+      <div><label>ФИО клиента *</label><input id="reqFio" placeholder="Иванов Иван Иванович"></div>
+      <div><label>Email клиента *</label><input id="reqEmail" type="email" placeholder="client@mail.ru"></div>
+      <div><label>Регион / организация</label><input id="reqRegion" placeholder="Кемеровская область"></div>
+      <div><label>Тариф *</label><select id="reqTariff"></select></div>
+      <div><label>Канал заявки</label><select id="reqChannel"><option>Email</option><option>Telegram</option><option>WhatsApp</option><option>Лично</option><option>Другое</option></select></div>
+      <div><label>Комментарий (из письма)</label><input id="reqComment" placeholder="Например: просит ключ на 2 устройства"></div>
+    </div>
+    <button class="btn btn-ok" onclick="addRequest()" style="margin-top:12px">💾 Сохранить заявку</button>
+  </div>
+
+  <div class="card">
+    <h2>📋 Список заявок</h2>
+    <div class="filters">
+      <div><label>Статус</label><select id="fltStatus" onchange="renderRequests()"><option value="">Все</option><option value="new">Новая</option><option value="paid">Оплачена — ждёт ключ</option><option value="issued">Ключ выдан</option><option value="closed">Закрыта</option><option value="rejected">Отказ</option></select></div>
+      <div style="flex:1"><label>Поиск (ФИО, email, регион)</label><input id="fltSearch" placeholder="введите текст…" oninput="renderRequests()"></div>
+      <div><button class="btn btn-sec" onclick="renderRequests()">🔄 Обновить</button></div>
+      <div><button class="btn btn-sec" onclick="exportRequests()">📥 Экспорт заявок (CSV)</button></div>
+    </div>
+    <div id="requestsList"></div>
+  </div>
+</section>
+
+<!-- ================= КЛЮЧИ ===============

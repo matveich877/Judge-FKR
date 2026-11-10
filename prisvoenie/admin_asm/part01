@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Админка — Присвоение КТСС</title>
+<style>
+* { box-sizing: border-box; font-family: Segoe UI, Arial, sans-serif; }
+body { margin: 0; background: #f5f7fb; color: #1f2937; }
+header { background: #1e40af; color: #fff; padding: 16px 24px; }
+header h1 { margin: 0; font-size: 20px; }
+header .links { font-size: 12px; font-weight: normal; margin-top: 4px; }
+header .links a { color: #fff; opacity: .85; text-decoration: none; }
+.tabs { display: flex; gap: 4px; background: #fff; padding: 8px 16px 0; border-bottom: 2px solid #e5e7eb; flex-wrap: wrap; position: sticky; top: 0; z-index: 10; }
+.tab { background: none; border: none; padding: 10px 16px; font-size: 14px; cursor: pointer; border-bottom: 3px solid transparent; color: #4b5563; border-radius: 6px 6px 0 0; }
+.tab:hover { background: #f3f4f6; }
+.tab.active { color: #1e40af; border-bottom-color: #1e40af; font-weight: 600; }
+.tab .badge { background: #dc2626; color: #fff; border-radius: 10px; padding: 1px 7px; font-size: 11px; margin-left: 4px; }
+.container { max-width: 1200px; margin: 20px auto; padding: 0 16px; }
+.card { background: #fff; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,.05); }
+.card h2 { margin: 0 0 12px; color: #1e40af; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px; font-size: 18px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+label { display: block; font-size: 12px; color: #4b5563; margin-bottom: 4px; }
+input, select, textarea { width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 5px; font-size: 13px; }
+textarea { resize: vertical; min-height: 50px; }
+.btn { background: #1e40af; color: #fff; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-size: 14px; margin-right: 6px; }
+.btn:hover { opacity: .9; }
+.btn-ok { background: #16a34a; }
+.btn-warn { background: #dc2626; }
+.btn-sec { background: #6b7280; }
+.btn-sm { padding: 4px 10px; font-size: 12px; margin: 2px 2px 2px 0; }
+table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+th, td { border: 1px solid #d1d5db; padding: 6px; text-align: left; vertical-align: top; }
+th { background: #f3f4f6; }
+.key-code { font-family: monospace; background: #f0f9ff; padding: 4px 8px; border-radius: 4px; font-weight: bold; color: #1e40af; word-break: break-all; font-size: 12px; }
+.login-form { max-width: 400px; margin: 100px auto; padding: 30px; background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+.login-form h2 { text-align: center; color: #1e40af; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.stat-card { background: #f9fafb; padding: 14px; border-radius: 8px; text-align: center; border-left: 4px solid #1e40af; }
+.stat-card .num { font-size: 26px; font-weight: 700; color: #1e40af; }
+.stat-card .lbl { font-size: 12px; color: #6b7280; }
+.stat-card.attn { border-left-color: #dc2626; }
+.stat-card.attn .num { color: #dc2626; }
+.stat-card.money { border-left-color: #16a34a; }
+.stat-card.money .num { color: #16a34a; }
+.hint { font-size: 12px; color: #6b7280; margin-top: 8px; padding: 8px; background: #fefce8; border-left: 3px solid #eab308; border-radius: 3px; line-height: 1.5; }
+.hint.info { background: #eff6ff; border-left-color: #3b82f6; }
+.status-badge { display: inline-block; padding: 2px 10px; border-radius: 10px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.st-new { background: #dbeafe; color: #1e40af; }
+.st-paid { background: #fef3c7; color: #92400e; }
+.st-issued { background: #d1fae5; color: #065f46; }
+.st-closed { background: #e5e7eb; color: #4b5563; }
+.st-rejected { background: #fee2e2; color: #991b1b; }
+.req-card { background: #fff; border: 1px solid #e5e7eb; border-left: 5px solid #1e40af; border-radius: 8px; padding: 14px 16px; margin-bottom: 12px; }
+.req-card.st-new { border-left-color: #3b82f6; }
+.req-card.st-paid { border-left-color: #f59e0b; }
+.req-card.st-issued { border-left-color: #16a34a; }
+.req-card.st-closed { border-left-color: #9ca3af; opacity: .8; }
+.req-card.st-rejected { border-left-color: #dc2626; opacity: .8; }
+.req-head { display: flex; justify-content: space-between; alig
