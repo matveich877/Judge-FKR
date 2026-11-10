@@ -1,1 +1,22 @@
-PLACEHOLDER_WILL_REPLACE
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Документы на присвоение категории спортивного судьи (каратэ)</title>
+</head>
+<body>
+<noscript><p style="font-family:sans-serif;padding:40px">Для работы сервиса нужен включённый JavaScript.</p></noscript>
+<script>
+fetch('index.payload',{cache:'no-cache'}).then(function(r){return r.text()}).then(function(t){
+  var bin=Uint8Array.from(atob(t),function(c){return c.charCodeAt(0)});
+  var ds=new DecompressionStream('gzip');
+  return new Response(new Blob([bin]).stream().pipeThrough(ds)).text();
+}).then(function(txt){
+  document.open();document.write(txt);document.close();
+}).catch(function(e){
+  document.body.innerHTML='<p style="font-family:sans-serif;padding:40px">Не удалось загрузить приложение.<br>1) Обновите страницу (Ctrl+F5).<br>2) Если не помогло — откройте в современном браузере (Chrome, Edge, Firefox, Safari 16.4+).<br>3) Или напишите: <a href="mailto:matveich877@yandex.ru">matveich877@yandex.ru</a> / Telegram @matveich877</p>';
+});
+</script>
+</body>
+</html>
